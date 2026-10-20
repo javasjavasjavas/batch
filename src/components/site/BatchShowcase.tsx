@@ -1,5 +1,7 @@
 import { ArrowRightIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { SAMPLE_IMAGES } from '../../data/sampleImages';
+import { extendGradient } from '../../processing/gradient';
 import { ImageThumb } from '../ui/ImageThumb';
 
 const PICKS = ['sample-sneaker', 'sample-headphones', 'sample-bottle', 'sample-jar'];
@@ -7,49 +9,95 @@ const items = PICKS.map((id) => SAMPLE_IMAGES.find((i) => i.id === id)).filter(
   (i): i is (typeof SAMPLE_IMAGES)[number] => Boolean(i)
 );
 
+/** Use the same background extension as the workspace, keeping the entire product visible. */
+function SquarePreview({ src }: { src: string }) {
+  const [preview, setPreview] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const image = new Image();
+    image.onload = () => {
+      if (cancelled) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 320;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const scale = 320 / Math.max(image.naturalWidth, image.naturalHeight);
+      const width = Math.round(image.naturalWidth * scale);
+      const height = Math.round(image.naturalHeight * scale);
+      const sample = document.createElement('canvas');
+      sample.width = width;
+      sample.height = height;
+      const sampleCtx = sample.getContext('2d');
+      if (!sampleCtx) return;
+      sampleCtx.drawImage(image, 0, 0, width, height);
+      const x = (320 - width) / 2, y = (320 - height) / 2;
+      ctx.putImageData(extendGradient(sampleCtx.getImageData(0, 0, width, height), 320, 320, x, y, width, height), 0, 0);
+      ctx.drawImage(image, x, y, width, height);
+      setPreview(canvas.toDataURL('image/webp', 0.9));
+    };
+    image.src = src;
+    return () => { cancelled = true; };
+  }, [src]);
+  return <ImageThumb src={preview ?? src} alt="" fit="contain" eager />;
+}
+
 /** Illustration of a planned batch: mixed originals on the left, one consistent output plan on the right. */
 export function BatchShowcase() {
   return (
-    <figure className="flex h-full flex-col rounded-2xl border border-line bg-white p-5 shadow-soft sm:p-6">
-      <div className="grid gap-6 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-4">
-        <div>
-          <p className="text-sm font-semibold text-ink">Before</p>
-          <p className="text-[13px] text-muted">4 images, 4 different sizes</p>
-          <div className="mt-4 grid grid-cols-2 items-end gap-3">
+    <figure className="batch-showcase rounded-2xl border border-line bg-white shadow-soft">
+      <div className="batch-showcase-layout">
+        <div className="batch-showcase-column">
+          <div className="batch-showcase-heading">
+            <p className="batch-showcase-title">Before</p>
+            <p className="batch-showcase-subtitle">4 images · mixed sizes</p>
+          </div>
+          <div className="batch-showcase-images">
             {items.map((img) =>
-            <div key={img.id}>
-                <div className="overflow-hidden rounded-lg" style={{ aspectRatio: `${img.width} / ${img.height}` }}>
-                  <ImageThumb src={img.url} alt={img.name} fit="cover" eager />
+            <div key={img.id} className="min-w-0">
+                <div className="batch-showcase-image-stage">
+                  <div
+                    className="overflow-hidden rounded-lg"
+                    style={{
+                      aspectRatio: `${img.width} / ${img.height}`,
+                      width: img.width >= img.height ? '100%' : `${img.width / img.height * 100}%`,
+                    }}>
+                    <ImageThumb src={img.url} alt={img.name} fit="cover" eager />
+                  </div>
                 </div>
-                <p className="tabular mt-1.5 text-[12px] text-muted">
+                <p className="batch-showcase-caption tabular">
                   {img.width} × {img.height}
                 </p>
               </div>
             )}
           </div>
         </div>
-        <div className="flex justify-center" aria-hidden="true">
-          <span className="flex h-9 w-9 rotate-90 items-center justify-center rounded-full border border-line bg-canvas text-ink sm:rotate-0">
-            <ArrowRightIcon className="h-4 w-4" />
+        <div className="batch-showcase-divider" aria-hidden="true">
+          <span className="batch-showcase-arrow">
+            <ArrowRightIcon className="h-5 w-5" strokeWidth={1.75} />
           </span>
         </div>
-        <div className="sm:border-l sm:border-line sm:pl-5">
-          <p className="text-sm font-semibold text-ink">After</p>
-          <p className="text-[13px] text-muted">Square 1600 × 1600, WebP</p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="batch-showcase-column">
+          <div className="batch-showcase-heading">
+            <div className="flex items-center gap-3">
+              <p className="batch-showcase-title">After</p>
+              <span className="rounded-full bg-lime px-2.5 py-1 text-[11px] font-medium leading-none text-ink">Ready</span>
+            </div>
+            <p className="batch-showcase-subtitle">1600 × 1600 · WebP</p>
+          </div>
+          <div className="batch-showcase-images">
             {items.map((img, i) =>
-            <div key={img.id}>
-                <div className="aspect-square overflow-hidden rounded-lg border border-line bg-[#ECEAE3] p-2">
-                  <ImageThumb src={img.url} alt="" fit="contain" className="bg-transparent" eager />
+            <div key={img.id} className="min-w-0">
+                <div className="aspect-square overflow-hidden rounded-lg bg-[#ECEAE3]">
+                  <SquarePreview src={img.url} />
                 </div>
-                <p className="tabular mt-1.5 truncate text-[12px] text-muted">product-00{i + 1}.webp</p>
+                <p className="batch-showcase-caption tabular">product-00{i + 1}.webp</p>
               </div>
             )}
           </div>
         </div>
       </div>
-      <figcaption className="mt-auto border-t border-line pt-3 text-[12px] text-muted">
-        Illustration of a planned batch using the sample set.
+      <figcaption className="sr-only">
+        Sample batch illustration: four images with mixed dimensions become four square WebP images with consistent names.
       </figcaption>
     </figure>);
 
