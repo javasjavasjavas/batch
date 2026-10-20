@@ -4,7 +4,7 @@ import { SAMPLE_IMAGES } from '../../data/sampleImages';
 import { extendGradient } from '../../processing/gradient';
 import { ImageThumb } from '../ui/ImageThumb';
 
-const PICKS = ['sample-sneaker', 'sample-headphones', 'sample-bottle', 'sample-jar'];
+const PICKS = ['sample-sneaker', 'sample-headphones', 'sample-bottle', 'sample-jar', 'sample-serum', 'sample-mug'];
 const items = PICKS.map((id) => SAMPLE_IMAGES.find((i) => i.id === id)).filter(
   (i): i is (typeof SAMPLE_IMAGES)[number] => Boolean(i)
 );
@@ -49,7 +49,7 @@ export function BatchShowcase() {
         <div className="batch-showcase-column">
           <div className="batch-showcase-heading">
             <p className="batch-showcase-title">Before</p>
-            <p className="batch-showcase-subtitle">4 images · mixed sizes</p>
+            <p className="batch-showcase-subtitle">{items.length} images · mixed sizes</p>
           </div>
           <div className="batch-showcase-images">
             {items.map((img) =>
@@ -73,7 +73,7 @@ export function BatchShowcase() {
         </div>
         <div className="batch-showcase-divider" aria-hidden="true">
           <span className="batch-showcase-arrow">
-            <ArrowRightIcon className="h-5 w-5" strokeWidth={1.75} />
+            <ArrowRightIcon className="h-4 w-4" strokeWidth={1.75} />
           </span>
         </div>
         <div className="batch-showcase-column">
@@ -97,7 +97,7 @@ export function BatchShowcase() {
         </div>
       </div>
       <figcaption className="sr-only">
-        Sample batch illustration: four images with mixed dimensions become four square WebP images with consistent names.
+        Sample batch illustration: six images with mixed dimensions become six square WebP images with consistent names.
       </figcaption>
     </figure>);
 

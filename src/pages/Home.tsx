@@ -54,7 +54,7 @@ export function Home() {
             Resize, compress, convert, and rename a whole batch of images with one set of settings. Free, no account, and
             designed to keep your files on your device.
           </p>
-          <Dropzone className="mt-8" onFiles={handleFiles} onSample={openSample} rejected={rejected} onDismissRejected={clearRejected} />
+          <Dropzone className="home-hero-upload mt-8" onFiles={handleFiles} onSample={openSample} rejected={rejected} onDismissRejected={clearRejected} />
         </div>
         <div className="home-hero-tools">
           <p className="text-[13px] text-muted">Or start with one tool</p>

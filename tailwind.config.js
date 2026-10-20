@@ -44,7 +44,7 @@ export default {
         out: 'cubic-bezier(0.23, 1, 0.32, 1)',
       },
       maxWidth: {
-        content: '1200px',
+        content: '1320px',
       },
     },
   },
