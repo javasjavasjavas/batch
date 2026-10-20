@@ -6,6 +6,7 @@ import { assetSize, DEFAULT_FRAME, fitRect, loadSteamSource, renderSteamAsset, s
 import { downloadBlob } from '../processing/downloads';
 import { LIMITS } from '../processing/formats';
 import { slugify } from '../utils/format';
+import { HeroCleanup } from '../components/steam/HeroCleanup';
 
 const inputStyle = 'w-full rounded-lg border border-line bg-white px-3 py-2 text-sm';
 const defaultSelection = STEAM_ASSETS.filter((asset) => asset.requirement === 'Required').map((asset) => asset.id);
@@ -44,7 +45,7 @@ export function SteamAssets() {
   const missing = STEAM_ASSETS.filter((asset) => asset.requirement === 'Required' && (!selected.includes(asset.id) || !getSource(asset))).map((asset) => asset.name);
   if (screenshots.length < 5) missing.push(`Gameplay screenshots (${screenshots.length}/5 minimum)`);
 
-  const upload = async (files: File[], key: string, forceAI = false) => {
+  const upload = async (files: File[], key: string, forceAI = false, cleanHero = false) => {
     if (!files.length || busy) return;
     setLoading(true); setLoadingMessage(key === 'logo' ? 'Preparing your logo…' : 'Reading image…'); setError('');
     const added: SteamSource[] = [];
@@ -57,9 +58,33 @@ export function SteamAssets() {
       if (!mounted.current) { added.forEach(release); return; }
       added.forEach(track);
       if (key === 'screenshots') setScreenshots((current) => [...current, ...added]);
-      else { release(sources[key]); setSources((current) => ({ ...current, [key]: added[0] })); }
+      else {
+        added[0].heroCleaned = key === 'library-hero' && cleanHero;
+        release(sources[key]);
+        if (key === 'artwork') release(sources['library-hero']);
+        setSources((current) => { const next = { ...current, [key]: added[0] }; if (key === 'artwork') delete next['library-hero']; return next; });
+      }
       changed();
+      return true;
     } catch (cause) { added.forEach(release); if (mounted.current) setError(cause instanceof Error ? cause.message : 'Could not read the image.'); }
+    finally { if (mounted.current) { setLoading(false); setLoadingMessage(''); } }
+  };
+
+  const loadSample = async () => {
+    if (busy) return;
+    setLoading(true); setLoadingMessage('Loading sample artwork…'); setError('');
+    const added: SteamSource[] = [];
+    try {
+      for (const filename of ['emberfall-key-art.png', 'emberfall-clean-art.png']) {
+        const response = await fetch(`/samples/${filename}`); if (!response.ok) throw new Error('Sample unavailable');
+        added.push(await loadSteamSource(new File([await response.blob()], filename, { type: 'image/png' })));
+      }
+      if (!mounted.current) { added.forEach(release); return; }
+      added[1].heroCleaned = true; added.forEach(track);
+      release(sources.artwork); release(sources['library-hero']);
+      setSources((current) => ({ ...current, artwork: added[0], 'library-hero': added[1] }));
+      setOverlayLogo(false); setName('emberfall'); changed();
+    } catch { added.forEach(release); if (mounted.current) setError('Could not load the sample. Choose a local image.'); }
     finally { if (mounted.current) { setLoading(false); setLoadingMessage(''); } }
   };
 
@@ -102,6 +127,10 @@ export function SteamAssets() {
         </div>
       </div>
       <div className="space-y-3 p-5">
+        {asset.id === 'library-hero' && source && <>
+          <p className={`rounded-lg p-2.5 text-xs ${source.heroCleaned ? 'bg-lime-soft text-ink' : 'bg-canvas text-muted'}`}>{source.heroCleaned ? 'Clean hero artwork · text-free version applied. Review before exporting.' : 'Text or a logo in your artwork? Detect it and create a clean hero.'}</p>
+          <HeroCleanup key={source.url} source={source} onApply={async (file) => { const applied = await upload([file], 'library-hero', false, true); if (!applied) throw new Error('Could not apply hero'); }} />
+        </>}
         {asset.logo && <><Upload label="Upload library logo" onFiles={(files) => void upload(files, 'logo')} /><p className="text-xs text-muted">Background removed automatically. Preview the transparent result here.</p>{loading && <p role="status" className="text-xs text-muted">{loadingMessage}</p>}</>}
         <p className="text-sm text-muted">{asset.description}</p>
         <p className="text-xs leading-relaxed text-muted">{asset.note} <a href={asset.source} target="_blank" rel="noreferrer" className="underline underline-offset-2">Steamworks ↗</a></p>
@@ -124,8 +153,8 @@ export function SteamAssets() {
       <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
         <section className="rounded-2xl border-2 border-dashed border-line-strong bg-white p-6" aria-labelledby="steam-art-title" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); if (!busy) void upload(Array.from(e.dataTransfer.files), 'artwork'); }}>
           <div className="flex items-center gap-4">{sources.artwork ? <img src={sources.artwork.url} alt="Main artwork" className="h-20 w-24 rounded-lg object-contain bg-canvas" /> : <ImagePlusIcon className="h-10 w-10 text-muted" />}<div><h2 id="steam-art-title" className="font-semibold">1. Add your main artwork</h2><p className="mt-1 text-sm text-muted">Any aspect ratio. JPG, PNG, WebP, AVIF or still GIF.</p>{sources.artwork && <p className="mt-1 text-xs text-muted">{sources.artwork.file.name} · {sources.artwork.width} × {sources.artwork.height}</p>}</div></div>
-          <div className="mt-5 flex flex-wrap gap-2"><Upload label={sources.artwork ? 'Change artwork' : 'Choose artwork'} onFiles={(files) => void upload(files, 'artwork')} /><Button variant="ghost" onClick={() => { setLoading(true); void fetch('/samples/emberfall-key-art.png').then((r) => { if (!r.ok) throw new Error('Sample unavailable'); return r.blob(); }).then(async (blob) => { const source = await loadSteamSource(new File([blob], 'emberfall-key-art.png', { type: 'image/png' })); if (!mounted.current) { URL.revokeObjectURL(source.url); return; } urls.current.add(source.url); release(sources.artwork); setSources((current) => ({ ...current, artwork: source })); setOverlayLogo(false); setName('emberfall'); changed(); }).catch(() => setError('Could not load the sample. Choose a local image.')).finally(() => setLoading(false)); }}>Try sample artwork</Button></div>
-          <p className="mt-3 text-xs text-muted">Drop a file here · 40 MB per file · processed on your device. Emberfall is fictional sample artwork with a centered title. Use text-free artwork for the Library Hero.</p>
+          <div className="mt-5 flex flex-wrap gap-2"><Upload label={sources.artwork ? 'Change artwork' : 'Choose artwork'} onFiles={(files) => void upload(files, 'artwork')} /><Button variant="ghost" onClick={() => void loadSample()}>Try sample artwork</Button></div>
+          <p className="mt-3 text-xs text-muted">Drop a file here · 40 MB per file · processed on your device. Emberfall is fictional sample artwork with a centered title. Its Library Hero uses a separate version without text or a logo.</p>
         </section>
         <section className="rounded-2xl border border-line bg-white p-6"><h2 className="font-semibold">2. Complete the set</h2><p className="mt-1 text-sm text-muted">Upload your logo with or without a background, plus real gameplay captures. Opaque logo backgrounds are removed automatically.</p><div className="mt-4 flex flex-wrap gap-2"><Upload label="Add logo" onFiles={(files) => void upload(files, 'logo')} /><Upload label="Add gameplay screenshots" multiple onFiles={(files) => void upload(files, 'screenshots')} /></div><p className="mt-3 text-xs text-muted">Solid backgrounds work best. Complex backgrounds use an on-device model downloaded on first use.</p>
           {loading && <p role="status" className="mt-3 text-sm text-muted">{loadingMessage || 'Reading image…'}</p>}

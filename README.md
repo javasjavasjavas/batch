@@ -14,6 +14,14 @@ individual crop/fit controls, optional transparent logo overlays, and separately
 uploaded gameplay screenshots. Files are processed locally. The ZIP includes
 named images, a readable guide and a JSON manifest with dimensions and sources.
 
+Library Hero uses separate text-free artwork for the Emberfall sample. For custom
+uploads, “Remove text / logo” opens a local Tesseract text detector and editable
+rectangle masks. LaMa inpainting runs in a dedicated worker, with a pinned model
+download cached by the browser. Users preview and apply the result only to the
+Hero. Stylized lettering and symbols may need manual selection; large repairs
+can soften detail. Cancel terminates processing and preserves the source.
+Model and library attribution: `public/ai-credits.txt`.
+
 Specifications are recorded in `src/data/steamAssets.ts`, checked against the
 official Steamworks documentation on 2026-10-20. Content, legibility and crops
 still require review; one artwork cannot replace a transparent logo or real

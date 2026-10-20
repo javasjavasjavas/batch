@@ -1,0 +1,14 @@
+Library Hero image repair
+LaMa: Resolution-robust Large Mask Inpainting with Fourier Convolutions,
+Suvorov et al., WACV 2022. https://github.com/advimman/lama
+Apache License 2.0: https://github.com/advimman/lama/blob/main/LICENSE
+ONNX export by sapienkit, based on Carve/LaMa-ONNX:
+https://huggingface.co/sapienkit/LaMa-ONNX
+Model revision: 0153b00d76c01058d825296ee162b46ff75ce05d
+Training data: Places2, Bolei Zhou and the Places authors, CC BY 4.0.
+https://places2.csail.mit.edu/
+
+Text detection: Tesseract.js (Apache-2.0), Project Naptha contributors.
+https://github.com/naptha/tesseract.js
+ONNX Runtime (MIT), Microsoft and contributors.
+https://github.com/microsoft/onnxruntime

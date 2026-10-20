@@ -3,7 +3,7 @@ import { inspectFile, LIMITS } from './formats';
 import { STEAM_CHECKED, STEAM_DOCS, type SteamAsset } from '../data/steamAssets';
 import { cleanLogo } from './logo';
 
-export interface SteamSource { file: File; url: string; image: HTMLImageElement; width: number; height: number; originalUrl?: string; backgroundRemoved?: boolean }
+export interface SteamSource { file: File; url: string; image: HTMLImageElement; width: number; height: number; originalUrl?: string; backgroundRemoved?: boolean; heroCleaned?: boolean }
 export interface SteamFrame { fit: 'cover' | 'contain'; x: number; y: number }
 export interface SteamOutput { asset: SteamAsset; filename: string; blob: Blob; width: number; height: number }
 export const DEFAULT_FRAME: SteamFrame = { fit: 'cover', x: 50, y: 50 };

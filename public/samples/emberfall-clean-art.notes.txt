@@ -1,0 +1,4 @@
+Emberfall clean Library Hero source, edited with the built-in image generation tool.
+Original: emberfall-key-art.png
+Prompt:
+Edit this exact fictional game artwork into a clean Steam Library Hero source. Remove ALL title lettering EMBER FALL and the entire glowing orange logo/emblem above it, including their glow, dark title shadow/backplate and isolated decorative particles. Reconstruct a natural continuous mountain valley, forest, distant ruins and atmospheric mist in the removed central region. Preserve the existing explorer on the bridge at left, stone bridge, fortress at right, sunset sky, landscape composition, perspective, color grading, painterly game art quality and image dimensions. No text, no letters, no symbols, no logo, no watermark anywhere. Keep everything outside the title/emblem region unchanged. This is the SAME landscape with only its embedded branding removed.
