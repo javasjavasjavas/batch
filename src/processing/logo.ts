@@ -24,14 +24,14 @@ export function removeSolidLogoBackground(input: ImageData): ImageData | null {
   return result;
 }
 
-export async function cleanLogo(input: ImageData, report: (message: string) => void) {
-  if (hasTransparency(input)) return { data: input, removed: false };
+export async function cleanLogo(input: ImageData, report: (message: string) => void, forceAI = false) {
+  if (!forceAI && hasTransparency(input)) return { data: input, removed: false };
   report('Removing the logo background…');
   await new Promise((resolve) => setTimeout(resolve, 0));
-  let result = removeSolidLogoBackground(input);
+  let result = forceAI ? null : removeSolidLogoBackground(input);
   if (!result) {
-    const { removeBackground } = await import('./background');
-    result = await removeBackground(input, report);
+    const { segmentLogo } = await import('./logoSegmentation');
+    result = await segmentLogo(input, report);
   }
   let visible = 0, clear = 0;
   for (let i = 3; i < result.data.length; i += 4) { if (result.data[i] > 128) visible++; if (result.data[i] < 32) clear++; }

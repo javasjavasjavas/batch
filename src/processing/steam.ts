@@ -17,7 +17,7 @@ export function assetSize(asset: SteamAsset, source: Pick<SteamSource, 'width' |
   const scale = Math.min(asset.width / source.width, asset.height / source.height);
   return { width: Math.max(1, Math.round(source.width * scale)), height: Math.max(1, Math.round(source.height * scale)) };
 }
-export async function loadSteamSource(file: File, logo = false, report: (message: string) => void = () => undefined): Promise<SteamSource> {
+export async function loadSteamSource(file: File, logo = false, report: (message: string) => void = () => undefined, forceAI = false): Promise<SteamSource> {
   const info = await inspectFile(file);
   if (info.animated) throw new Error('Use a still image for Steam assets.');
   const url = URL.createObjectURL(file);
@@ -31,7 +31,7 @@ export async function loadSteamSource(file: File, logo = false, report: (message
       const scale = Math.min(1, 2048 / Math.max(width, height));
       canvas.width = Math.max(1, Math.round(width * scale)); canvas.height = Math.max(1, Math.round(height * scale));
       const ctx = canvas.getContext('2d')!; ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      const cleaned = await cleanLogo(ctx.getImageData(0, 0, canvas.width, canvas.height), report);
+      const cleaned = await cleanLogo(ctx.getImageData(0, 0, canvas.width, canvas.height), report, forceAI);
       if (cleaned.removed) {
         ctx.putImageData(cleaned.data, 0, 0);
         const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Could not prepare the transparent logo.')), 'image/png'));

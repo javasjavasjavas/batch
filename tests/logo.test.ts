@@ -1,5 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { cleanLogo, hasTransparency, removeSolidLogoBackground } from '../src/processing/logo';
+import { segmentLogo } from '../src/processing/logoSegmentation';
+
+vi.mock('../src/processing/logoSegmentation', () => ({ segmentLogo: vi.fn(async (input: ImageData) => {
+  const result = new ImageData(input.width, input.height);
+  result.data.set(input.data);
+  for (let i = 3; i < result.data.length / 2; i += 4) result.data[i] = 0;
+  return result;
+}) }));
 
 class PixelImage {
   data: Uint8ClampedArray;
@@ -14,6 +22,13 @@ const solid = (r = 255, g = 255, b = 255) => {
 const pixel = (image: ImageData, x: number, y: number, color: number[]) => image.data.set(color, (y * image.width + x) * 4);
 
 describe('automatic logo background removal', () => {
+  it('explicit AI retry runs segmentation even for a solid or already transparent source', async () => {
+    const original = solid(); original.data[3] = 0;
+    const result = await cleanLogo(original, () => undefined, true);
+    expect(segmentLogo).toHaveBeenCalledWith(original, expect.any(Function));
+    expect(result.removed).toBe(true);
+    expect(result.data).not.toBe(original);
+  });
   it('removes white backgrounds including enclosed letter counters while retaining lettering', async () => {
     const image = solid();
     for (let y = 5; y < 15; y++) for (let x = 5; x < 15; x++) pixel(image, x, y, [20, 50, 90, 255]);

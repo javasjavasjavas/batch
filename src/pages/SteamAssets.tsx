@@ -44,7 +44,7 @@ export function SteamAssets() {
   const missing = STEAM_ASSETS.filter((asset) => asset.requirement === 'Required' && (!selected.includes(asset.id) || !getSource(asset))).map((asset) => asset.name);
   if (screenshots.length < 5) missing.push(`Gameplay screenshots (${screenshots.length}/5 minimum)`);
 
-  const upload = async (files: File[], key: string) => {
+  const upload = async (files: File[], key: string, forceAI = false) => {
     if (!files.length || busy) return;
     setLoading(true); setLoadingMessage(key === 'logo' ? 'Preparing your logo…' : 'Reading image…'); setError('');
     const added: SteamSource[] = [];
@@ -53,7 +53,7 @@ export function SteamAssets() {
       if (key === 'screenshots' && screenshots.length + incoming.length > 20) throw new Error('Add up to 20 gameplay screenshots per set.');
       const total = Object.entries(sources).reduce((sum, [id, source]) => sum + (id === key ? 0 : source.file.size), 0) + screenshots.reduce((sum, source) => sum + source.file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0);
       if (total > LIMITS.batchBytes) throw new Error('Keep the combined source files under 300 MB.');
-      for (const file of incoming) added.push(await loadSteamSource(file, key === 'logo', (message) => { if (mounted.current) setLoadingMessage(message); }));
+      for (const file of incoming) added.push(await loadSteamSource(file, key === 'logo', (message) => { if (mounted.current) setLoadingMessage(message); }, forceAI));
       if (!mounted.current) { added.forEach(release); return; }
       added.forEach(track);
       if (key === 'screenshots') setScreenshots((current) => [...current, ...added]);
@@ -98,10 +98,11 @@ export function SteamAssets() {
       <div className="flex h-56 items-center justify-center bg-canvas p-5">
         <div className={`relative overflow-hidden ${asset.logo ? 'transparency-grid' : ''}`} style={{ aspectRatio: `${size.width}/${size.height}`, width: `min(100%, ${184 * size.width / size.height}px)`, backgroundColor: asset.logo ? undefined : background }}>
           {source ? <><img src={source.url} alt={`${asset.name} preview`} className="absolute inset-0 h-full w-full" style={{ objectFit: asset.logo ? 'contain' : frame.fit, objectPosition: `${frame.x}% ${frame.y}%` }} />
-            {asset.brand && overlayLogo && sources.logo && <img src={sources.logo.url} alt="" className="absolute bottom-[10%] left-[10%] h-[30%] w-[80%] object-contain object-bottom" />}</> : <div className="flex h-full min-h-24 min-w-36 items-center justify-center px-4 text-center text-sm text-white/75">{asset.logo ? 'Add a transparent logo' : 'Add your artwork'}</div>}
+            {asset.brand && overlayLogo && sources.logo && <img src={sources.logo.url} alt="" className="absolute bottom-[10%] left-[10%] h-[30%] w-[80%] object-contain object-bottom" />}</> : <div className={`flex h-full min-h-24 min-w-36 items-center justify-center px-4 text-center text-sm ${asset.logo ? 'text-ink' : 'text-white/75'}`}>{asset.logo ? 'Upload a logo with any background' : 'Add your artwork'}</div>}
         </div>
       </div>
       <div className="space-y-3 p-5">
+        {asset.logo && <><Upload label="Upload library logo" onFiles={(files) => void upload(files, 'logo')} /><p className="text-xs text-muted">Background removed automatically. Preview the transparent result here.</p>{loading && <p role="status" className="text-xs text-muted">{loadingMessage}</p>}</>}
         <p className="text-sm text-muted">{asset.description}</p>
         <p className="text-xs leading-relaxed text-muted">{asset.note} <a href={asset.source} target="_blank" rel="noreferrer" className="underline underline-offset-2">Steamworks ↗</a></p>
         {source && scale > 1.01 && <p className="text-xs text-warning">Upscaling {scale.toFixed(1)}× — a larger source will look sharper.</p>}
@@ -134,6 +135,7 @@ export function SteamAssets() {
               <figure><figcaption className="mb-2 text-xs font-semibold">Transparent preview</figcaption><img src={sources.logo.url} alt="Logo with transparent background" className="transparency-grid h-28 w-full rounded-lg object-contain" /></figure>
             </div>
             <p className="mt-3 text-xs text-muted">{sources.logo.backgroundRemoved ? 'Background removed automatically. Check the lettering and edges before exporting.' : 'Your logo already has transparency. It has been preserved.'}</p>
+            <Button className="mt-3" variant="secondary" size="sm" onClick={() => void upload([sources.logo.file], 'logo', true)}>Retry with AI</Button>
           </div>}
           <p className="mt-3 text-xs text-muted">Logo: {sources.logo ? sources.logo.file.name : 'not added'} · Gameplay: {screenshots.length}/5 minimum</p>{sources.logo && <div className="mt-3 flex flex-wrap items-center gap-4"><label className="flex gap-2 text-sm"><input type="checkbox" checked={overlayLogo} onChange={(e) => { changed(); setOverlayLogo(e.target.checked); }} />Add logo to capsules</label><Button variant="ghost" size="sm" onClick={() => { changed(); release(sources.logo); setSources((current) => { const next = { ...current }; delete next.logo; return next; }); }}>Remove logo</Button></div>}</section>
       </div>
