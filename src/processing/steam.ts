@@ -1,8 +1,9 @@
 import { BlobReader, BlobWriter, ZipWriter, TextReader } from '@zip.js/zip.js/lib/zip-core-external.js';
 import { inspectFile, LIMITS } from './formats';
 import { STEAM_CHECKED, STEAM_DOCS, type SteamAsset } from '../data/steamAssets';
+import { cleanLogo } from './logo';
 
-export interface SteamSource { file: File; url: string; image: HTMLImageElement; width: number; height: number }
+export interface SteamSource { file: File; url: string; image: HTMLImageElement; width: number; height: number; originalUrl?: string; backgroundRemoved?: boolean }
 export interface SteamFrame { fit: 'cover' | 'contain'; x: number; y: number }
 export interface SteamOutput { asset: SteamAsset; filename: string; blob: Blob; width: number; height: number }
 export const DEFAULT_FRAME: SteamFrame = { fit: 'cover', x: 50, y: 50 };
@@ -16,24 +17,31 @@ export function assetSize(asset: SteamAsset, source: Pick<SteamSource, 'width' |
   const scale = Math.min(asset.width / source.width, asset.height / source.height);
   return { width: Math.max(1, Math.round(source.width * scale)), height: Math.max(1, Math.round(source.height * scale)) };
 }
-export async function loadSteamSource(file: File, logo = false): Promise<SteamSource> {
+export async function loadSteamSource(file: File, logo = false, report: (message: string) => void = () => undefined): Promise<SteamSource> {
   const info = await inspectFile(file);
   if (info.animated) throw new Error('Use a still image for Steam assets.');
   const url = URL.createObjectURL(file);
+  let cleanedUrl: string | undefined;
   try {
     const image = new Image(); image.src = url; await image.decode();
     const width = image.naturalWidth, height = image.naturalHeight;
     if (!width || !height || width * height > LIMITS.pixels || Math.max(width, height) > LIMITS.dimension) throw new Error('Use an image up to 10,000 px per side and 40 megapixels.');
     if (logo) {
-      const canvas = document.createElement('canvas'); canvas.width = Math.min(width, 256); canvas.height = Math.min(height, 256);
+      const canvas = document.createElement('canvas');
+      const scale = Math.min(1, 2048 / Math.max(width, height));
+      canvas.width = Math.max(1, Math.round(width * scale)); canvas.height = Math.max(1, Math.round(height * scale));
       const ctx = canvas.getContext('2d')!; ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let transparent = false;
-      for (let i = 3; i < pixels.length; i += 4) if (pixels[i] < 255) { transparent = true; break; }
-      if (!transparent) throw new Error('The library logo needs a transparent background. Upload a transparent PNG or WebP logo.');
+      const cleaned = await cleanLogo(ctx.getImageData(0, 0, canvas.width, canvas.height), report);
+      if (cleaned.removed) {
+        ctx.putImageData(cleaned.data, 0, 0);
+        const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Could not prepare the transparent logo.')), 'image/png'));
+        cleanedUrl = URL.createObjectURL(blob);
+        const cleanImage = new Image(); cleanImage.src = cleanedUrl; await cleanImage.decode();
+        return { file, url: cleanedUrl, image: cleanImage, width: canvas.width, height: canvas.height, originalUrl: url, backgroundRemoved: true };
+      }
     }
     return { file, url, image, width, height };
-  } catch (error) { URL.revokeObjectURL(url); throw error; }
+  } catch (error) { URL.revokeObjectURL(url); if (cleanedUrl) URL.revokeObjectURL(cleanedUrl); throw error; }
 }
 export async function renderSteamAsset(asset: SteamAsset, source: SteamSource, frame: SteamFrame, background: string, logo?: SteamSource): Promise<SteamOutput> {
   const { width, height } = assetSize(asset, source);

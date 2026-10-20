@@ -26,6 +26,7 @@ export function SteamAssets() {
   const [name, setName] = useState('my-game');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [progress, setProgress] = useState<string | null>(null);
   const [outputs, setOutputs] = useState<SteamOutput[]>([]);
   const urls = useRef(new Set<string>());
@@ -33,7 +34,8 @@ export function SteamAssets() {
   const mounted = useRef(true);
   const busy = loading || progress !== null;
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; active.current?.abort(); urls.current.forEach(URL.revokeObjectURL); }; }, []);
-  const release = (source?: SteamSource) => { if (source) { URL.revokeObjectURL(source.url); urls.current.delete(source.url); } };
+  const release = (source?: SteamSource) => { if (source) for (const url of [source.url, source.originalUrl]) if (url) { URL.revokeObjectURL(url); urls.current.delete(url); } };
+  const track = (source: SteamSource) => { urls.current.add(source.url); if (source.originalUrl) urls.current.add(source.originalUrl); };
   const changed = () => { setOutputs([]); setError(''); };
   const getSource = (asset: SteamAsset) => asset.group === 'Screenshots' ? screenshots[Number(asset.id.slice(-2)) - 1] : asset.logo ? sources.logo : sources[asset.id] || sources.artwork;
   const getFrame = (asset: SteamAsset) => frames[asset.id] || (asset.group === 'Screenshots' ? { ...DEFAULT_FRAME, fit: 'contain' as const } : DEFAULT_FRAME);
@@ -44,21 +46,21 @@ export function SteamAssets() {
 
   const upload = async (files: File[], key: string) => {
     if (!files.length || busy) return;
-    setLoading(true); setError('');
+    setLoading(true); setLoadingMessage(key === 'logo' ? 'Preparing your logo…' : 'Reading image…'); setError('');
     const added: SteamSource[] = [];
     try {
       const incoming = key === 'screenshots' ? files : files.slice(0, 1);
       if (key === 'screenshots' && screenshots.length + incoming.length > 20) throw new Error('Add up to 20 gameplay screenshots per set.');
       const total = Object.entries(sources).reduce((sum, [id, source]) => sum + (id === key ? 0 : source.file.size), 0) + screenshots.reduce((sum, source) => sum + source.file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0);
       if (total > LIMITS.batchBytes) throw new Error('Keep the combined source files under 300 MB.');
-      for (const file of incoming) added.push(await loadSteamSource(file, key === 'logo'));
-      if (!mounted.current) { added.forEach((source) => URL.revokeObjectURL(source.url)); return; }
-      added.forEach((source) => urls.current.add(source.url));
+      for (const file of incoming) added.push(await loadSteamSource(file, key === 'logo', (message) => { if (mounted.current) setLoadingMessage(message); }));
+      if (!mounted.current) { added.forEach(release); return; }
+      added.forEach(track);
       if (key === 'screenshots') setScreenshots((current) => [...current, ...added]);
       else { release(sources[key]); setSources((current) => ({ ...current, [key]: added[0] })); }
       changed();
-    } catch (cause) { added.forEach((source) => URL.revokeObjectURL(source.url)); if (mounted.current) setError(cause instanceof Error ? cause.message : 'Could not read the image.'); }
-    finally { if (mounted.current) setLoading(false); }
+    } catch (cause) { added.forEach(release); if (mounted.current) setError(cause instanceof Error ? cause.message : 'Could not read the image.'); }
+    finally { if (mounted.current) { setLoading(false); setLoadingMessage(''); } }
   };
 
   const generate = async () => {
@@ -121,10 +123,19 @@ export function SteamAssets() {
       <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
         <section className="rounded-2xl border-2 border-dashed border-line-strong bg-white p-6" aria-labelledby="steam-art-title" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); if (!busy) void upload(Array.from(e.dataTransfer.files), 'artwork'); }}>
           <div className="flex items-center gap-4">{sources.artwork ? <img src={sources.artwork.url} alt="Main artwork" className="h-20 w-24 rounded-lg object-contain bg-canvas" /> : <ImagePlusIcon className="h-10 w-10 text-muted" />}<div><h2 id="steam-art-title" className="font-semibold">1. Add your main artwork</h2><p className="mt-1 text-sm text-muted">Any aspect ratio. JPG, PNG, WebP, AVIF or still GIF.</p>{sources.artwork && <p className="mt-1 text-xs text-muted">{sources.artwork.file.name} · {sources.artwork.width} × {sources.artwork.height}</p>}</div></div>
-          <div className="mt-5 flex flex-wrap gap-2"><Upload label={sources.artwork ? 'Change artwork' : 'Choose artwork'} onFiles={(files) => void upload(files, 'artwork')} /><Button variant="ghost" onClick={() => { setLoading(true); void fetch('/0f8e9c78-f8ec-47d6-858a-6c19973b8dfd.jpg').then((r) => { if (!r.ok) throw new Error('Sample unavailable'); return r.blob(); }).then(async (blob) => { const source = await loadSteamSource(new File([blob], 'sample-product.jpg', { type: 'image/jpeg' })); if (!mounted.current) { URL.revokeObjectURL(source.url); return; } urls.current.add(source.url); release(sources.artwork); setSources((current) => ({ ...current, artwork: source })); changed(); }).catch(() => setError('Could not load the sample. Choose a local image.')).finally(() => setLoading(false)); }}>Try sample artwork</Button></div>
-          <p className="mt-3 text-xs text-muted">Drop a file here · 40 MB per file · processed on your device. The sample demonstrates sizing, not a Steam-ready game.</p>
+          <div className="mt-5 flex flex-wrap gap-2"><Upload label={sources.artwork ? 'Change artwork' : 'Choose artwork'} onFiles={(files) => void upload(files, 'artwork')} /><Button variant="ghost" onClick={() => { setLoading(true); void fetch('/samples/emberfall-key-art.png').then((r) => { if (!r.ok) throw new Error('Sample unavailable'); return r.blob(); }).then(async (blob) => { const source = await loadSteamSource(new File([blob], 'emberfall-key-art.png', { type: 'image/png' })); if (!mounted.current) { URL.revokeObjectURL(source.url); return; } urls.current.add(source.url); release(sources.artwork); setSources((current) => ({ ...current, artwork: source })); setOverlayLogo(false); setName('emberfall'); changed(); }).catch(() => setError('Could not load the sample. Choose a local image.')).finally(() => setLoading(false)); }}>Try sample artwork</Button></div>
+          <p className="mt-3 text-xs text-muted">Drop a file here · 40 MB per file · processed on your device. Emberfall is fictional sample artwork with a centered title. Use text-free artwork for the Library Hero.</p>
         </section>
-        <section className="rounded-2xl border border-line bg-white p-6"><h2 className="font-semibold">2. Complete the set</h2><p className="mt-1 text-sm text-muted">Add a transparent logo and real gameplay captures. A single artwork cannot replace those.</p><div className="mt-4 flex flex-wrap gap-2"><Upload label="Add transparent logo" onFiles={(files) => void upload(files, 'logo')} /><Upload label="Add gameplay screenshots" multiple onFiles={(files) => void upload(files, 'screenshots')} /></div><p className="mt-3 text-xs text-muted">Logo: {sources.logo ? sources.logo.file.name : 'not added'} · Gameplay: {screenshots.length}/5 minimum</p>{sources.logo && <div className="mt-3 flex flex-wrap items-center gap-4"><label className="flex gap-2 text-sm"><input type="checkbox" checked={overlayLogo} onChange={(e) => { changed(); setOverlayLogo(e.target.checked); }} />Add logo to capsules</label><Button variant="ghost" size="sm" onClick={() => { changed(); release(sources.logo); setSources((current) => { const next = { ...current }; delete next.logo; return next; }); }}>Remove logo</Button></div>}</section>
+        <section className="rounded-2xl border border-line bg-white p-6"><h2 className="font-semibold">2. Complete the set</h2><p className="mt-1 text-sm text-muted">Upload your logo with or without a background, plus real gameplay captures. Opaque logo backgrounds are removed automatically.</p><div className="mt-4 flex flex-wrap gap-2"><Upload label="Add logo" onFiles={(files) => void upload(files, 'logo')} /><Upload label="Add gameplay screenshots" multiple onFiles={(files) => void upload(files, 'screenshots')} /></div><p className="mt-3 text-xs text-muted">Solid backgrounds work best. Complex backgrounds use an on-device model downloaded on first use.</p>
+          {loading && <p role="status" className="mt-3 text-sm text-muted">{loadingMessage || 'Reading image…'}</p>}
+          {sources.logo && <div className="mt-4 rounded-xl border border-line p-3">
+            <div className="grid grid-cols-2 gap-3">
+              <figure><figcaption className="mb-2 text-xs font-semibold">Original</figcaption><img src={sources.logo.originalUrl || sources.logo.url} alt="Original uploaded logo" className="transparency-grid h-28 w-full rounded-lg object-contain" /></figure>
+              <figure><figcaption className="mb-2 text-xs font-semibold">Transparent preview</figcaption><img src={sources.logo.url} alt="Logo with transparent background" className="transparency-grid h-28 w-full rounded-lg object-contain" /></figure>
+            </div>
+            <p className="mt-3 text-xs text-muted">{sources.logo.backgroundRemoved ? 'Background removed automatically. Check the lettering and edges before exporting.' : 'Your logo already has transparency. It has been preserved.'}</p>
+          </div>}
+          <p className="mt-3 text-xs text-muted">Logo: {sources.logo ? sources.logo.file.name : 'not added'} · Gameplay: {screenshots.length}/5 minimum</p>{sources.logo && <div className="mt-3 flex flex-wrap items-center gap-4"><label className="flex gap-2 text-sm"><input type="checkbox" checked={overlayLogo} onChange={(e) => { changed(); setOverlayLogo(e.target.checked); }} />Add logo to capsules</label><Button variant="ghost" size="sm" onClick={() => { changed(); release(sources.logo); setSources((current) => { const next = { ...current }; delete next.logo; return next; }); }}>Remove logo</Button></div>}</section>
       </div>
       <div className="mt-5 flex flex-wrap items-end gap-5 rounded-2xl border border-line bg-white p-5"><label className="flex-1 text-sm font-medium">Set name<input className={`${inputStyle} mt-1 min-w-40`} value={name} maxLength={80} onChange={(e) => setName(e.target.value)} /></label><label className="text-sm font-medium">Padding / JPG background<input type="color" aria-label="Padding background" value={background} onChange={(e) => { changed(); setBackground(e.target.value); }} className="mt-1 block h-10 w-20 cursor-pointer rounded border border-line" /></label><Button variant="secondary" onClick={() => { changed(); setSelected(defaultSelection); }}>Required assets</Button><Button variant="secondary" onClick={() => { changed(); setSelected(STEAM_ASSETS.map((asset) => asset.id)); }}>Include extras</Button></div>
       <p className="mt-4 text-sm leading-relaxed text-muted">Capsules need a readable game name; the Library Hero needs artwork without text. Replace an individual source below when necessary. Resizing does not add missing detail or remove lettering.</p>
