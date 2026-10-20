@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRightIcon, CpuIcon, EyeOffIcon, MonitorSmartphoneIcon, FolderUpIcon, SlidersHorizontalIcon, ClipboardCheckIcon } from 'lucide-react';
+import { ArrowRightIcon, CpuIcon, EyeOffIcon, MonitorSmartphoneIcon, FolderUpIcon, SlidersHorizontalIcon, ClipboardCheckIcon, Gamepad2Icon } from 'lucide-react';
 import { TOOLS } from '../data/tools';
 import { HOME_FAQS } from '../data/homeFaqs';
 import { useWorkspaceEntry } from '../hooks/useWorkspaceEntry';
@@ -73,6 +73,7 @@ export function Home() {
                 </button>
               </li>
             )}
+            <li><Link to="/app/steam" className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-sm font-medium text-ink hover:bg-lime-soft"><Gamepad2Icon className="h-4 w-4" />Steam assets</Link></li>
           </ul>
         </div>
         <div className="home-hero-showcase mt-5 lg:mt-0 lg:pt-2">

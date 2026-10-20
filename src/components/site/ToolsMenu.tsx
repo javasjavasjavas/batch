@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronDownIcon, LayersIcon } from 'lucide-react';
+import { ChevronDownIcon, LayersIcon, Gamepad2Icon } from 'lucide-react';
 import { TOOLS } from '../../data/tools';
 import { ToolIcon } from '../ui/ToolIcon';
 
@@ -57,6 +57,7 @@ export function ToolsMenu({ label = 'Tools', mobile = false }: { label?: string;
         {TOOLS.map((tool) => <Link key={tool.id} to={`/app/${tool.id}`} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-canvas">
           <ToolIcon tool={tool.id} className="h-4 w-4" /><span>{tool.name}</span>
         </Link>)}
+        <Link to="/app/steam" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-canvas"><Gamepad2Icon className="h-4 w-4" aria-hidden="true" /><span>Steam Asset Generator</span></Link>
         <Link to="/tools" className="mt-1 block border-t border-line px-3 pb-1 pt-3 text-[12px] text-muted hover:text-ink">Explore all tools</Link>
         </div>
       </div>}

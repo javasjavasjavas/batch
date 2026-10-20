@@ -19,6 +19,7 @@ import { Editor } from './pages/workspace/Editor';
 import { Review } from './pages/workspace/Review';
 import { Processing } from './pages/workspace/Processing';
 import { Results } from './pages/workspace/Results';
+import { SteamAssets } from './pages/SteamAssets';
 
 const router = createBrowserRouter([
 {
@@ -30,6 +31,8 @@ const router = createBrowserRouter([
     children: [
     { path: '/', element: <Home /> },
     { path: '/tools', element: <ToolsDirectory /> },
+    { path: '/app/steam', element: <SteamAssets /> },
+    { path: '/tools/steam-assets', element: <SteamAssets /> },
     { path: '/tools/:slug', element: <ToolLanding /> },
     { path: '/help', element: <Help /> },
     { path: '/help/:slug', element: <HelpArticle /> },

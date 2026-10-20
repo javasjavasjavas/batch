@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { SearchXIcon } from 'lucide-react';
+import { SearchXIcon, Gamepad2Icon, ArrowRightIcon } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { TOOLS } from '../data/tools';
 import { SearchInput } from '../components/ui/SearchInput';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -9,6 +10,7 @@ import { ToolCard } from '../components/site/ToolCard';
 
 export function ToolsDirectory() {
   const [query, setQuery] = useState('');
+  const showSteam = !query.trim() || 'steam assets generator game capsule library icon screenshot'.includes(query.trim().toLowerCase());
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -21,7 +23,7 @@ export function ToolsDirectory() {
       <header className="max-w-2xl pb-8 pt-12 sm:pt-16">
         <h1 className="text-[38px] font-semibold leading-[1.05] tracking-[-0.035em] text-ink sm:text-[48px]">Tools</h1>
         <p className="mt-3 text-[17px] leading-relaxed text-muted">
-          Four focused tools that work on whole batches. Use one, or combine them in the same run.
+          Prepare images in batches, combine everyday tools, or create a complete set of Steam graphics.
         </p>
       </header>
 
@@ -34,17 +36,18 @@ export function ToolsDirectory() {
         className="max-w-xl" />
       
       <p className="sr-only" role="status" aria-live="polite">
-        {results.length === 1 ? '1 tool found' : `${results.length} tools found`}
+        {results.length + Number(showSteam)} tools found
       </p>
 
       <div className="mt-8">
-        {results.length > 0 ?
+        {results.length > 0 || showSteam ?
         <ul className="grid gap-4 md:grid-cols-2">
             {results.map((tool) =>
           <li key={tool.id}>
                 <ToolCard tool={tool} />
               </li>
           )}
+            {showSteam && <li><article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 sm:p-7"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-lime-soft"><Gamepad2Icon className="h-5 w-5" /></span><h2 className="mt-5 text-lg font-semibold"><Link to="/tools/steam-assets">Steam Asset Generator</Link></h2><p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">Turn your artwork into Steam capsules, library images and icons. Review every crop and export a named set with an asset guide.</p><Link to="/app/steam" className="mt-6 inline-flex items-center gap-2 self-start rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white">Create Steam assets<ArrowRightIcon className="h-4 w-4" /></Link></article></li>}
           </ul> :
 
         <div className="rounded-2xl border border-dashed border-line-strong bg-white">
