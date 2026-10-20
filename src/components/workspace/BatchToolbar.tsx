@@ -59,7 +59,7 @@ export function BatchToolbar({ view, onViewChange, onAddFiles }: BatchToolbarPro
             </Button>
           </div> :
 
-        <p className="hidden text-[12.5px] text-muted xl:block">Select images to remove them together.</p>
+        <p className="hidden text-[12.5px] text-muted xl:block">Select images to review or remove them together.</p>
         }
       </div>
       <div className="flex items-center gap-1.5">

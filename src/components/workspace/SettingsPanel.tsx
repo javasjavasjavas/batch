@@ -31,7 +31,7 @@ const CONTROLS: Record<ToolId, React.ComponentType> = {
 };
 
 export function SettingsPanel({ onReview }: {onReview?: () => void;}) {
-  const { workspacePath, workspaceTool, activeTool, enabled, setToolEnabled, images, issues, resetSettings } = useBatch();
+  const { workspacePath, workspaceTool, activeTool, enabled, setToolEnabled, images, selectedIds, beginReview, issues, resetSettings } = useBatch();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [confirmReset, setConfirmReset] = useState(false);
@@ -97,6 +97,7 @@ export function SettingsPanel({ onReview }: {onReview?: () => void;}) {
             className="flex-1"
             disabled={images.length === 0}
             onClick={() => {
+              beginReview();
               onReview?.();
               navigate(`${workspacePath}/review`);
             }}>
@@ -105,6 +106,19 @@ export function SettingsPanel({ onReview }: {onReview?: () => void;}) {
             <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
+        {selectedIds.length > 0 && (
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => {
+              beginReview(true);
+              onReview?.();
+              navigate(`${workspacePath}/review`);
+            }}>
+            Review selected ({selectedIds.length})
+            <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
         {images.length === 0 && <p className="text-center text-[12px] text-muted">Add images to review the batch.</p>}
       </div>
 

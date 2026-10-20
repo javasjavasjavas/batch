@@ -6,7 +6,7 @@ import { TOOL_ORDER } from '../../utils/planning';
 import { Button } from '../ui/Button';
 
 export function MobileActionBar({ onOpenSettings }: {onOpenSettings: () => void;}) {
-  const { workspacePath, workspaceTool, images, enabled, errorCount } = useBatch();
+  const { workspacePath, workspaceTool, images, selectedIds, beginReview, enabled, errorCount } = useBatch();
   const navigate = useNavigate();
   const onCount = workspaceTool ? 1 : TOOL_ORDER.filter((t) => enabled[t]).length;
   const total = images.reduce((a, i) => a + (i.size ?? 0), 0);
@@ -23,11 +23,17 @@ export function MobileActionBar({ onOpenSettings }: {onOpenSettings: () => void;
           Settings
           <span className="tabular rounded bg-lime-soft px-1.5 text-[12px] font-semibold text-lime-ink">{onCount}</span>
         </Button>
-        <Button variant="accent" size="lg" className="flex-1" disabled={!images.length} onClick={() => navigate(`${workspacePath}/review`)}>
+        <Button variant="accent" size="lg" className="flex-1" disabled={!images.length} onClick={() => { beginReview(); navigate(`${workspacePath}/review`); }}>
           Review batch
           <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
+      {selectedIds.length > 0 && (
+        <Button variant="secondary" className="mt-2 w-full" onClick={() => { beginReview(true); navigate(`${workspacePath}/review`); }}>
+          Review selected ({selectedIds.length})
+          <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+        </Button>
+      )}
     </div>);
 
 }

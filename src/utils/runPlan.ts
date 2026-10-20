@@ -2,6 +2,13 @@ import type { BatchImage, BatchSettings, EnabledTools, ToolId } from '../types/b
 import type { RunItem, RunState } from '../types/run';
 import { localDateStamp, plannedDimensions, plannedName, TOOL_LABEL, TOOL_ORDER, toolSummary, uniqueNames } from './planning';
 
+/** A null scope includes the batch; an empty or stale selection must never include it. */
+export function imagesForReview(images: BatchImage[], ids: readonly string[] | null): BatchImage[] {
+  if (ids === null) return images;
+  const included = new Set(ids);
+  return images.filter((image) => included.has(image.id));
+}
+
 export function createRun(images: BatchImage[], settings: BatchSettings, enabled: EnabledTools, workspaceTool: ToolId | null = null): RunState {
   const date = localDateStamp();
   const formats = images.map((img) => img.type.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg');

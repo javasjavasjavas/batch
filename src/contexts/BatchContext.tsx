@@ -8,7 +8,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { usePresets } from '../hooks/usePresets';
 import { useRunEngine } from '../hooks/useRunEngine';
 import { validateBatch } from '../utils/validation';
-import { createRun } from '../utils/runPlan';
+import { createRun, imagesForReview } from '../utils/runPlan';
 import { toolFromPath, toolsForWorkspace, workspacePathFor } from '../utils/workspace';
 
 type ImagesApi = ReturnType<typeof useBatchImages>;
@@ -35,8 +35,11 @@ interface BatchContextValue extends Omit<ImagesApi, 'loadSample' | 'clearBatch'>
   presetModified: boolean;
   issues: SettingsIssue[];
   errorCount: number;
+  reviewImages: ImagesApi['images'];
+  reviewingSelected: boolean;
+  beginReview: (onlySelected?: boolean) => void;
   run: RunState | null;
-  startRun: () => void;
+  startRun: () => boolean;
   pauseRun: () => void;
   resumeRun: () => void;
   cancelRun: () => void;
@@ -53,6 +56,7 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
   const engine = useRunEngine();
   const { discard: discardEngine, start: startEngine } = engine;
   const [title, setTitle] = useState(DEFAULT_TITLE);
+  const [reviewIds, setReviewIds] = useState<string[] | null>(null);
   const { pathname } = useLocation();
   const workspaceTool = toolFromPath(pathname);
   const workspacePath = workspacePathFor(workspaceTool);
@@ -72,11 +76,12 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
 
   const { images } = imagesApi;
   const { setAppliedPresetId, presets, appliedPreset } = presetsApi;
-  useEffect(() => { discardEngine(); setAppliedPresetId(null); }, [workspacePath, discardEngine, setAppliedPresetId]);
+  useEffect(() => { discardEngine(); setAppliedPresetId(null); setReviewIds(null); }, [workspacePath, discardEngine, setAppliedPresetId]);
 
   const loadSample = useCallback(
     (options?: {withUnreadable?: boolean;}) => {
       discardEngine();
+      setReviewIds(null);
       imagesApi.loadSample(options);
       setTitle((t) => t === DEFAULT_TITLE ? 'Spring product shoot' : t);
     },
@@ -85,6 +90,7 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
 
   const clearBatch = useCallback(() => {
     discardEngine();
+    setReviewIds(null);
     imagesApi.clearBatch();
     setTitle(DEFAULT_TITLE);
   }, [imagesApi, discardEngine]);
@@ -139,11 +145,18 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
 
   const issues = useMemo(() => validateBatch(settings, enabled, images.length), [settings, enabled, images.length]);
   const errorCount = issues.filter((i) => i.level === 'error').length;
+  const reviewImages = useMemo(() => imagesForReview(images, reviewIds), [images, reviewIds]);
+  const beginReview = (onlySelected = false) => {
+    discardEngine();
+    setReviewIds(onlySelected ? [...imagesApi.selectedIds] : null);
+  };
 
   const startRun = useCallback(() => {
+    if (validateBatch(settings, enabled, reviewImages.length).some((issue) => issue.level === 'error')) return false;
     runWorkspace.current = workspacePath;
-    startEngine(createRun(images, settings, enabled, workspaceTool));
-  }, [startEngine, images, settings, enabled, workspacePath, workspaceTool]);
+    startEngine(createRun(reviewImages, settings, enabled, workspaceTool));
+    return true;
+  }, [startEngine, reviewImages, settings, enabled, workspacePath, workspaceTool]);
 
   const value: BatchContextValue = {
     ...imagesApi,
@@ -169,6 +182,9 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
     presetModified,
     issues,
     errorCount,
+    reviewImages,
+    reviewingSelected: reviewIds !== null,
+    beginReview,
     run: runWorkspace.current === workspacePath ? engine.run : null,
     startRun,
     pauseRun: engine.pause,

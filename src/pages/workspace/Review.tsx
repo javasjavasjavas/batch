@@ -9,10 +9,13 @@ import { Button } from '../../components/ui/Button';
 import { ImageThumb } from '../../components/ui/ImageThumb';
 import { ToolIcon } from '../../components/ui/ToolIcon';
 import { IssueList } from '../../components/workspace/IssueList';
+import { validateBatch } from '../../utils/validation';
 
 export function Review() {
-  const { workspacePath, workspaceTool, images, settings, enabled, issues, errorCount, startRun, title, setActiveTool } = useBatch();
+  const { workspacePath, workspaceTool, reviewImages: images, images: batchImages, reviewingSelected, settings, enabled, startRun, title, setActiveTool } = useBatch();
   const navigate = useNavigate();
+  const issues = validateBatch(settings, enabled, images.length);
+  const errorCount = issues.filter((issue) => issue.level === 'error').length;
 
   if (!images.length) {
     return (
@@ -22,7 +25,7 @@ export function Review() {
           className="py-20"
           icon={<ClipboardListIcon className="h-5 w-5" />}
           title="Nothing to review yet"
-          description="Add images to your batch, choose settings, and come back here to check the plan.">
+          description={reviewingSelected ? 'The selected images are no longer in the batch. Go back to editing and select images to review.' : 'Add images to your batch, choose settings, and come back here to check the plan.'}>
           
           <ButtonLink to={`${workspacePath}`} variant="primary">
             Back to editing
@@ -36,8 +39,7 @@ export function Review() {
   const total = images.reduce((a, i) => a + (i.size ?? 0), 0);
   const names = uniqueNames(images.map((img, i) => plannedName(img.name, i, settings, enabled, localDateStamp(), img.type.split('/')[1]?.replace('jpeg', 'jpg'))));
   const start = () => {
-    startRun();
-    navigate(`${workspacePath}/run`);
+    if (startRun()) navigate(`${workspacePath}/run`);
   };
   const editTool = (tool: (typeof tools)[number]) => {
     setActiveTool(tool);
@@ -58,6 +60,7 @@ export function Review() {
           <h1 className="mt-3 text-[28px] font-semibold tracking-[-0.03em] text-ink sm:text-[32px]">Review “{title}”</h1>
           <p className="tabular mt-1 text-[15px] text-muted">
             {pluralize(images.length, 'image')} · {formatBytes(total)} original
+            {reviewingSelected && <span> · Selected only ({images.length} of {batchImages.length})</span>}
           </p>
         </header>
 

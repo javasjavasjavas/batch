@@ -18,7 +18,7 @@ import { MobileActionBar } from '../../components/workspace/MobileActionBar';
 import { TOOL_LABEL } from '../../utils/planning';
 
 export function Editor() {
-  const { images, title, workspaceTool, workspacePath } = useBatch();
+  const { images, selectedIds, title, workspaceTool, workspacePath } = useBatch();
   const { prefs } = usePrefs();
   const [params, setParams] = useSearchParams();
   const [view, setView] = useState<ViewMode>(prefs.view);
@@ -89,7 +89,7 @@ export function Editor() {
           }
           </> :
 
-        <div className="scrollbar-thin min-h-0 flex-1 overflow-y-auto pb-32 lg:pb-0">
+        <div className={`scrollbar-thin min-h-0 flex-1 overflow-y-auto ${selectedIds.length ? 'pb-44' : 'pb-32'} lg:pb-0`}>
             <EmptyWorkspace onFiles={handleFiles} rejected={rejected} onDismissRejected={clearRejected} />
             <div className="px-4 pb-10 lg:hidden">
               <AdSlot format="leaderboard" />

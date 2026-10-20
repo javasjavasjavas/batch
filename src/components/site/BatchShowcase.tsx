@@ -6,7 +6,8 @@ import { ImageThumb } from '../ui/ImageThumb';
 
 const PICKS = ['sample-sneaker', 'sample-headphones', 'sample-bottle', 'sample-jar', 'sample-serum', 'sample-mug'];
 const items = PICKS.map((id) => SAMPLE_IMAGES.find((i) => i.id === id)).filter(
-  (i): i is (typeof SAMPLE_IMAGES)[number] => Boolean(i)
+  (i): i is (typeof SAMPLE_IMAGES)[number] & { width: number; height: number; url: string } =>
+    Boolean(i?.width && i?.height && i?.url)
 );
 
 /** Use the same background extension as the workspace, keeping the entire product visible. */
