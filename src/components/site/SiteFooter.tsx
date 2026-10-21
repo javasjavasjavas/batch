@@ -28,6 +28,7 @@ export function SiteFooter() {
               </li>
             )}
             <li><Link to="/tools/steam-assets" className={footLink}>Steam Asset Generator</Link></li>
+            <li><Link to="/tools" className={footLink}>Social, creator & app kits</Link></li>
             <li>
               <Link to="/tools" className={footLink}>
                 All tools

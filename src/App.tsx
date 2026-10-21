@@ -20,6 +20,8 @@ import { Review } from './pages/workspace/Review';
 import { Processing } from './pages/workspace/Processing';
 import { Results } from './pages/workspace/Results';
 import { SteamAssets } from './pages/SteamAssets';
+import { PlatformAssets } from './pages/PlatformAssets';
+import { PLATFORM_PACKS } from './data/platforms';
 
 const router = createBrowserRouter([
 {
@@ -33,6 +35,10 @@ const router = createBrowserRouter([
     { path: '/tools', element: <ToolsDirectory /> },
     { path: '/app/steam', element: <SteamAssets /> },
     { path: '/tools/steam-assets', element: <SteamAssets /> },
+    ...PLATFORM_PACKS.flatMap((pack) => [
+      { path: `/app/${pack.id}`, element: <PlatformAssets platform={pack.id} /> },
+      { path: `/tools/${pack.id}-assets`, element: <PlatformAssets platform={pack.id} /> },
+    ]),
     { path: '/tools/:slug', element: <ToolLanding /> },
     { path: '/help', element: <Help /> },
     { path: '/help/:slug', element: <HelpArticle /> },

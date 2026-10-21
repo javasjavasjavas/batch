@@ -6,7 +6,7 @@ import { type HeroRegion } from '../../processing/heroRegions';
 import { HeroRegionEditor } from './HeroRegionEditor';
 import type { SteamSource } from '../../processing/steam';
 
-export function HeroCleanup({ source, onApply }: { source: SteamSource; onApply: (file: File) => Promise<void> }) {
+export function HeroCleanup({ source, onApply, target = 'Library Hero' }: { source: SteamSource; onApply: (file: File) => Promise<void>; target?: string }) {
   const [open, setOpen] = useState(false), [regions, setRegions] = useState<HeroRegion[]>([]);
   const [history, setHistory] = useState<HeroRegion[][]>([]), [status, setStatus] = useState('');
   const [error, setError] = useState(''), [notice, setNotice] = useState('');
@@ -44,10 +44,10 @@ export function HeroCleanup({ source, onApply }: { source: SteamSource; onApply:
   };
   return <>
     <Button className="w-full" variant="secondary" onClick={() => { setOpen(true); setRegions([]); setHistory([]); setNotice(''); void detect(); }}><SparklesIcon className="h-4 w-4" />Remove text / logo</Button>
-    <Dialog open={open} onClose={close} size="xl" title="Clean Library Hero" description="Detect text, then adjust the areas to remove. Only the Library Hero will use the cleaned artwork." footer={<div className="flex flex-wrap justify-end gap-2">
+    <Dialog open={open} onClose={close} size="xl" title={`Clean ${target}`} description={`Detect text, then adjust the areas to remove. Only ${target} will use the cleaned artwork.`} footer={<div className="flex flex-wrap justify-end gap-2">
       <Button onClick={close}>{status ? 'Cancel' : 'Close'}</Button>
       <Button variant="accent" disabled={!!status || !regions.length || !!preview} onClick={() => void repair()}><SparklesIcon className="h-4 w-4" />Remove selected areas</Button>
-      {preview && <Button variant="primary" disabled={!!status} onClick={async () => { setStatus('Applying hero…'); try { await onApply(new File([preview.blob], 'library-hero-clean.png', { type: 'image/png' })); close(); } catch { setError('Could not apply this preview. Please retry.'); setStatus(''); } }}>Use for Library Hero</Button>}
+      {preview && <Button variant="primary" disabled={!!status} onClick={async () => { setStatus('Applying artwork…'); try { await onApply(new File([preview.blob], 'clean-artwork.png', { type: 'image/png' })); close(); } catch { setError('Could not apply this preview. Please retry.'); setStatus(''); } }}>Use for {target}</Button>}
     </div>}>
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2">
