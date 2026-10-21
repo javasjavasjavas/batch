@@ -97,8 +97,7 @@ select:focus-visible {
 .batch-showcase-layout {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 56px;
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
 }
 .batch-showcase-column {
   display: flex;
@@ -140,10 +139,8 @@ select:focus-visible {
   white-space: nowrap;
 }
 .batch-showcase-divider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
+  position: relative;
+  justify-self: center;
   width: 1px;
   background: #e3e5dc;
 }
@@ -162,14 +159,12 @@ select:focus-visible {
   transform: translate(-50%, -50%);
 }
 @container (max-width: 390px) {
-  .batch-showcase-layout { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+  .batch-showcase-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 64px auto; }
   .batch-showcase-heading { margin-bottom: 16px; }
   .batch-showcase-subtitle { font-size: 13px; }
   .batch-showcase-caption { font-size: 11px; }
   .batch-showcase-divider {
-    top: calc(50% - 1px);
-    bottom: auto;
-    left: 0;
+    align-self: center;
     width: 100%;
     height: 1px;
   }
@@ -198,10 +193,10 @@ select:focus-visible {
   .home-hero-showcase { grid-row:1; }
   .home-hero-ad { grid-column:1 / -1; grid-row:2; margin:4px 0 0; }
   .home-hero-tools { grid-column:1 / -1; grid-row:3; }
-  .home-hero-showcase .batch-showcase { padding:18px; }
-  .home-hero-showcase .batch-showcase-layout { gap:36px; }
+  .home-hero-showcase .batch-showcase { padding:28px; }
   .home-hero-showcase .batch-showcase-images { gap:12px; }
-  .home-hero-showcase .batch-showcase-image-stage { max-height:80px; }
+  .home-hero-showcase .batch-showcase-images > div { display:flex; flex-direction:column; align-items:center; }
+  .home-hero-showcase .batch-showcase-image-stage { width:100%; max-width:80px; justify-content:center; }
   .home-hero-showcase .batch-showcase-image-stage > div { max-height:80px; }
   .home-hero-showcase .batch-showcase-images > div > .aspect-square { width:80px; max-width:100%; }
   .tool-hero { grid-template-rows:auto auto; row-gap:36px; }
