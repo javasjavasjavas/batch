@@ -1,11 +1,13 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { CheckIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 const STEPS = ['Edit', 'Review', 'Process', 'Results'];
 
 export function WorkflowSteps({ current, className }: {current: number;className?: string;}) {
+  const { tr } = useI18n();
   return (
-    <ol aria-label="Workflow progress" className={twMerge('items-center gap-1 text-[13px]', className)}>
+    <ol aria-label={tr("Workflow progress")} className={twMerge('items-center gap-1 text-[13px]', className)}>
       {STEPS.map((step, i) => {
         const done = i < current;
         const active = i === current;
@@ -22,8 +24,8 @@ export function WorkflowSteps({ current, className }: {current: number;className
               {done ? <CheckIcon className="h-3 w-3" strokeWidth={3} /> : i + 1}
             </span>
             <span className={twMerge(active ? 'font-medium text-ink' : 'text-muted')}>
-              {step}
-              {done && <span className="sr-only"> (done)</span>}
+              {tr(step)}
+              {done && <span className="sr-only">{tr(" (done)")}</span>}
             </span>
           </li>);
 

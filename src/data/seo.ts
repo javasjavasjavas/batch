@@ -1,6 +1,8 @@
 import { TOOLS } from './tools';
 import { PLATFORM_PACKS } from './platforms';
 import { HELP_ARTICLES } from './helpArticles';
+import { englishPath, localizedPath, localeForPath } from '../i18n/paths';
+import { translate } from '../i18n/translate';
 
 export const SITE_URL = 'https://batchimagekit.com';
 export interface SeoPage { path: string; title: string; description: string; kind: 'website' | 'tool' | 'article'; name: string }
@@ -75,7 +77,7 @@ const searchDescriptions: Record<string, string> = {
   '/help/local-processing-and-browser-limits': 'See how local image processing works, what your browser saves and which batch limits apply. Learn about background tools, formats and large exports.',
 };
 
-export const SEO_PAGES: SeoPage[] = ([
+const ENGLISH_PAGES: SeoPage[] = ([
   { path: '/', name: 'Batch Image Kit', title: 'Free Bulk Image Tools & Asset Generators | Batch Image Kit', description: 'Resize, compress, convert and rename images in bulk. Create Steam, social media, shop and app store image kits for free. No account; images stay on your device.', kind: 'website' },
   { path: '/tools', name: 'Free image tools', title: 'Free Online Image Tools & Platform Asset Kits | Batch Image Kit', description: 'Find free bulk image tools and asset generators for Steam, YouTube, Instagram, Etsy, Shopify and more. Prepare images locally and download ready-to-use files.', kind: 'website' },
   ...TOOLS.map((tool): SeoPage => ({ path: `/tools/${tool.slug}`, name: tool.name, title: `${tool.name} Online – Free | Batch Image Kit`, description: coreDescriptions[tool.id], kind: 'tool' })),
@@ -88,25 +90,32 @@ export const SEO_PAGES: SeoPage[] = ([
   { path: '/terms', name: 'Terms of use', title: 'Terms of Use | Batch Image Kit', description: 'Read the terms for using Batch Image Kit, including acceptable use, image ownership, browser limitations and responsibility for exported files.', kind: 'website' },
 ] as SeoPage[]).map((page) => ({ ...page, title: searchTitles[page.path] ? `${searchTitles[page.path]} | Batch Image Kit` : page.title, description: searchDescriptions[page.path] || page.description }));
 
-export const WORKSPACE_PATHS = ['', '/resize', '/compress', '/convert', '/rename'].flatMap((tool) => ['', '/review', '/run', '/results'].map((step) => `/app${tool}${step}`));
-export const TOOL_ALIASES: Record<string, string> = Object.fromEntries(['steam', ...PLATFORM_PACKS.map((pack) => pack.id)].map((id) => [`/app/${id}`, `/tools/${id}-assets`]));
+export const SEO_PAGES = [...ENGLISH_PAGES, ...ENGLISH_PAGES.map(page => ({ ...page, path: localizedPath(page.path, 'es'), title: translate(page.title.replace(' | Batch Image Kit', ''), 'es') + ' | Batch Image Kit', description: translate(page.description, 'es'), name: translate(page.name, 'es') }))];
+const ENGLISH_WORKSPACES = ['', '/resize', '/compress', '/convert', '/rename'].flatMap((tool) => ['', '/review', '/run', '/results'].map((step) => `/app${tool}${step}`));
+export const WORKSPACE_PATHS = [...ENGLISH_WORKSPACES, ...ENGLISH_WORKSPACES.map(path => localizedPath(path, 'es'))];
+const aliases = ['steam', ...PLATFORM_PACKS.map((pack) => pack.id)].map((id) => [`/app/${id}`, `/tools/${id}-assets`]);
+export const TOOL_ALIASES: Record<string, string> = Object.fromEntries([...aliases, ...aliases.map(([from,to]) => [localizedPath(from,'es'),localizedPath(to,'es')])]);
 export const normalizePath = (path: string) => path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
 export function pageForPath(path: string) {
   const normalized = normalizePath(path);
-  return SEO_PAGES.find((page) => page.path === (TOOL_ALIASES[normalized] || normalized));
+  return SEO_PAGES.find((page) => normalizePath(page.path) === (TOOL_ALIASES[normalized] || normalized));
 }
 export function metaForPath(path: string) {
   const page = pageForPath(path);
+  const locale = localeForPath(path);
   return {
-    title: page?.title || (WORKSPACE_PATHS.includes(normalizePath(path)) ? 'Image Workspace | Batch Image Kit' : 'Page Not Found | Batch Image Kit'),
-    description: page?.description || 'Use the free image tools at Batch Image Kit to prepare and download images locally in your browser.',
+    locale,
+    title: page?.title || translate(WORKSPACE_PATHS.includes(normalizePath(path)) ? 'Image Workspace' : 'Page Not Found', locale) + ' | Batch Image Kit',
+    description: page?.description || translate('Use the free image tools at Batch Image Kit to prepare and download images locally in your browser.', locale),
     canonical: page ? SITE_URL + page.path : undefined,
     robots: page ? 'index,follow,max-image-preview:large' : 'noindex,follow',
     type: page?.kind === 'article' ? 'article' : 'website',
+    alternates: page ? { en: SITE_URL + localizedPath(page.path, 'en'), es: SITE_URL + localizedPath(page.path, 'es'), 'x-default': SITE_URL + localizedPath(page.path, 'en') } : undefined,
   };
 }
 export function structuredData(path: string) {
-  const page = pageForPath(path);
+  const locale = localeForPath(path);
+  const page = pageForPath(englishPath(path));
   if (!page) return [];
   const url = SITE_URL + page.path;
   const graph: Record<string, unknown>[] = [
@@ -121,6 +130,15 @@ export function structuredData(path: string) {
   }
   if (page.kind === 'tool') graph.push({ '@type': 'WebApplication', '@id': `${url}#application`, name: page.name, url, description: page.description, applicationCategory: 'MultimediaApplication', operatingSystem: 'Any', browserRequirements: 'Requires JavaScript and a modern browser.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, provider: { '@id': `${SITE_URL}/#organization` } });
   if (page.kind === 'article') graph.push({ '@type': 'TechArticle', headline: page.name, description: page.description, mainEntityOfPage: url, author: { '@id': `${SITE_URL}/#organization` }, publisher: { '@id': `${SITE_URL}/#organization` } });
-  if (page.path === '/tools') graph.push({ '@type': 'ItemList', itemListElement: SEO_PAGES.filter((item) => item.kind === 'tool').map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, url: SITE_URL + item.path })) });
-  return { '@context': 'https://schema.org', '@graph': graph };
+  if (page.path === '/tools') graph.push({ '@type': 'ItemList', itemListElement: ENGLISH_PAGES.filter((item) => item.kind === 'tool').map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.name, url: SITE_URL + item.path })) });
+  function localize(value: unknown, key = ''): unknown {
+    if (Array.isArray(value)) return value.map(item => localize(item));
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k,v]) => [k,localize(v,k)]));
+    if (typeof value !== 'string') return value;
+    if (key === 'inLanguage') return locale;
+    if (['name','description','headline','browserRequirements'].includes(key)) return translate(value.replace(' | Batch Image Kit',''),locale) + (value.endsWith(' | Batch Image Kit') ? ' | Batch Image Kit' : '');
+    if (value.startsWith(SITE_URL) && !value.includes('#organization') && !value.includes('#website') && !value.endsWith('.svg')) return SITE_URL + localizedPath(value.slice(SITE_URL.length) || '/',locale);
+    return value;
+  }
+  return { '@context': 'https://schema.org', '@graph': localize(graph) };
 }

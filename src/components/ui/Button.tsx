@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { LoaderCircleIcon } from 'lucide-react';
@@ -39,6 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 { variant = 'secondary', size = 'md', loading = false, className, children, disabled, type = 'button', ...rest },
 ref)
 {
+  const { tr } = useI18n();
   return (
     <button
       ref={ref}
@@ -49,7 +51,7 @@ ref)
       {...rest}>
       
       {loading && <LoaderCircleIcon className="h-4 w-4 animate-spin" aria-hidden="true" />}
-      {children}
+      {tr(children)}
     </button>);
 
 });

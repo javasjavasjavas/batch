@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React from 'react';
 import { CircleCheckIcon, CircleDashedIcon, CircleXIcon, ImageOffIcon, LoaderCircleIcon, PauseIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
@@ -15,6 +16,7 @@ const CONFIG: Record<BadgeStatus, {label: string;className: string;icon: React.R
 };
 
 export function StatusBadge({ status, className }: {status: BadgeStatus;className?: string;}) {
+  const { tr } = useI18n();
   const c = CONFIG[status];
   return (
     <span
@@ -24,8 +26,8 @@ export function StatusBadge({ status, className }: {status: BadgeStatus;classNam
         className
       )}>
       
-      <span aria-hidden="true">{c.icon}</span>
-      {c.label}
+      <span aria-hidden="true">{tr(c.icon)}</span>
+      {tr(c.label)}
     </span>);
 
 }

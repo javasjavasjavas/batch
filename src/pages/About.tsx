@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LocaleContext';
 import type { ArticleSection } from '../types/content';
 import { EditorialLayout } from '../components/site/EditorialLayout';
 import { ButtonLink } from '../components/ui/ButtonLink';
@@ -45,21 +46,18 @@ const SECTIONS: ArticleSection[] = [
 
 
 export function About() {
+  const { tr } = useI18n();
   return (
     <EditorialLayout
       eyebrow="About"
-      title="A focused tool for preparing many images at once"
+      title={tr("A focused tool for preparing many images at once")}
       lede="Batch exists to turn a repetitive afternoon of exporting, resizing, and renaming into a single, predictable step."
       sections={SECTIONS}
       showAd
       footer={
       <div className="flex flex-wrap gap-2 border-t border-line pt-8">
-          <ButtonLink to="/app" variant="primary">
-            Open workspace
-          </ButtonLink>
-          <ButtonLink to="/tools" variant="secondary">
-            Browse tools
-          </ButtonLink>
+          <ButtonLink to="/app" variant="primary">{tr("Open workspace")}</ButtonLink>
+          <ButtonLink to="/tools" variant="secondary">{tr("Browse tools")}</ButtonLink>
         </div>
       } />);
 

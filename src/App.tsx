@@ -1,6 +1,5 @@
 import { RouterProvider, type RouteObject, type createBrowserRouter } from 'react-router-dom';
 import { PrefsProvider } from './contexts/PrefsContext';
-import { ToastProvider } from './contexts/ToastContext';
 import { MotionPrefs } from './components/ui/MotionPrefs';
 import { RootLayout } from './components/site/RootLayout';
 import { SiteLayout } from './components/site/SiteLayout';
@@ -15,11 +14,19 @@ import { Privacy } from './pages/Privacy';
 import { Terms } from './pages/Terms';
 import { NotFound } from './pages/NotFound';
 import { PLATFORM_PACKS } from './data/platforms';
+import { LocaleProvider } from './i18n/LocaleContext';
+import { localizedPath } from './i18n/paths';
+
+// Reuse the component identity across locale routes so a language change preserves kit state.
+function platformLoader(platform: string) {
+  let result: Promise<{ Component: () => JSX.Element }> | undefined;
+  return () => result ??= import('./pages/PlatformAssets').then(({ PlatformAssets }) => ({ Component: () => <PlatformAssets platform={platform} /> }));
+}
 
 export const routes: RouteObject[] = [
 {
   element: <RootLayout />,
-  errorElement: <RouteError />,
+  errorElement: <LocaleProvider><RouteError /></LocaleProvider>,
   children: [
   {
     element: <SiteLayout />,
@@ -29,8 +36,8 @@ export const routes: RouteObject[] = [
     { path: '/app/steam', lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
     { path: '/tools/steam-assets', lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
     ...PLATFORM_PACKS.flatMap((pack) => [
-      { path: `/app/${pack.id}`, lazy: async () => { const { PlatformAssets } = await import('./pages/PlatformAssets'); return { Component: () => <PlatformAssets platform={pack.id} /> }; } },
-      { path: `/tools/${pack.id}-assets`, lazy: async () => { const { PlatformAssets } = await import('./pages/PlatformAssets'); return { Component: () => <PlatformAssets platform={pack.id} /> }; } },
+      { path: `/app/${pack.id}`, lazy: platformLoader(pack.id) },
+      { path: `/tools/${pack.id}-assets`, lazy: platformLoader(pack.id) },
     ]),
     { path: '/tools/:slug', element: <ToolLanding /> },
     { path: '/help', element: <Help /> },
@@ -44,7 +51,7 @@ export const routes: RouteObject[] = [
   ...['/app', '/app/resize', '/app/compress', '/app/convert', '/app/rename'].map((path) => ({
     path,
     lazy: async () => ({ Component: (await import('./components/workspace/WorkspaceLayout')).WorkspaceLayout }),
-    errorElement: <RouteError />,
+    errorElement: <LocaleProvider><RouteError /></LocaleProvider>,
     children: [
     { index: true, lazy: async () => ({ Component: (await import('./pages/workspace/Editor')).Editor }) },
     { path: 'review', lazy: async () => ({ Component: (await import('./pages/workspace/Review')).Review }) },
@@ -58,11 +65,20 @@ export const routes: RouteObject[] = [
 export function App({ router }: { router: ReturnType<typeof createBrowserRouter> }) {
   return (
     <PrefsProvider>
-      <ToastProvider>
           <MotionPrefs>
             <RouterProvider router={router} />
           </MotionPrefs>
-      </ToastProvider>
     </PrefsProvider>);
 
 }
+
+// Both languages share the root provider, keeping in-memory files and processing alive.
+const rootChildren = routes[0].children!;
+function spanishRoute(route: RouteObject): RouteObject {
+  return { ...route, ...(route.path && route.path !== '*' ? { path: localizedPath(route.path, 'es') } : {}),
+    ...(route.children ? { children: route.children.map(child => child.path?.startsWith('/') ? spanishRoute(child) : child) } : {}),
+  } as RouteObject;
+}
+const publicRoutes = rootChildren[0].children!;
+publicRoutes.splice(publicRoutes.length - 1, 0, ...publicRoutes.filter(route => route.path !== '*').map(spanishRoute));
+rootChildren.push(...rootChildren.slice(1).map(spanishRoute));

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React, { useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -28,6 +29,7 @@ export function Segmented<T extends string>({
   fullWidth,
   className
 }: SegmentedProps<T>) {
+  const { tr } = useI18n();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -42,7 +44,7 @@ export function Segmented<T extends string>({
   return (
     <div
       role="radiogroup"
-      aria-label={label}
+      aria-label={tr(label)}
       className={twMerge(
         'gap-0.5 rounded-lg border border-line bg-sunken/70 p-0.5',
         fullWidth ? 'flex w-full' : 'inline-flex',
@@ -61,8 +63,8 @@ export function Segmented<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
-            aria-label={iconOnly ? option.label : undefined}
-            title={iconOnly ? option.label : undefined}
+            aria-label={tr(iconOnly ? option.label : undefined)}
+            title={tr(iconOnly ? option.label : undefined)}
             tabIndex={focusable ? 0 : -1}
             onClick={() => onChange(option.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
@@ -74,8 +76,8 @@ export function Segmented<T extends string>({
               selected ? 'bg-lime text-ink shadow-[0_1px_2px_rgba(21,23,21,0.12)]' : 'text-muted hover:bg-white/80 hover:text-ink'
             )}>
             
-            {option.icon}
-            {!iconOnly && option.label}
+            {tr(option.icon)}
+            {tr(!iconOnly && option.label)}
           </button>);
 
       })}

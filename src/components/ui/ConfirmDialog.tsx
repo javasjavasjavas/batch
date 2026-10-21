@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React from 'react';
 import { Button } from './Button';
 import { Dialog } from './Dialog';
@@ -23,19 +24,20 @@ export function ConfirmDialog({
   cancelLabel = 'Cancel',
   tone = 'default'
 }: ConfirmDialogProps) {
+  const { tr } = useI18n();
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title={title}
-      description={description}
+      title={tr(title)}
+      description={tr(description)}
       size="sm"
       role="alertdialog"
       bodyClassName="pb-2"
       footer={
       <>
           <Button variant="secondary" onClick={onClose} data-autofocus>
-            {cancelLabel}
+            {tr(cancelLabel)}
           </Button>
           <Button
           variant={tone === 'danger' ? 'danger' : 'primary'}
@@ -44,7 +46,7 @@ export function ConfirmDialog({
             onClose();
           }}>
           
-            {confirmLabel}
+            {tr(confirmLabel)}
           </Button>
         </>
       } />);

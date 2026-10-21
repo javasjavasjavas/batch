@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React, { useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -17,6 +18,7 @@ interface RadioCardsProps<T extends string> {
 }
 
 export function RadioCards<T extends string>({ options, value, onChange, label, columns = 1, className }: RadioCardsProps<T>) {
+  const { tr } = useI18n();
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -31,7 +33,7 @@ export function RadioCards<T extends string>({ options, value, onChange, label, 
   return (
     <div
       role="radiogroup"
-      aria-label={label}
+      aria-label={tr(label)}
       className={twMerge('grid gap-2', columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-1', className)}>
       
       {options.map((option, i) => {
@@ -63,8 +65,8 @@ export function RadioCards<T extends string>({ options, value, onChange, label, 
               {selected && <span className="h-2 w-2 rounded-full bg-ink" />}
             </span>
             <span className="min-w-0">
-              <span className="block text-sm font-medium text-ink">{option.label}</span>
-              {option.description && <span className="mt-0.5 block text-[12.5px] leading-snug text-muted">{option.description}</span>}
+              <span className="block text-sm font-medium text-ink">{tr(option.label)}</span>
+              {option.description && <span className="mt-0.5 block text-[12.5px] leading-snug text-muted">{tr(option.description)}</span>}
             </span>
           </button>);
 

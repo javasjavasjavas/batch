@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { twMerge } from 'tailwind-merge';
 import type { ViewMode } from '../../types/prefs';
 import { useBatch } from '../../contexts/BatchContext';
@@ -12,6 +13,7 @@ interface ImageCollectionProps {
 }
 
 export function ImageCollection({ view, onOpen }: ImageCollectionProps) {
+  const { tr } = useI18n();
   const { images, selectedIds, toggleSelect, moveImage, settings, enabled } = useBatch();
   const { prefs } = usePrefs();
   const compact = prefs.density === 'compact';
@@ -37,13 +39,13 @@ export function ImageCollection({ view, onOpen }: ImageCollectionProps) {
         <div className={twMerge('hidden gap-3 border-b border-line bg-canvas px-4 py-2 text-[12px] font-medium text-muted md:grid', ROW_GRID)} aria-hidden="true">
           <span />
           <span />
-          <span>Name</span>
-          <span>Type</span>
-          <span>Dimensions</span>
-          <span>Size</span>
+          <span>{tr("Name")}</span>
+          <span>{tr("Type")}</span>
+          <span>{tr("Dimensions")}</span>
+          <span>{tr("Size")}</span>
           <span className="w-24" />
         </div>
-        <ul className="divide-y divide-line" aria-label="Images in batch">
+        <ul className="divide-y divide-line" aria-label={tr("Images in batch")}>
           {items.map((p) =>
           <ImageRow key={p.image.id} {...p} />
           )}
@@ -54,7 +56,7 @@ export function ImageCollection({ view, onOpen }: ImageCollectionProps) {
 
   return (
     <ul
-      aria-label="Images in batch"
+      aria-label={tr("Images in batch")}
       className={twMerge('grid', compact ? 'gap-2' : 'gap-3')}
       style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${compact ? 124 : 158}px, 1fr))` }}>
       

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import type { RunItem } from '../../types/run';
 import { formatBytes, formatDimensions, formatTypeLabel } from '../../utils/format';
@@ -13,6 +14,7 @@ interface CompareDialogProps {
 }
 
 export function CompareDialog({ items, itemId, onClose, onNavigate }: CompareDialogProps) {
+  const { tr } = useI18n();
   const index = items.findIndex((i) => i.id === itemId);
   const item = index >= 0 ? items[index] : null;
   const prev = index > 0 ? items[index - 1] : null;
@@ -28,21 +30,17 @@ export function CompareDialog({ items, itemId, onClose, onNavigate }: CompareDia
       open={!!item}
       onClose={onClose}
       title={item?.outputName ?? ''}
-      description="Original and processed output"
+      description={tr("Original and processed output")}
       size="xl"
       footer={
       item &&
       <>
             <p className="tabular mr-auto text-[13px] text-muted">
-              {index + 1} of {items.length}
+              {tr(index + 1)}{tr(" of ")}{tr(items.length)}
             </p>
             <Button variant="secondary" disabled={!prev} onClick={() => prev && onNavigate(prev.id)}>
-              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-              Previous
-            </Button>
-            <Button variant="secondary" disabled={!next} onClick={() => next && onNavigate(next.id)}>
-              Next
-              <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />{tr("Previous")}</Button>
+            <Button variant="secondary" disabled={!next} onClick={() => next && onNavigate(next.id)}>{tr("Next")}<ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
           </>
 
@@ -56,9 +54,9 @@ export function CompareDialog({ items, itemId, onClose, onNavigate }: CompareDia
                 <ImageThumb src={item.url} alt={`Original: ${item.name}`} fit="contain" className="bg-transparent" showLabel eager />
               </div>
               <figcaption className="mt-3">
-                <p className="text-[13px] font-semibold text-ink">Original</p>
+                <p className="text-[13px] font-semibold text-ink">{tr("Original")}</p>
                 <p className="tabular text-[13px] text-muted">
-                  {item.name} · {formatDimensions(item.width, item.height) ?? 'Size unknown'} · {formatBytes(item.originalSize)}
+                  {item.name}{tr(" · ")}{tr(formatDimensions(item.width, item.height) ?? 'Size unknown')}{tr(" · ")}{tr(formatBytes(item.originalSize))}
                 </p>
               </figcaption>
             </figure>
@@ -69,11 +67,11 @@ export function CompareDialog({ items, itemId, onClose, onNavigate }: CompareDia
                 </div>
               </div>
               <figcaption className="mt-3">
-                <p className="text-[13px] font-semibold text-ink">Processed output</p>
+                <p className="text-[13px] font-semibold text-ink">{tr("Processed output")}</p>
                 <p className="tabular text-[13px] text-muted">
-                  {item.outputName} · {item.plannedWidth && item.plannedHeight ? `${item.plannedWidth} × ${item.plannedHeight}` : 'Size unknown'} ·{' '}
-                  {formatTypeLabel('', `x.${item.outputFormat}`)}
-                  {' · '}{formatBytes(item.outputSize ?? null)}
+                  {item.outputName}{tr(" · ")}{tr(item.plannedWidth && item.plannedHeight ? `${item.plannedWidth} × ${item.plannedHeight}` : 'Size unknown')}{tr(" ·")}{tr(' ')}
+                  {tr(formatTypeLabel('', `x.${item.outputFormat}`))}
+                  {tr(' · ')}{tr(formatBytes(item.outputSize ?? null))}
                 </p>
               </figcaption>
             </figure>

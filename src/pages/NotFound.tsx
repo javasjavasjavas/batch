@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useI18n } from '../i18n/LocaleContext';
+import { Link } from '../i18n/router';
 import { ArrowRightIcon } from 'lucide-react';
 import { ButtonLink } from '../components/ui/ButtonLink';
 
@@ -9,23 +10,16 @@ const LINKS = [
 
 
 export function NotFound() {
+  const { tr } = useI18n();
   return (
     <div className="mx-auto max-w-content px-5 pb-24 pt-16 sm:px-8 sm:pt-24">
       <div className="max-w-2xl">
-        <p className="tabular text-sm font-medium text-muted">Error 404</p>
-        <h1 className="mt-2 text-[40px] font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-[54px]">
-          This page didn’t make it into the batch.
-        </h1>
-        <p className="mt-4 max-w-[50ch] text-[17px] leading-relaxed text-muted">
-          The link may be outdated, or the address has a typo. Your current batch, if you have one, is still open in the workspace.
-        </p>
+        <p className="tabular text-sm font-medium text-muted">{tr("Error 404")}</p>
+        <h1 className="mt-2 text-[40px] font-semibold leading-[1.05] tracking-[-0.04em] text-ink sm:text-[54px]">{tr("This page didn’t make it into the batch.")}</h1>
+        <p className="mt-4 max-w-[50ch] text-[17px] leading-relaxed text-muted">{tr("The link may be outdated, or the address has a typo. Your current batch, if you have one, is still open in the workspace.")}</p>
         <div className="mt-8 flex flex-wrap gap-2">
-          <ButtonLink to="/app" variant="primary" size="lg">
-            Go to workspace
-          </ButtonLink>
-          <ButtonLink to="/" variant="secondary" size="lg">
-            Home page
-          </ButtonLink>
+          <ButtonLink to="/app" variant="primary" size="lg">{tr("Go to workspace")}</ButtonLink>
+          <ButtonLink to="/" variant="secondary" size="lg">{tr("Home page")}</ButtonLink>
         </div>
       </div>
       <ul className="mt-14 grid gap-3 md:grid-cols-3">
@@ -33,8 +27,8 @@ export function NotFound() {
         <li key={l.to}>
             <Link to={l.to} className="group flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-[border-color] duration-150 hover:border-line-strong">
               <span>
-                <span className="block font-semibold text-ink">{l.label}</span>
-                <span className="mt-0.5 block text-sm text-muted">{l.body}</span>
+                <span className="block font-semibold text-ink">{tr(l.label)}</span>
+                <span className="mt-0.5 block text-sm text-muted">{tr(l.body)}</span>
               </span>
               <ArrowRightIcon className="h-4 w-4 shrink-0 text-muted transition-transform duration-150 ease-out group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>

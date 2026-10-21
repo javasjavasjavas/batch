@@ -1,5 +1,6 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useState } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from '../../i18n/router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRightIcon, MenuIcon, XIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
@@ -7,6 +8,7 @@ import { Logo } from '../ui/Logo';
 import { Button } from '../ui/Button';
 import { ButtonLink } from '../ui/ButtonLink';
 import { ToolsMenu } from './ToolsMenu';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 const NAV = [
 { label: 'How it works', to: '/#how-it-works' },
@@ -20,6 +22,7 @@ twMerge(
 );
 
 export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
+  const { tr } = useI18n();
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -35,27 +38,26 @@ export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
   return (
     <header className="sticky top-0 z-40 shrink-0 border-b border-line bg-canvas">
       <div className={twMerge('mx-auto flex h-16 max-w-content items-center gap-6 px-5 sm:px-8', workspace && 'max-w-none sm:px-5')}>
-        <Link to="/" aria-label="Batch home" className="rounded-md">
+        <Link to="/" aria-label={tr("Batch home")} className="rounded-md">
           <Logo />
         </Link>
-        <nav aria-label="Main" className="hidden items-center gap-0.5 md:flex">
+        <nav aria-label={tr("Main")} className="hidden items-center gap-0.5 md:flex">
           <ToolsMenu />
           {NAV.map((item) =>
           item.to.includes('#') ?
           <Link key={item.to} to={item.to} className={linkClass({ isActive: false })}>
-                {item.label}
+                {tr(item.label)}
               </Link> :
 
           <NavLink key={item.to} to={item.to} className={linkClass}>
-                {item.label}
+                {tr(item.label)}
               </NavLink>
 
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          {!workspace && <ButtonLink to="/app" variant="primary" className="hidden sm:inline-flex">
-            Batch workspace
-            <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+          <LanguageSwitcher />
+          {!workspace && <ButtonLink to="/app" variant="primary" className="hidden sm:inline-flex">{tr("Batch workspace")}<ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
           </ButtonLink>}
           <Button
             variant="ghost"
@@ -63,7 +65,7 @@ export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
             className="md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={tr(open ? 'Close menu' : 'Open menu')}
             onClick={() => setOpen((o) => !o)}>
             
             {open ? <XIcon className="h-5 w-5" aria-hidden="true" /> : <MenuIcon className="h-5 w-5" aria-hidden="true" />}
@@ -74,7 +76,7 @@ export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
         {open &&
         <motion.nav
           id="mobile-nav"
-          aria-label="Mobile"
+          aria-label={tr("Mobile")}
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -86,14 +88,12 @@ export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
               {NAV.map((item) =>
             <li key={item.to}>
                   <Link to={item.to} className="flex h-14 items-center text-[17px] font-medium text-ink">
-                    {item.label}
+                    {tr(item.label)}
                   </Link>
                 </li>
             )}
             </ul>
-            {!workspace && <ButtonLink to="/app" variant="primary" size="lg" className="mt-3 w-full">
-              Batch workspace
-              <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+            {!workspace && <ButtonLink to="/app" variant="primary" size="lg" className="mt-3 w-full">{tr("Batch workspace")}<ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
             </ButtonLink>}
           </motion.nav>
         }

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { Link2Icon, Link2OffIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import type { BackgroundMode, FitMode, ResizeUnit } from '../../types/batch';
@@ -14,6 +15,7 @@ import { ColorField } from './ColorField';
 const numeric = (v: string) => v.replace(/[^\d]/g, '').slice(0, 5);
 
 export function ResizeControls() {
+  const { tr } = useI18n();
   const { settings, updateSettings, issues, enabled, setToolEnabled } = useBatch();
   const r = settings.resize;
   const set = (patch: Partial<typeof r>) => updateSettings('resize', patch);
@@ -25,9 +27,7 @@ export function ResizeControls() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="mb-2 text-[13px] font-medium text-ink" id="resize-presets-label">
-          Size presets
-        </p>
+        <p className="mb-2 text-[13px] font-medium text-ink" id="resize-presets-label">{tr("Size presets")}</p>
         <div className="grid grid-cols-2 gap-1.5" role="group" aria-labelledby="resize-presets-label">
           {RESIZE_PRESETS.map((p) => {
             const active =
@@ -43,8 +43,8 @@ export function ResizeControls() {
                   active ? 'border-ink bg-lime-soft' : 'border-line bg-white hover:border-line-strong'
                 )}>
                 
-                <span className="block text-[13px] font-medium text-ink">{p.label}</span>
-                <span className="block text-[12px] text-muted">{p.hint}</span>
+                <span className="block text-[13px] font-medium text-ink">{tr(p.label)}</span>
+                <span className="block text-[12px] text-muted">{tr(p.hint)}</span>
               </button>);
 
           })}
@@ -52,9 +52,9 @@ export function ResizeControls() {
       </div>
 
       <div>
-        <p className="mb-2 text-[13px] font-medium text-ink">Resize by</p>
+        <p className="mb-2 text-[13px] font-medium text-ink">{tr("Resize by")}</p>
         <Segmented<ResizeUnit>
-          label="Resize by"
+          label={tr("Resize by")}
           fullWidth
           value={r.unit}
           onChange={(unit) => set({ unit })}
@@ -68,12 +68,12 @@ export function ResizeControls() {
       {r.unit === 'px' ?
       <>
           <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2">
-            <Field label={r.lockAspect ? 'Max width' : 'Width'} htmlFor="resize-width" error={widthError}>
+            <Field label={tr(r.lockAspect ? 'Max width' : 'Width')} htmlFor="resize-width" error={widthError}>
               <Input
               id="resize-width"
               inputMode="numeric"
               unit="px"
-              placeholder={r.lockAspect ? 'Auto' : ''}
+              placeholder={tr(r.lockAspect ? 'Auto' : '')}
               value={r.width}
               invalid={!!widthError}
               aria-describedby={describedBy('resize-width', undefined, widthError)}
@@ -83,8 +83,8 @@ export function ResizeControls() {
             <button
             type="button"
             aria-pressed={r.lockAspect}
-            aria-label="Keep original proportions"
-            title={r.lockAspect ? 'Proportions kept' : 'Exact size'}
+            aria-label={tr("Keep original proportions")}
+            title={tr(r.lockAspect ? 'Proportions kept' : 'Exact size')}
             onClick={() => set({ lockAspect: !r.lockAspect })}
             className={twMerge(
               'mt-[26px] flex h-10 w-10 items-center justify-center rounded-lg border transition-[background-color,border-color] duration-150 ease-out',
@@ -93,12 +93,12 @@ export function ResizeControls() {
             
               {r.lockAspect ? <Link2Icon className="h-4 w-4" aria-hidden="true" /> : <Link2OffIcon className="h-4 w-4" aria-hidden="true" />}
             </button>
-            <Field label={r.lockAspect ? 'Max height' : 'Height'} htmlFor="resize-height" error={heightError}>
+            <Field label={tr(r.lockAspect ? 'Max height' : 'Height')} htmlFor="resize-height" error={heightError}>
               <Input
               id="resize-height"
               inputMode="numeric"
               unit="px"
-              placeholder={r.lockAspect ? 'Auto' : ''}
+              placeholder={tr(r.lockAspect ? 'Auto' : '')}
               value={r.height}
               invalid={!!heightError}
               aria-describedby={describedBy('resize-height', undefined, heightError)}
@@ -107,16 +107,16 @@ export function ResizeControls() {
             </Field>
           </div>
           <p className="-mt-2 text-[12.5px] leading-snug text-muted">
-            {r.lockAspect ?
+            {tr(r.lockAspect ?
           'Proportions are kept. Each image fits inside this box. Leave one side empty to set only the other.' :
-          'Every image gets exactly this size. Choose how images fill the frame.'}
+          'Every image gets exactly this size. Choose how images fill the frame.')}
           </p>
 
           {!r.lockAspect &&
         <div>
-              <p className="mb-2 text-[13px] font-medium text-ink">Fit</p>
+              <p className="mb-2 text-[13px] font-medium text-ink">{tr("Fit")}</p>
               <RadioCards<FitMode>
-            label="Fit"
+            label={tr("Fit")}
             value={r.fit}
             onChange={(fit) => set({ fit })}
             options={[
@@ -127,11 +127,11 @@ export function ResizeControls() {
             </div>
         }
           {!r.lockAspect && r.fit === 'pad' && r.backgroundMode === 'original' &&
-        <ColorField id="resize-pad" label="Padding color" value={r.padColor} onChange={(padColor) => set({ padColor })} error={padError} />
+        <ColorField id="resize-pad" label={tr("Padding color")} value={r.padColor} onChange={(padColor) => set({ padColor })} error={padError} />
         }
         </> :
 
-      <Field label="Scale" htmlFor="resize-percent" hint="Applied to both width and height." error={percentError}>
+      <Field label={tr("Scale")} htmlFor="resize-percent" hint="Applied to both width and height." error={percentError}>
           <Input
           id="resize-percent"
           inputMode="numeric"
@@ -146,16 +146,16 @@ export function ResizeControls() {
 
       {(r.lockAspect || r.unit === 'percent') &&
       <Toggle
-        label="Enlarge smaller images"
-        description="When off, images smaller than the target keep their size so they don’t blur."
+        label={tr("Enlarge smaller images")}
+        description={tr("When off, images smaller than the target keep their size so they don’t blur.")}
         checked={r.allowUpscale}
         onChange={(allowUpscale) => set({ allowUpscale })} />
 
       }
       <div className="border-t border-line pt-5">
-        <p className="mb-2 text-[13px] font-medium text-ink">Background</p>
+        <p className="mb-2 text-[13px] font-medium text-ink">{tr("Background")}</p>
         <RadioCards<BackgroundMode>
-          label="Background"
+          label={tr("Background")}
           value={r.backgroundMode}
           onChange={(backgroundMode) => {
             set({ backgroundMode, ...(backgroundMode === 'extend' ? { unit: 'px', lockAspect: false, fit: 'pad', width: r.width || '1600', height: r.height || '1600' } : {}) });
@@ -171,9 +171,9 @@ export function ResizeControls() {
             { value: 'color', label: 'Replace background · AI', description: 'Cut out the product and use a solid color.' }
           ]}
         />
-        {r.backgroundMode === 'extend' && <p className="mt-2 text-[12.5px] leading-snug text-muted">Best for simple studio gradients with clear edges. Preserves the original photo; does not generate objects or scenery. Uses exact dimensions and Pad to fit.</p>}
-        {(r.backgroundMode === 'transparent' || r.backgroundMode === 'color') && <p className="mt-2 text-[12.5px] leading-snug text-muted">AI runs on your device. First use downloads a 183 MB model, then your browser caches it. Fine details and shadows may need review. Use Compare after processing.</p>}
-        {r.backgroundMode === 'color' && <div className="mt-3"><ColorField id="resize-background" label="Background color" value={r.padColor} onChange={(padColor) => set({ padColor })} error={padError} /></div>}
+        {r.backgroundMode === 'extend' && <p className="mt-2 text-[12.5px] leading-snug text-muted">{tr("Best for simple studio gradients with clear edges. Preserves the original photo; does not generate objects or scenery. Uses exact dimensions and Pad to fit.")}</p>}
+        {(r.backgroundMode === 'transparent' || r.backgroundMode === 'color') && <p className="mt-2 text-[12.5px] leading-snug text-muted">{tr("AI runs on your device. First use downloads a 183 MB model, then your browser caches it. Fine details and shadows may need review. Use Compare after processing.")}</p>}
+        {r.backgroundMode === 'color' && <div className="mt-3"><ColorField id="resize-background" label={tr("Background color")} value={r.padColor} onChange={(padColor) => set({ padColor })} error={padError} /></div>}
       </div>
     </div>);
 

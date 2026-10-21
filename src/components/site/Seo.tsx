@@ -7,6 +7,7 @@ export function Seo() {
   const { pathname } = useLocation();
   useEffect(() => {
     const meta = metaForPath(pathname);
+    document.documentElement.lang = meta.locale;
     document.title = meta.title;
     function setMeta(key: string, content: string, property = false) {
       const attribute = property ? 'property' : 'name';
@@ -19,13 +20,18 @@ export function Seo() {
     for (const [key, value] of Object.entries({ title: meta.title, description: meta.description, type: meta.type, site_name: 'Batch Image Kit' })) setMeta(`og:${key}`, value, true);
     setMeta('og:image', `${SITE_URL}/social-card.png`, true);
     setMeta('og:image:type', 'image/png', true);
-    setMeta('og:locale', 'en_US', true);
+    setMeta('og:locale', meta.locale === 'es' ? 'es_ES' : 'en_US', true);
+    setMeta('og:locale:alternate', meta.locale === 'es' ? 'en_US' : 'es_ES', true);
+    document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(element => element.remove());
+    for (const [lang, href] of Object.entries(meta.alternates || {})) {
+      const link = document.createElement('link'); link.rel = 'alternate'; link.hreflang = lang; link.href = href; document.head.append(link);
+    }
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
-    setMeta('og:image:alt', 'Batch — Free Bulk Image Tools', true);
+    setMeta('og:image:alt', meta.locale === 'es' ? 'Batch — Herramientas gratis para imágenes en lote' : 'Batch — Free Bulk Image Tools', true);
     setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:image', `${SITE_URL}/social-card.png`);
-    setMeta('twitter:image:alt', 'Batch — Free Bulk Image Tools');
+    setMeta('twitter:image:alt', meta.locale === 'es' ? 'Batch — Herramientas gratis para imágenes en lote' : 'Batch — Free Bulk Image Tools');
     setMeta('twitter:title', meta.title);
     setMeta('twitter:description', meta.description);
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');

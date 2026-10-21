@@ -1,4 +1,4 @@
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps } from '../../i18n/router';
 import { buttonClasses, ButtonSize, ButtonVariant } from './Button';
 
 interface ButtonLinkProps extends LinkProps {

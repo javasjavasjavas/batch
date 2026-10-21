@@ -1,5 +1,6 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../i18n/router';
 import { ActivityIcon, PauseIcon, PlayIcon } from 'lucide-react';
 import { useBatch } from '../../contexts/BatchContext';
 import { countRunItems, overallProgress } from '../../utils/runPlan';
@@ -13,6 +14,7 @@ import { RunItemRow } from '../../components/workspace/RunItemRow';
 import { StoppedView } from '../../components/workspace/StoppedView';
 
 export function Processing() {
+  const { tr } = useI18n();
   const { workspacePath, run, pauseRun, resumeRun, cancelRun } = useBatch();
   const navigate = useNavigate();
   const [confirmCancel, setConfirmCancel] = useState(false);
@@ -30,15 +32,11 @@ export function Processing() {
           headingLevel="h1"
           className="py-20"
           icon={<ActivityIcon className="h-5 w-5" />}
-          title="No run in progress"
-          description="Review your batch to start processing.">
+          title={tr("No run in progress")}
+          description={tr("Review your batch to start processing.")}>
           
-          <ButtonLink to={`${workspacePath}/review`} variant="primary">
-            Review batch
-          </ButtonLink>
-          <ButtonLink to={`${workspacePath}`} variant="secondary">
-            Back to editing
-          </ButtonLink>
+          <ButtonLink to={`${workspacePath}/review`} variant="primary">{tr("Review batch")}</ButtonLink>
+          <ButtonLink to={`${workspacePath}`} variant="secondary">{tr("Back to editing")}</ButtonLink>
         </EmptyState>
       </div>);
 
@@ -62,46 +60,39 @@ export function Processing() {
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:py-10">
         <header className="mt-2">
           <h1 className="text-[28px] font-semibold tracking-[-0.03em] text-ink sm:text-[32px]">
-            {paused ? 'Paused' : `Processing ${pluralize(run.items.length, 'image')}`}
+            {tr(paused ? 'Paused' : `Processing ${pluralize(run.items.length, 'image')}`)}
           </h1>
           <p className="tabular mt-1 text-[15px] text-muted" aria-live="polite">
-            {counts.complete} of {counts.total} done
-            {counts.failed > 0 && ` · ${counts.failed} failed`}
-            {paused && (counts.active ? ' · Pausing after the current image' : ' · Resume when you’re ready')}
+            {tr(counts.complete)}{tr(" of ")}{tr(counts.total)}{tr(" done")}{counts.failed > 0 && tr(` · ${counts.failed} failed`)}
+            {tr(paused && (counts.active ? ' · Pausing after the current image' : ' · Resume when you’re ready'))}
           </p>
           <div className="mt-5 flex items-center gap-4">
-            <ProgressBar size="lg" value={progress} label="Overall progress" tone={paused ? 'muted' : 'ink'} />
-            <span className="tabular w-12 shrink-0 text-right text-sm font-semibold text-ink">{Math.round(progress * 100)}%</span>
+            <ProgressBar size="lg" value={progress} label={tr("Overall progress")} tone={paused ? 'muted' : 'ink'} />
+            <span className="tabular w-12 shrink-0 text-right text-sm font-semibold text-ink">{tr(Math.round(progress * 100))}{tr("%")}</span>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
             {paused ?
             <Button variant="primary" onClick={resumeRun}>
-                <PlayIcon className="h-4 w-4" aria-hidden="true" />
-                Resume
-              </Button> :
+                <PlayIcon className="h-4 w-4" aria-hidden="true" />{tr("Resume")}</Button> :
 
             <Button variant="secondary" onClick={pauseRun}>
-                <PauseIcon className="h-4 w-4" aria-hidden="true" />
-                Pause
-              </Button>
+                <PauseIcon className="h-4 w-4" aria-hidden="true" />{tr("Pause")}</Button>
             }
-            <Button variant="ghost" onClick={openCancel}>
-              Cancel run
-            </Button>
+            <Button variant="ghost" onClick={openCancel}>{tr("Cancel run")}</Button>
           </div>
         </header>
 
         {run.summary.length > 0 &&
-        <ul className="mt-8 flex flex-wrap gap-1.5" aria-label="Settings for this run">
+        <ul className="mt-8 flex flex-wrap gap-1.5" aria-label={tr("Settings for this run")}>
             {run.summary.map((s) =>
           <li key={s} className="rounded-md bg-sunken px-2 py-1 text-[12px] text-muted">
-                {s}
+                {s.split(': ').map((part, index) => index === 1 && s.startsWith('Rename:') ? part : tr(part)).join(': ')}
               </li>
           )}
           </ul>
         }
 
-        <ul className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white" aria-label="Images in this run">
+        <ul className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white" aria-label={tr("Images in this run")}>
           {run.items.map((item) =>
           <RunItemRow key={item.id} item={item} />
           )}
@@ -119,10 +110,10 @@ export function Processing() {
           pausedForConfirm.current = false;
           cancelRun();
         }}
-        title="Cancel this run?"
-        description="Queued work stops. Images already completed remain available to download."
-        confirmLabel="Cancel run"
-        cancelLabel="Keep going"
+        title={tr("Cancel this run?")}
+        description={tr("Queued work stops. Images already completed remain available to download.")}
+        confirmLabel={tr("Cancel run")}
+        cancelLabel={tr("Keep going")}
         tone="danger" />
       
     </div>);

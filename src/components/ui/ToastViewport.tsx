@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, XIcon } from 'lucide-react';
 import type { ToastItem } from '../../contexts/ToastContext';
@@ -10,6 +11,7 @@ const ICONS = {
 };
 
 export function ToastViewport({ toasts, onDismiss }: {toasts: ToastItem[];onDismiss: (id: number) => void;}) {
+  const { tr } = useI18n();
   return (
     <div
       aria-live="polite"
@@ -29,16 +31,16 @@ export function ToastViewport({ toasts, onDismiss }: {toasts: ToastItem[];onDism
           className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl bg-ink px-4 py-3 text-white shadow-pop">
           
             <span className="mt-px shrink-0" aria-hidden="true">
-              {ICONS[t.tone]}
+              {tr(ICONS[t.tone])}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium">{t.title}</p>
-              {t.description && <p className="mt-0.5 text-[13px] leading-snug text-white/70">{t.description}</p>}
+              <p className="text-sm font-medium">{tr(t.title)}</p>
+              {t.description && <p className="mt-0.5 text-[13px] leading-snug text-white/70">{tr(t.description)}</p>}
             </div>
             <button
             type="button"
             onClick={() => onDismiss(t.id)}
-            aria-label="Dismiss notification"
+            aria-label={tr("Dismiss notification")}
             className="-mr-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-white/60 transition-colors duration-150 hover:bg-white/10 hover:text-white">
             
               <XIcon className="h-4 w-4" aria-hidden="true" />

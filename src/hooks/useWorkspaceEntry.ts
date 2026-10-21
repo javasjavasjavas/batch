@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../i18n/router';
 import type { ToolId } from '../types/batch';
 import { useBatch } from '../contexts/BatchContext';
 import { useToast } from '../contexts/ToastContext';

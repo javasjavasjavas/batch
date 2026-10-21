@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams } from '../i18n/router';
 import { TOOLS } from '../data/tools';
 import { ToolTemplate } from '../components/site/ToolTemplate';
 import { NotFound } from './NotFound';

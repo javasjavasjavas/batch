@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { twMerge } from 'tailwind-merge';
 
 interface ProgressBarProps {
@@ -16,11 +17,12 @@ const TONES = {
 };
 
 export function ProgressBar({ value, label, tone = 'ink', size = 'sm', className }: ProgressBarProps) {
+  const { tr } = useI18n();
   const pct = Math.round(Math.max(0, Math.min(1, value)) * 100);
   return (
     <div
       role="progressbar"
-      aria-label={label}
+      aria-label={tr(label)}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={pct}

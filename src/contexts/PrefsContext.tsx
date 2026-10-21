@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LocaleContext';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ConsentChoices, CookieConsent, InterfacePrefs } from '../types/prefs';
 import { useLocalStorage } from '../hooks/useLocalStorage';
@@ -28,6 +29,7 @@ interface PrefsContextValue {
 const PrefsContext = createContext<PrefsContextValue | null>(null);
 
 export function PrefsProvider({ children }: {children: React.ReactNode;}) {
+  const { tr } = useI18n();
   const [prefs, setPrefs] = useLocalStorage<InterfacePrefs>('batch.prefs', DEFAULT_PREFS);
   const [consent, setConsent] = useLocalStorage<CookieConsent>('batch.consent', DEFAULT_CONSENT);
   const [cookieDialogOpen, setCookieDialogOpen] = useState(false);
@@ -69,7 +71,7 @@ export function PrefsProvider({ children }: {children: React.ReactNode;}) {
     [prefs, updatePrefs, resetPrefs, consent, saveConsent, acceptAll, rejectAll, cookieDialogOpen, demoOffline]
   );
 
-  return <PrefsContext.Provider value={value}>{children}</PrefsContext.Provider>;
+  return <PrefsContext.Provider value={value}>{tr(children)}</PrefsContext.Provider>;
 }
 
 export function usePrefs(): PrefsContextValue {

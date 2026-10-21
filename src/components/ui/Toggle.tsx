@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useId } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -12,17 +13,18 @@ interface ToggleProps {
 }
 
 export function Toggle({ checked, onChange, label, description, disabled, hideLabel, className }: ToggleProps) {
+  const { tr } = useI18n();
   const id = useId();
   return (
     <div className={twMerge('flex items-start justify-between gap-4', className)}>
       {!hideLabel &&
       <div className="min-w-0">
           <span id={`${id}-label`} className="text-sm font-medium text-ink">
-            {label}
+            {tr(label)}
           </span>
           {description &&
         <p id={`${id}-desc`} className="mt-0.5 text-[13px] leading-snug text-muted">
-              {description}
+              {tr(description)}
             </p>
         }
         </div>
@@ -32,7 +34,7 @@ export function Toggle({ checked, onChange, label, description, disabled, hideLa
         role="switch"
         aria-checked={checked}
         aria-labelledby={hideLabel ? undefined : `${id}-label`}
-        aria-label={hideLabel ? label : undefined}
+        aria-label={tr(hideLabel ? label : undefined)}
         aria-describedby={description && !hideLabel ? `${id}-desc` : undefined}
         disabled={disabled}
         onClick={() => onChange(!checked)}

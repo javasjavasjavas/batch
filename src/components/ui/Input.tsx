@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,10 +12,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 { unit, invalid, leading, className, ...rest },
 ref)
 {
+  const { tr } = useI18n();
   return (
     <div className="relative">
       {leading &&
-      <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted">{leading}</span>
+      <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted">{tr(leading)}</span>
       }
       <input
         ref={ref}
@@ -32,7 +34,7 @@ ref)
         {...rest} />
       
       {unit &&
-      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[13px] text-muted">{unit}</span>
+      <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[13px] text-muted">{tr(unit)}</span>
       }
     </div>);
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '../i18n/router';
 import { consentReady, isAdHost } from './config';
 import { loadAdSense } from './loader';
 

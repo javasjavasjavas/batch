@@ -1,5 +1,6 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from '../../i18n/router';
 import { CircleCheckIcon, CircleXIcon, ImagesIcon, PackageOpenIcon, RotateCcwIcon, SlidersHorizontalIcon } from 'lucide-react';
 import { useBatch } from '../../contexts/BatchContext';
 import { useToast } from '../../contexts/ToastContext';
@@ -16,6 +17,7 @@ import { CompareDialog } from '../../components/workspace/CompareDialog';
 import { downloadBlob, makeZip } from '../../processing/downloads';
 
 export function Results() {
+  const { tr } = useI18n();
   const { workspacePath, run, retryFailed, discardRun, clearBatch, title, images } = useBatch();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -35,15 +37,11 @@ export function Results() {
           headingLevel="h1"
           className="py-20"
           icon={<PackageOpenIcon className="h-5 w-5" />}
-          title="No results yet"
-          description="Results appear here after a run finishes.">
+          title={tr("No results yet")}
+          description={tr("Results appear here after a run finishes.")}>
           
-          <ButtonLink to={`${workspacePath}/review`} variant="primary">
-            Review batch
-          </ButtonLink>
-          <ButtonLink to={`${workspacePath}`} variant="secondary">
-            Back to editing
-          </ButtonLink>
+          <ButtonLink to={`${workspacePath}/review`} variant="primary">{tr("Review batch")}</ButtonLink>
+          <ButtonLink to={`${workspacePath}`} variant="secondary">{tr("Back to editing")}</ButtonLink>
         </EmptyState>
       </div>);
 
@@ -81,34 +79,31 @@ export function Results() {
   return (
     <div className="scrollbar-thin h-full overflow-y-auto">
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:pt-10">
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-info-soft px-2 py-1 text-[12px] font-medium text-info">Processed locally</span>
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-info-soft px-2 py-1 text-[12px] font-medium text-info">{tr("Processed locally")}</span>
         <h1 className="mt-3 text-[28px] font-semibold tracking-[-0.03em] text-ink sm:text-[34px]">
-          {failed.length || run.status === 'canceled' ? `${done.length} of ${counts.total} images ready` : 'Batch complete'}
+          {tr(failed.length || run.status === 'canceled' ? `${done.length} of ${counts.total} images ready` : 'Batch complete')}
         </h1>
         <p className="mt-1 max-w-[60ch] text-[15px] text-muted">
-          {run.status === 'canceled' ? 'Remaining work was canceled. Completed images can still be downloaded.' : failed.length ?
+          {tr(run.status === 'canceled' ? 'Remaining work was canceled. Completed images can still be downloaded.' : failed.length ?
           'Some images couldn’t be processed. Retry them, or adjust settings and run again.' :
-          'Your images are ready to download.'}
+          'Your images are ready to download.')}
         </p>
 
-        <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Status counts">
+        <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label={tr("Status counts")}>
           <li className="flex items-center gap-1.5 text-ink">
             <CircleCheckIcon className="h-4 w-4 text-[#6E8A12]" aria-hidden="true" />
-            <span className="tabular font-semibold">{done.length}</span> complete
-          </li>
+            <span className="tabular font-semibold">{tr(done.length)}</span>{tr(" complete")}</li>
           <li className={`flex items-center gap-1.5 ${failed.length ? 'text-danger' : 'text-muted'}`}>
             <CircleXIcon className="h-4 w-4" aria-hidden="true" />
-            <span className="tabular font-semibold">{failed.length}</span> failed
-          </li>
+            <span className="tabular font-semibold">{tr(failed.length)}</span>{tr(" failed")}</li>
           <li className="flex items-center gap-1.5 text-muted">
             <ImagesIcon className="h-4 w-4" aria-hidden="true" />
-            <span className="tabular font-semibold text-ink">{counts.total}</span> in batch
-          </li>
-          {counts.canceled > 0 && <li className="text-muted"><span className="tabular font-semibold">{counts.canceled}</span> canceled</li>}
+            <span className="tabular font-semibold text-ink">{tr(counts.total)}</span>{tr(" in batch")}</li>
+          {counts.canceled > 0 && <li className="text-muted"><span className="tabular font-semibold">{tr(counts.canceled)}</span>{tr(" canceled")}</li>}
         </ul>
         {done.length > 0 &&
         <p className="tabular mt-3 text-[13px] text-muted">
-            {formatBytes(totalOriginal)} → <span className="font-medium text-ink">{formatBytes(totalOutput)}</span>
+            {tr(formatBytes(totalOriginal))}{tr(" → ")}<span className="font-medium text-ink">{tr(formatBytes(totalOutput))}</span>
             {totalOriginal > 0 && ` (${totalOutput > totalOriginal ? '+' : ''}${Math.round((totalOutput / totalOriginal - 1) * 100)}%)`}
           </p>
         }
@@ -119,13 +114,12 @@ export function Results() {
             <section aria-labelledby="failed-title" className="rounded-2xl border border-danger/20 bg-danger-soft p-5">
                 <h2 id="failed-title" className="flex items-center gap-2 text-[15px] font-semibold text-ink">
                   <CircleXIcon className="h-4 w-4 text-danger" aria-hidden="true" />
-                  {pluralize(failed.length, 'image')} failed
-                </h2>
+                  {tr(pluralize(failed.length, 'image'))}{tr(" failed")}</h2>
                 <ul className="mt-3 space-y-2.5">
                   {failed.map((item) =>
                 <li key={item.id} className="rounded-lg bg-white/70 px-3 py-2.5">
                       <p className="truncate text-sm font-medium text-ink">{item.name}</p>
-                      <p className="mt-0.5 text-[13px] leading-snug text-[#7A2A21]">{item.error}</p>
+                      <p className="mt-0.5 text-[13px] leading-snug text-[#7A2A21]">{tr(item.error)}</p>
                     </li>
                 )}
                 </ul>
@@ -137,21 +131,15 @@ export function Results() {
                     navigate(`${workspacePath}/run`);
                   }}>
                   
-                    <RotateCcwIcon className="h-4 w-4" aria-hidden="true" />
-                    Retry failed ({failed.length})
-                  </Button>
+                    <RotateCcwIcon className="h-4 w-4" aria-hidden="true" />{tr("Retry failed (")}{tr(failed.length)}{tr(")")}</Button>
                   <Button variant="secondary" onClick={() => navigate(`${workspacePath}?panel=settings`)}>
-                    <SlidersHorizontalIcon className="h-4 w-4" aria-hidden="true" />
-                    Adjust settings
-                  </Button>
+                    <SlidersHorizontalIcon className="h-4 w-4" aria-hidden="true" />{tr("Adjust settings")}</Button>
                 </div>
               </section>
             }
 
             <section aria-labelledby="done-title">
-              <h2 id="done-title" className="text-[15px] font-semibold text-ink">
-                Completed images
-              </h2>
+              <h2 id="done-title" className="text-[15px] font-semibold text-ink">{tr("Completed images")}</h2>
               {done.length ?
               <ul className="mt-3 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-white">
                   {done.map((item) =>
@@ -159,9 +147,7 @@ export function Results() {
                 )}
                 </ul> :
 
-              <p className="mt-3 rounded-2xl border border-dashed border-line-strong bg-white p-6 text-center text-sm text-muted">
-                  No images completed in this run.
-                </p>
+              <p className="mt-3 rounded-2xl border border-dashed border-line-strong bg-white p-6 text-center text-sm text-muted">{tr("No images completed in this run.")}</p>
               }
             </section>
           </div>
@@ -169,12 +155,8 @@ export function Results() {
           <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
             <ExportPanel items={done} zipName={zipName} onZipNameChange={setZipName} onDownloadAll={exportAll} exportProgress={exportProgress} />
             <div className="grid grid-cols-2 gap-2">
-              <ButtonLink to={`${workspacePath}`} variant="secondary">
-                Edit settings
-              </ButtonLink>
-              <Button variant="ghost" onClick={() => images.length ? setConfirmNew(true) : startNew()}>
-                Start a new batch
-              </Button>
+              <ButtonLink to={`${workspacePath}`} variant="secondary">{tr("Edit settings")}</ButtonLink>
+              <Button variant="ghost" onClick={() => images.length ? setConfirmNew(true) : startNew()}>{tr("Start a new batch")}</Button>
             </div>
           </aside>
         </div>
@@ -187,9 +169,9 @@ export function Results() {
         open={confirmNew}
         onClose={() => setConfirmNew(false)}
         onConfirm={startNew}
-        title="Start a new batch?"
-        description={`This removes the ${pluralize(images.length, 'image')} in your workspace. Settings and presets are kept.`}
-        confirmLabel="Start new batch"
+        title={tr("Start a new batch?")}
+        description={tr(`This removes the ${pluralize(images.length, 'image')} in your workspace. Settings and presets are kept.`)}
+        confirmLabel={tr("Start new batch")}
         tone="danger" />
       
     </div>);

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import type { OutputFormat, PngLevel } from '../../types/batch';
 import { useBatch } from '../../contexts/BatchContext';
 import { fieldError } from '../../utils/validation';
@@ -8,6 +9,7 @@ import { Toggle } from '../ui/Toggle';
 import { ColorField } from './ColorField';
 
 export function ConvertControls() {
+  const { tr } = useI18n();
   const { settings, updateSettings, issues, enabled } = useBatch();
   const c = settings.convert;
   const set = (patch: Partial<typeof c>) => updateSettings('convert', patch);
@@ -15,9 +17,9 @@ export function ConvertControls() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="mb-2 text-[13px] font-medium text-ink">Output format</p>
+        <p className="mb-2 text-[13px] font-medium text-ink">{tr("Output format")}</p>
         <RadioCards<OutputFormat>
-          label="Output format"
+          label={tr("Output format")}
           value={c.format}
           onChange={(format) => set({ format })}
           options={[
@@ -29,20 +31,20 @@ export function ConvertControls() {
       </div>
 
       <div className="space-y-4 border-t border-line pt-5">
-        <p className="text-[13px] font-semibold text-ink">{FORMAT_LABEL[c.format]} options</p>
+        <p className="text-[13px] font-semibold text-ink">{tr(`${FORMAT_LABEL[c.format]} options`)}</p>
         {c.format === 'jpg' &&
         <>
             <ColorField
             id="convert-bg"
-            label="Fill for transparent areas"
+            label={tr("Fill for transparent areas")}
             hint="JPG can’t store transparency, so these areas get this color."
             value={c.background}
             onChange={(background) => set({ background })}
             error={fieldError(issues, 'convert', 'background')} />
           
             <Toggle
-            label="Progressive loading"
-            description="Images appear in passes on slow connections."
+            label={tr("Progressive loading")}
+            description={tr("Images appear in passes on slow connections.")}
             checked={c.progressive}
             onChange={(progressive) => set({ progressive })} />
           
@@ -50,9 +52,9 @@ export function ConvertControls() {
         }
         {c.format === 'png' &&
         <div>
-            <p className="mb-2 text-[13px] font-medium text-ink">Compression effort</p>
+            <p className="mb-2 text-[13px] font-medium text-ink">{tr("Compression effort")}</p>
             <Segmented<PngLevel>
-            label="Compression effort"
+            label={tr("Compression effort")}
             fullWidth
             size="sm"
             value={c.pngLevel}
@@ -63,25 +65,23 @@ export function ConvertControls() {
             { value: 'smallest', label: 'Smallest' }]
             } />
           
-            <p className="mt-2 text-[12.5px] leading-snug text-muted">
-              PNG stays lossless at every level. More effort gives smaller files but takes longer.
-            </p>
+            <p className="mt-2 text-[12.5px] leading-snug text-muted">{tr("PNG stays lossless at every level. More effort gives smaller files but takes longer.")}</p>
           </div>
         }
         {c.format === 'webp' &&
         <>
             <Toggle
-            label="Lossless"
-            description="Keeps every pixel. Files are larger than standard WebP."
+            label={tr("Lossless")}
+            description={tr("Keeps every pixel. Files are larger than standard WebP.")}
             checked={c.webpLossless}
             onChange={(webpLossless) => set({ webpLossless })} />
           
-            <p className="text-[12.5px] leading-snug text-muted">Transparent areas are preserved.</p>
+            <p className="text-[12.5px] leading-snug text-muted">{tr("Transparent areas are preserved.")}</p>
           </>
         }
       </div>
       {!enabled.compress && c.format !== 'png' && !(c.format === 'webp' && c.webpLossless) &&
-        <p className="text-[12.5px] text-muted">Encoding quality: 82. Use Compress or the Batch workspace to choose another quality.</p>}
+        <p className="text-[12.5px] text-muted">{tr("Encoding quality: 82. Use Compress or the Batch workspace to choose another quality.")}</p>}
     </div>);
 
 }

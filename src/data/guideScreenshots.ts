@@ -1,3 +1,4 @@
+import type { Locale } from '../i18n/paths';
 import type { ArticleSection } from '../types/content';
 
 type Screenshot = NonNullable<ArticleSection['image']>;
@@ -24,3 +25,16 @@ export const GUIDE_SCREENSHOTS: Record<string, Record<string, Screenshot>> = {
   'reduce-image-file-size': { 'pixels-vs-bytes': images.results, compress: images.compress, png: images.convert },
   'convert-webp-png-jpg': { 'webp-to-jpg': { ...images.convert, caption: 'Select JPG when an upload requires it. The screenshot shows all three output choices; the example selection is WebP.' }, 'batch-conversion': images.review },
 };
+
+/** Screenshots are captured from the corresponding language, not machine-translated images. */
+export function localizedScreenshot(image: Screenshot | undefined, locale: Locale): Screenshot | undefined {
+  if (!image || locale === 'en') return image;
+  const file = image.src.split('/').pop()!.replace('.jpg', '');
+  const sizes: Record<string, [number, number]> = {
+    'add-images': [650, 440], 'organize-batch': [885, 300], 'resize-padding': [328, 419],
+    'compress-quality': [328, 300], 'convert-format': [328, 280], 'rename-pattern': [328, 190],
+    'background-options': [328, 338], 'review-batch': [722, 357], 'batch-results': [740, 300],
+  };
+  const [width, height] = sizes[file];
+  return { ...image, src: '/guides/es/' + file + '.png', width, height };
+}

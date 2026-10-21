@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { ChevronLeftIcon, ChevronRightIcon, CornerDownRightIcon, LoaderCircleIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import type { BatchImage } from '../../types/batch';
@@ -27,6 +28,7 @@ const moveBtn =
 'flex h-7 w-7 items-center justify-center rounded-md border border-line bg-white/95 text-ink shadow-sm transition-colors duration-150 hover:bg-white disabled:opacity-40';
 
 export function ImageCard({ image, index, total, selected, planned, compact, onToggle, onOpen, onMove }: ImageItemProps) {
+  const { tr } = useI18n();
   return (
     <li className="group relative">
       <div
@@ -38,7 +40,7 @@ export function ImageCard({ image, index, total, selected, planned, compact, onT
         <button
           type="button"
           onClick={onOpen}
-          aria-label={`Open details for ${image.name}`}
+          aria-label={tr(`Open details for ${image.name}`)}
           className="relative block aspect-square w-full overflow-hidden rounded-lg">
           
           <ImageThumb src={image.thumbnailUrl || image.url} alt={image.name} showLabel={!compact} />
@@ -55,10 +57,10 @@ export function ImageCard({ image, index, total, selected, planned, compact, onT
           className="absolute left-3 top-3 shadow-sm" />
         
         <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity duration-150 group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100">
-          <button type="button" className={moveBtn} disabled={index === 0} onClick={() => onMove(-1)} aria-label={`Move ${image.name} earlier`}>
+          <button type="button" className={moveBtn} disabled={index === 0} onClick={() => onMove(-1)} aria-label={tr(`Move ${image.name} earlier`)}>
             <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" className={moveBtn} disabled={index === total - 1} onClick={() => onMove(1)} aria-label={`Move ${image.name} later`}>
+          <button type="button" className={moveBtn} disabled={index === total - 1} onClick={() => onMove(1)} aria-label={tr(`Move ${image.name} later`)}>
             <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
@@ -67,12 +69,12 @@ export function ImageCard({ image, index, total, selected, planned, compact, onT
             {image.name}
           </p>
           <p className={twMerge('tabular mt-0.5 truncate text-[12px]', image.status === 'unreadable' ? 'text-warning' : 'text-muted')}>
-            {imageMeta(image)}
+            {tr(imageMeta(image))}
           </p>
           {planned && !compact &&
-          <p className="mt-1 flex items-center gap-1 truncate text-[12px] text-lime-ink" title={`Planned name: ${planned}`}>
+          <p className="mt-1 flex items-center gap-1 truncate text-[12px] text-lime-ink" title={tr(`Planned name: ${planned}`)}>
               <CornerDownRightIcon className="h-3 w-3 shrink-0" aria-hidden="true" />
-              <span className="sr-only">Planned name: </span>
+              <span className="sr-only">{tr("Planned name: ")}</span>
               <span className="truncate">{planned}</span>
             </p>
           }

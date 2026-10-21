@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React from 'react';
 import { InfoIcon } from 'lucide-react';
 import { useBatch } from '../../contexts/BatchContext';
@@ -13,6 +14,7 @@ function describeQuality(q: number): {label: string;text: string;} {
 }
 
 export function CompressControls() {
+  const { tr } = useI18n();
   const { settings, updateSettings, enabled, images } = useBatch();
   const c = settings.compress;
   const band = describeQuality(c.quality);
@@ -29,11 +31,9 @@ export function CompressControls() {
       <fieldset disabled={qualityDisabled} className={`min-w-0 space-y-5 ${qualityDisabled ? 'opacity-50' : ''}`}>
       <div>
         <div className="flex items-end justify-between">
-          <label htmlFor="compress-quality" className="text-[13px] font-medium text-ink">
-            Quality
-          </label>
+          <label htmlFor="compress-quality" className="text-[13px] font-medium text-ink">{tr("Quality")}</label>
           <output htmlFor="compress-quality" className="tabular text-[28px] font-semibold leading-none tracking-[-0.02em] text-ink">
-            {c.quality}
+            {tr(c.quality)}
           </output>
         </div>
         <input
@@ -49,15 +49,15 @@ export function CompressControls() {
           style={{ ['--fill' as string]: `${c.quality}%` } as React.CSSProperties} />
         
         <div className="mt-2 flex justify-between text-[12px] text-muted">
-          <span>Smaller files</span>
-          <span>More detail</span>
+          <span>{tr("Smaller files")}</span>
+          <span>{tr("More detail")}</span>
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-[13px] font-medium text-ink">Presets</p>
+        <p className="mb-2 text-[13px] font-medium text-ink">{tr("Presets")}</p>
         <Segmented<string>
-          label="Quality presets"
+          label={tr("Quality presets")}
           size="sm"
           fullWidth
           value={String(c.quality)}
@@ -68,20 +68,18 @@ export function CompressControls() {
       </fieldset>
 
       <div id="compress-quality-help" className="rounded-xl bg-canvas p-3.5">
-        <p className="text-[13px] font-semibold text-ink">{qualityDisabled ? 'Lossless output' : band.label}</p>
-        <p className="mt-0.5 text-[13px] leading-snug text-muted">{qualityDisabled ? qualityHelp : band.text}</p>
+        <p className="text-[13px] font-semibold text-ink">{tr(qualityDisabled ? 'Lossless output' : band.label)}</p>
+        <p className="mt-0.5 text-[13px] leading-snug text-muted">{tr(qualityDisabled ? qualityHelp : band.text)}</p>
       </div>
 
       {!enabled.convert && images.some((image) => image.type === 'image/png') && !pngOutput &&
       <p className="flex gap-2 text-[12.5px] leading-snug text-muted">
-          <InfoIcon className="mt-px h-4 w-4 shrink-0" aria-hidden="true" />
-          PNG files stay lossless. Quality affects only the JPG and lossy WebP files in this batch.
-        </p>
+          <InfoIcon className="mt-px h-4 w-4 shrink-0" aria-hidden="true" />{tr("PNG files stay lossless. Quality affects only the JPG and lossy WebP files in this batch.")}</p>
       }
 
       <Toggle
-        label="Remove metadata"
-        description="Re-encoding removes metadata. Keep this on for compression; Rename only preserves the original bytes and metadata."
+        label={tr("Remove metadata")}
+        description={tr("Re-encoding removes metadata. Keep this on for compression; Rename only preserves the original bytes and metadata.")}
         checked={c.stripMetadata}
         onChange={(stripMetadata) => updateSettings('compress', { stripMetadata })} />
       

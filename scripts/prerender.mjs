@@ -10,7 +10,7 @@ if (publisherConfigured) {
 }
 if (!template.includes('<!--seo-head-->')) throw new Error('Missing metadata insertion point');
 const escape = (value) => value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
-const paths = [...SEO_PAGES.map((page) => page.path), ...WORKSPACE_PATHS, '/404'];
+const paths = [...SEO_PAGES.map((page) => page.path), ...WORKSPACE_PATHS, '/404', '/es/404'];
 for (const path of paths) {
   const meta = metaForPath(path);
   const tags = [
@@ -22,25 +22,27 @@ for (const path of paths) {
     `<meta property="og:description" content="${escape(meta.description)}">`,
     `<meta property="og:type" content="${meta.type}">`,
     '<meta property="og:site_name" content="Batch Image Kit">',
-    '<meta property="og:locale" content="en_US">',
+    `<meta property="og:locale" content="${meta.locale === 'es' ? 'es_ES' : 'en_US'}">`,
+    `<meta property="og:locale:alternate" content="${meta.locale === 'es' ? 'en_US' : 'es_ES'}">`,
     `<meta property="og:image" content="${SITE_URL}/social-card.png">`,
     '<meta property="og:image:type" content="image/png">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Batch — Free Bulk Image Tools">',
+    `<meta property="og:image:alt" content="${meta.locale === 'es' ? 'Batch — Herramientas gratis para imágenes en lote' : 'Batch — Free Bulk Image Tools'}">`,
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:image" content="${SITE_URL}/social-card.png">`,
-    '<meta name="twitter:image:alt" content="Batch — Free Bulk Image Tools">',
+    `<meta name="twitter:image:alt" content="${meta.locale === 'es' ? 'Batch — Herramientas gratis para imágenes en lote' : 'Batch — Free Bulk Image Tools'}">`,
     `<meta name="twitter:title" content="${escape(meta.title)}">`,
     `<meta name="twitter:description" content="${escape(meta.description)}">`,
     ...(meta.canonical ? [`<link rel="canonical" href="${meta.canonical}">`, `<meta property="og:url" content="${meta.canonical}">`] : []),
+    ...Object.entries(meta.alternates || {}).map(([lang, url]) => `<link rel="alternate" hreflang="${lang}" href="${url}">`),
     `<script id="page-schema" type="application/ld+json">${JSON.stringify(structuredData(path)).replace(/</g, '\\u003c')}</script>`,
   ].join('\n    ');
-  const file = path === '/' ? 'dist/index.html' : `dist${path}.html`;
+  const file = path.endsWith('/') ? `dist${path}index.html` : `dist${path}.html`;
   await mkdir(dirname(file), { recursive: true });
   const body = await render(path);
   if (!body.includes('<h1')) throw new Error(`Missing page content: ${path}`);
-  await writeFile(file, template.replace('<!--seo-head-->', tags).replace('<div id="root"></div>', () => `<div id="root">${body}</div>`));
+  await writeFile(file, template.replace('<html lang="en">', `<html lang="${meta.locale}">`).replace('<!--seo-head-->', tags).replace('<div id="root"></div>', () => `<div id="root">${body}</div>`));
 }
 await writeFile('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${SEO_PAGES.map((page) => `  <url><loc>${SITE_URL}${page.path}</loc></url>`).join('\n')}\n</urlset>\n`);
 await writeFile('dist/robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`);

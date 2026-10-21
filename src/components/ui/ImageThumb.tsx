@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useState } from 'react';
 import { ImageOffIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
@@ -12,6 +13,7 @@ interface ImageThumbProps {
 }
 
 export function ImageThumb({ src, alt, fit = 'contain', className, showLabel = false, eager = false }: ImageThumbProps) {
+  const { tr } = useI18n();
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -23,11 +25,11 @@ export function ImageThumb({ src, alt, fit = 'contain', className, showLabel = f
     return (
       <div
         role="img"
-        aria-label={`${alt}: preview unavailable`}
+        aria-label={tr(`${alt}: preview unavailable`)}
         className={twMerge('flex h-full w-full flex-col items-center justify-center gap-1.5 bg-sunken text-muted', className)}>
         
         <ImageOffIcon className="h-5 w-5" aria-hidden="true" />
-        {showLabel && <span className="px-2 text-center text-xs">Preview unavailable</span>}
+        {showLabel && <span className="px-2 text-center text-xs">{tr("Preview unavailable")}</span>}
       </div>);
 
   }
@@ -37,7 +39,7 @@ export function ImageThumb({ src, alt, fit = 'contain', className, showLabel = f
 
       <img
         src={src}
-        alt={alt}
+        alt={tr(alt)}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         draggable={false}

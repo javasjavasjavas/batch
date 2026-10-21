@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import React, { useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { ToolId } from '../../types/batch';
@@ -6,6 +7,7 @@ import { TOOL_LABEL, TOOL_ORDER } from '../../utils/planning';
 import { ToolIcon } from '../ui/ToolIcon';
 
 export function ToolTabs() {
+  const { tr } = useI18n();
   const { activeTool, setActiveTool, enabled } = useBatch();
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -19,7 +21,7 @@ export function ToolTabs() {
   };
 
   return (
-    <div role="tablist" aria-label="Tools" className="grid shrink-0 grid-cols-4 border-b border-line">
+    <div role="tablist" aria-label={tr("Tools")} className="grid shrink-0 grid-cols-4 border-b border-line">
       {TOOL_ORDER.map((tool: ToolId, i) => {
         const selected = tool === activeTool;
         return (
@@ -47,8 +49,8 @@ export function ToolTabs() {
               <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full border border-white bg-[#8FB01C]" aria-hidden="true" />
               }
             </span>
-            {TOOL_LABEL[tool]}
-            <span className="sr-only">{enabled[tool] ? ', on' : ', off'}</span>
+            {tr(TOOL_LABEL[tool])}
+            <span className="sr-only">{tr(enabled[tool] ? ', on' : ', off')}</span>
             {selected && <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-ink" aria-hidden="true" />}
           </button>);
 

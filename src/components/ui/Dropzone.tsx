@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useRef } from 'react';
 import { ArrowDownToLineIcon, FolderOpenIcon, ImagesIcon, TriangleAlertIcon, XIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
@@ -25,6 +26,7 @@ export function Dropzone({
   onDismissRejected,
   className
 }: DropzoneProps) {
+  const { tr } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const { isDragging, bind } = useFileDrop(onFiles);
 
@@ -49,22 +51,18 @@ export function Dropzone({
           {isDragging ? <ArrowDownToLineIcon className="h-5 w-5" /> : <FolderOpenIcon className="h-5 w-5" strokeWidth={1.75} />}
         </div>
         <p className="text-[17px] font-semibold tracking-[-0.01em] text-ink">
-          {isDragging ? 'Release to add your images' : title}
+          {tr(isDragging ? 'Release to add your images' : title)}
         </p>
-        <p className="mt-1 text-sm text-muted">{isDragging ? 'They’ll stay on this device.' : 'or pick them from your device'}</p>
+        <p className="mt-1 text-sm text-muted">{tr(isDragging ? 'They’ll stay on this device.' : 'or pick them from your device')}</p>
         <div className="mt-5 flex w-full flex-col items-stretch justify-center gap-2 sm:w-auto sm:flex-row sm:items-center">
           <Button variant="primary" size="lg" onClick={() => inputRef.current?.click()}>
-            <FolderOpenIcon className="h-[18px] w-[18px]" aria-hidden="true" />
-            Choose images
-          </Button>
+            <FolderOpenIcon className="h-[18px] w-[18px]" aria-hidden="true" />{tr("Choose images")}</Button>
           {onSample &&
           <Button variant="secondary" size="lg" onClick={onSample}>
-              <ImagesIcon className="h-[18px] w-[18px]" aria-hidden="true" />
-              Try a sample batch
-            </Button>
+              <ImagesIcon className="h-[18px] w-[18px]" aria-hidden="true" />{tr("Try a sample batch")}</Button>
           }
         </div>
-        <p className="mt-4 text-[12.5px] text-muted">{SUPPORTED_FORMATS_LABEL} · No sign-up · Files stay on your device</p>
+        <p className="mt-4 text-[12.5px] text-muted">{tr(SUPPORTED_FORMATS_LABEL)}{tr(" · No sign-up · Files stay on your device")}</p>
         <input
           ref={inputRef}
           type="file"
@@ -86,22 +84,22 @@ export function Dropzone({
             <TriangleAlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
             <div className="min-w-0 flex-1 text-[13px]">
               <p className="font-medium text-ink">
-                {rejected.length === 1 ? 'One file was skipped' : `${rejected.length} files were skipped`}
+                {tr(rejected.length === 1 ? 'One file was skipped' : `${rejected.length} files were skipped`)}
               </p>
               <ul className="mt-1 space-y-0.5 text-[#5C4A2A]">
                 {rejected.slice(0, 3).map((r) =>
               <li key={r.name} className="break-words">
-                    <span className="font-medium">{r.name}</span> — {r.reason}
+                    <span className="font-medium">{r.name}</span>{tr(" — ")}{tr(r.reason)}
                   </li>
               )}
-                {rejected.length > 3 && <li>and {rejected.length - 3} more.</li>}
+                {rejected.length > 3 && <li>{tr("and ")}{tr(rejected.length - 3)}{tr(" more.")}</li>}
               </ul>
             </div>
             {onDismissRejected &&
           <button
             type="button"
             onClick={onDismissRejected}
-            aria-label="Dismiss skipped files"
+            aria-label={tr("Dismiss skipped files")}
             className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-[#5C4A2A] transition-colors duration-150 hover:bg-warning/10">
             
                 <XIcon className="h-4 w-4" aria-hidden="true" />

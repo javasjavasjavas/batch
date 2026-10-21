@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LocaleContext';
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { ToastViewport } from '../components/ui/ToastViewport';
 
@@ -18,6 +19,7 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 export function ToastProvider({ children }: {children: React.ReactNode;}) {
+  const { tr } = useI18n();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const counter = useRef(0);
 
@@ -37,7 +39,7 @@ export function ToastProvider({ children }: {children: React.ReactNode;}) {
 
   return (
     <ToastContext.Provider value={value}>
-      {children}
+      {tr(children)}
       <ToastViewport toasts={toasts} onDismiss={dismiss} />
     </ToastContext.Provider>);
 

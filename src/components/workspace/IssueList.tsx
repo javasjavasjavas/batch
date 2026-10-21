@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { CircleAlertIcon, TriangleAlertIcon } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 import type { SettingsIssue } from '../../types/batch';
@@ -10,6 +11,7 @@ interface IssueListProps {
 }
 
 export function IssueList({ issues, showTool, className }: IssueListProps) {
+  const { tr } = useI18n();
   if (!issues.length) return null;
   return (
     <ul className={twMerge('space-y-2', className)}>
@@ -29,9 +31,9 @@ export function IssueList({ issues, showTool, className }: IssueListProps) {
             <TriangleAlertIcon className="mt-px h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
             }
             <span>
-              <span className="sr-only">{isError ? 'Error: ' : 'Warning: '}</span>
-              {showTool && issue.tool !== 'batch' && <span className="font-semibold">{TOOL_LABEL[issue.tool]}: </span>}
-              {issue.message}
+              <span className="sr-only">{tr(isError ? 'Error: ' : 'Warning: ')}</span>
+              {showTool && issue.tool !== 'batch' && <span className="font-semibold">{tr(TOOL_LABEL[issue.tool])}{tr(": ")}</span>}
+              {tr(issue.message)}
             </span>
           </li>);
 

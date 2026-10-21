@@ -1,5 +1,6 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '../../i18n/router';
 import { twMerge } from 'tailwind-merge';
 import { AD_FORMATS, AD_SIZE_CSS, advertising, advertisingReady, isAdHost, isAdRoute, validAdUnit, type AdPlacement } from '../../advertising/config';
 import { loadAdSense } from '../../advertising/loader';
@@ -16,6 +17,7 @@ export function AdSlot(props: AdSlotProps) {
 }
 
 function AdUnit({ placement, className, preview }: AdSlotProps & { preview: boolean }) {
+  const { tr } = useI18n();
   const node = useRef<HTMLModElement>(null);
   const shell = useRef<HTMLElement>(null);
   const requested = useRef(false);
@@ -54,14 +56,14 @@ function AdUnit({ placement, className, preview }: AdSlotProps & { preview: bool
   }, [preview, placement]);
 
   if (failed) return null;
-  return <aside ref={shell} aria-label="Advertisements" data-ad-placement={placement} className={twMerge('batch-ad-space', className)}>
-    <style>{AD_SIZE_CSS}</style>
-    <span className="text-[11px] text-muted">Advertisements</span>
+  return <aside ref={shell} aria-label={tr("Advertisements")} data-ad-placement={placement} className={twMerge('batch-ad-space', className)}>
+    <style>{tr(AD_SIZE_CSS)}</style>
+    <span className="text-[11px] text-muted">{tr("Advertisements")}</span>
     <ins ref={node} className={`${preview ? 'batch-ad-preview' : 'adsbygoogle'} batch-ad-${format}`}
       style={{ display: 'block', textDecoration: 'none' }}
       data-ad-client={preview ? undefined : advertising.publisherId}
       data-ad-slot={preview ? undefined : advertising.units[placement]}>
-      {preview && <span>{placement}<br /><strong>{size}</strong><small>Layout preview · no live ads</small></span>}
+      {preview && <span>{tr(placement)}<br /><strong>{tr(size)}</strong><small>{tr("Layout preview · no live ads")}</small></span>}
     </ins>
   </aside>;
 }

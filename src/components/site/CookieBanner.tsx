@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useI18n } from '../../i18n/LocaleContext';
+import { Link } from '../../i18n/router';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CookieIcon } from 'lucide-react';
 import { usePrefs } from '../../contexts/PrefsContext';
@@ -6,6 +7,7 @@ import { Button } from '../ui/Button';
 import { consentReady } from '../../advertising/config';
 
 export function CookieBanner() {
+  const { tr } = useI18n();
   const { consent, acceptAll, rejectAll, setCookieDialogOpen, cookieDialogOpen } = usePrefs();
   const visible = !consentReady && !consent.decided && !cookieDialogOpen;
 
@@ -13,7 +15,7 @@ export function CookieBanner() {
     <AnimatePresence>
       {visible &&
       <motion.section
-        aria-label="Cookie consent"
+        aria-label={tr("Cookie consent")}
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
@@ -24,26 +26,16 @@ export function CookieBanner() {
             <div className="flex min-w-0 flex-1 gap-3">
               <CookieIcon className="mt-0.5 h-5 w-5 shrink-0 text-ink" strokeWidth={1.75} aria-hidden="true" />
               <div className="text-sm">
-                <h2 className="font-semibold text-ink">Your privacy choices</h2>
-                <p className="mt-1 leading-relaxed text-muted">
-                  With your permission, optional cookies would personalize ads and measure usage. Necessary storage keeps your
-                  preferences working.{' '}
-                  <Link to="/privacy" className="font-medium text-ink underline underline-offset-2">
-                    Privacy
-                  </Link>
+                <h2 className="font-semibold text-ink">{tr("Your privacy choices")}</h2>
+                <p className="mt-1 leading-relaxed text-muted">{tr("With your permission, optional cookies would personalize ads and measure usage. Necessary storage keeps your preferences working.")}{tr(' ')}
+                  <Link to="/privacy" className="font-medium text-ink underline underline-offset-2">{tr("Privacy")}</Link>
                 </p>
               </div>
             </div>
             <div className="grid shrink-0 grid-cols-2 gap-2 sm:flex">
-              <Button variant="ghost" size="md" onClick={() => setCookieDialogOpen(true)} className="col-span-2 sm:col-span-1">
-                Customize
-              </Button>
-              <Button variant="secondary" onClick={rejectAll}>
-                Reject optional
-              </Button>
-              <Button variant="primary" onClick={acceptAll}>
-                Accept optional
-              </Button>
+              <Button variant="ghost" size="md" onClick={() => setCookieDialogOpen(true)} className="col-span-2 sm:col-span-1">{tr("Customize")}</Button>
+              <Button variant="secondary" onClick={rejectAll}>{tr("Reject optional")}</Button>
+              <Button variant="primary" onClick={acceptAll}>{tr("Accept optional")}</Button>
             </div>
           </div>
         </motion.section>

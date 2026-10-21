@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
 import { MoveIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '../ui/Button';
@@ -18,6 +19,7 @@ type Drag = { pointerId: number; x: number; y: number; index: number; kind: 'dra
 export function HeroRegionEditor({ imageUrl, width, height, regions, disabled, onChange }: {
   imageUrl: string; width: number; height: number; regions: HeroRegion[]; disabled: boolean; onChange: (regions: HeroRegion[]) => void;
 }) {
+  const { tr } = useI18n();
   const surface = useRef<HTMLDivElement>(null), drag = useRef<Drag | null>(null);
   const [selected, setSelected] = useState(0), [draft, setDraft] = useState<{ index: number; region: HeroRegion } | null>(null);
   const selectedIndex = Math.min(selected, regions.length - 1);
@@ -61,17 +63,16 @@ export function HeroRegionEditor({ imageUrl, width, height, regions, disabled, o
   return <div className="space-y-3">
     <div className="flex min-h-8 flex-wrap items-center gap-3 text-xs text-muted">
       {regions.length ? <>
-        <label className="flex items-center gap-2 font-medium text-ink">Selected area
-          <select aria-label="Selected area" value={selectedIndex} disabled={disabled} onChange={(event) => setSelected(Number(event.target.value))} className="h-8 rounded-lg border border-line bg-white px-2 text-sm">
-            {regions.map((_, i) => <option key={i} value={i}>Area {i + 1}</option>)}
+        <label className="flex items-center gap-2 font-medium text-ink">{tr("Selected area")}<select aria-label={tr("Selected area")} value={selectedIndex} disabled={disabled} onChange={(event) => setSelected(Number(event.target.value))} className="h-8 rounded-lg border border-line bg-white px-2 text-sm">
+            {regions.map((_, i) => <option key={i} value={i}>{tr("Area ")}{tr(i + 1)}</option>)}
           </select>
         </label>
-        <Button size="sm" variant="ghost" disabled={disabled} onClick={() => remove(selectedIndex)}><Trash2Icon className="h-4 w-4" />Delete area</Button>
-        {active && <span className="tabular-nums">{Math.round(active.width * width)} × {Math.round(active.height * height)} px</span>}
-      </> : <span>Drag over the image to add an area.</span>}
+        <Button size="sm" variant="ghost" disabled={disabled} onClick={() => remove(selectedIndex)}><Trash2Icon className="h-4 w-4" />{tr("Delete area")}</Button>
+        {active && <span className="tabular-nums">{tr(Math.round(active.width * width))}{tr(" × ")}{tr(Math.round(active.height * height))}{tr(" px")}</span>}
+      </> : <span>{tr("Drag over the image to add an area.")}</span>}
     </div>
     <div className="p-3">
-      <div ref={surface} role="group" aria-label="Text and logo removal areas" className={`relative mx-auto w-full touch-none select-none rounded-lg bg-canvas ${disabled ? '' : 'cursor-crosshair'}`}
+      <div ref={surface} role="group" aria-label={tr("Text and logo removal areas")} className={`relative mx-auto w-full touch-none select-none rounded-lg bg-canvas ${disabled ? '' : 'cursor-crosshair'}`}
         style={{ aspectRatio: `${width}/${height}`, maxWidth: `min(100%, ${460 * width / height}px)` }}
         onPointerDown={(event) => begin(event, regions.length, 'draw')}
         onPointerMove={(event) => { if (drag.current?.pointerId === event.pointerId) setDraft({ index: drag.current.index, region: dragRegion(event) }); }}
@@ -84,15 +85,15 @@ export function HeroRegionEditor({ imageUrl, width, height, regions, disabled, o
         }}
         onPointerCancel={() => { drag.current = null; setDraft(null); }}
         onLostPointerCapture={() => { drag.current = null; setDraft(null); }}>
-        <img draggable={false} src={imageUrl} alt="Hero artwork before removal" className="pointer-events-none absolute inset-0 h-full w-full rounded-lg" />
+        <img draggable={false} src={imageUrl} alt={tr("Hero artwork before removal")} className="pointer-events-none absolute inset-0 h-full w-full rounded-lg" />
         {shown.map((region, i) => {
           const isSelected = i === (draft?.index ?? selectedIndex);
           return <div key={i} data-removal-area={i + 1} className="absolute" style={{ left: `${region.x * 100}%`, top: `${region.y * 100}%`, width: `${region.width * 100}%`, height: `${region.height * 100}%`, zIndex: isSelected ? 2 : 1 }}>
-            <button type="button" aria-label={`Move area ${i + 1}`} aria-pressed={isSelected} disabled={disabled} onFocus={() => setSelected(i)} onClick={() => setSelected(i)} onPointerDown={(event) => begin(event, i, 'move')} onKeyDown={(event) => keyboard(event, i)}
+            <button type="button" aria-label={tr(`Move area ${i + 1}`)} aria-pressed={isSelected} disabled={disabled} onFocus={() => setSelected(i)} onClick={() => setSelected(i)} onPointerDown={(event) => begin(event, i, 'move')} onKeyDown={(event) => keyboard(event, i)}
               className={`absolute inset-0 h-full w-full cursor-move border-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-white ${isSelected ? 'border-lime bg-lime/20 shadow-[0_0_0_1px_rgba(0,0,0,0.6)]' : 'border-white/80 bg-white/10'}`}>
-              <span className="pointer-events-none absolute left-1 top-1 flex items-center gap-1 rounded bg-ink/85 px-1.5 py-0.5 text-[10px] font-semibold text-white"><MoveIcon className="h-3 w-3" />{i + 1}</span>
+              <span className="pointer-events-none absolute left-1 top-1 flex items-center gap-1 rounded bg-ink/85 px-1.5 py-0.5 text-[10px] font-semibold text-white"><MoveIcon className="h-3 w-3" />{tr(i + 1)}</span>
             </button>
-            {isSelected && !disabled && handles.map((handle) => <button type="button" key={handle.id} aria-label={`Resize area ${i + 1} ${handle.label}`} onPointerDown={(event) => begin(event, i, handle.id)} onKeyDown={(event) => keyboard(event, i, handle.id)}
+            {isSelected && !disabled && handles.map((handle) => <button type="button" key={handle.id} aria-label={tr(`Resize area ${i + 1} ${handle.label}`)} onPointerDown={(event) => begin(event, i, handle.id)} onKeyDown={(event) => keyboard(event, i, handle.id)}
               className="absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2"
               style={{ left: handle.left, top: handle.top, cursor: handle.cursor }}>
               <span className="pointer-events-none h-3 w-3 rounded-[2px] border border-ink bg-lime shadow-sm" />
@@ -101,6 +102,6 @@ export function HeroRegionEditor({ imageUrl, width, height, regions, disabled, o
         })}
       </div>
     </div>
-    <p className="text-xs leading-relaxed text-muted">Drag an area to move it, or drag its handles to resize. Draw outside an area to add another. Use arrow keys for 1 px adjustments, or Shift + arrows for 10 px.</p>
+    <p className="text-xs leading-relaxed text-muted">{tr("Drag an area to move it, or drag its handles to resize. Draw outside an area to add another. Use arrow keys for 1 px adjustments, or Shift + arrows for 10 px.")}</p>
   </div>;
 }

@@ -1,3 +1,4 @@
+import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { WifiOffIcon, XIcon } from 'lucide-react';
@@ -5,6 +6,7 @@ import { usePrefs } from '../../contexts/PrefsContext';
 import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 
 export function OfflineNotice() {
+  const { tr } = useI18n();
   const online = useOnlineStatus();
   const { demoOffline, setDemoOffline } = usePrefs();
   const offline = !online || demoOffline;
@@ -29,11 +31,8 @@ export function OfflineNotice() {
         
           <WifiOffIcon className="mt-0.5 h-[18px] w-[18px] shrink-0 text-warning" aria-hidden="true" />
           <div className="min-w-0 flex-1 text-sm">
-            <p className="font-medium text-ink">You’re offline</p>
-            <p className="mt-0.5 leading-snug text-[#5C4A2A]">
-              Your batch and settings stay available because they live on this device. Help pages and ad space may not load
-              until you reconnect.
-              {demoOffline && online && ' (Simulated from the demo menu.)'}
+            <p className="font-medium text-ink">{tr("You’re offline")}</p>
+            <p className="mt-0.5 leading-snug text-[#5C4A2A]">{tr("Your batch and settings stay available because they live on this device. Help pages and ad space may not load until you reconnect.")}{tr(demoOffline && online && ' (Simulated from the demo menu.)')}
             </p>
           </div>
           <button
@@ -42,7 +41,7 @@ export function OfflineNotice() {
             setDismissed(true);
             setDemoOffline(false);
           }}
-          aria-label="Dismiss offline notice"
+          aria-label={tr("Dismiss offline notice")}
           className="-mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[#5C4A2A] transition-colors duration-150 hover:bg-warning/10">
           
             <XIcon className="h-4 w-4" aria-hidden="true" />

@@ -1,5 +1,6 @@
+import { useI18n } from '../i18n/LocaleContext';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '../i18n/router';
 import type { BatchSettings, EnabledTools, SettingsIssue, ToolId } from '../types/batch';
 import type { RunState } from '../types/run';
 import { DEFAULT_ENABLED, DEFAULT_SETTINGS } from '../data/defaultSettings';
@@ -51,11 +52,12 @@ interface BatchContextValue extends Omit<ImagesApi, 'loadSample' | 'clearBatch'>
 const BatchContext = createContext<BatchContextValue | null>(null);
 
 export function BatchProvider({ children }: {children: React.ReactNode;}) {
+  const { tr } = useI18n();
   const imagesApi = useBatchImages();
   const presetsApi = usePresets();
   const engine = useRunEngine();
   const { discard: discardEngine, start: startEngine } = engine;
-  const [title, setTitle] = useState(DEFAULT_TITLE);
+  const [title, setTitle] = useState(() => tr(DEFAULT_TITLE));
   const [reviewIds, setReviewIds] = useState<string[] | null>(null);
   const { pathname } = useLocation();
   const workspaceTool = toolFromPath(pathname);
@@ -83,16 +85,16 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
       discardEngine();
       setReviewIds(null);
       imagesApi.loadSample(options);
-      setTitle((t) => t === DEFAULT_TITLE ? 'Spring product shoot' : t);
+      setTitle((t) => t === DEFAULT_TITLE || t === tr(DEFAULT_TITLE) ? tr('Spring product shoot') : t);
     },
-    [imagesApi, discardEngine]
+    [imagesApi, discardEngine, tr]
   );
 
   const clearBatch = useCallback(() => {
     discardEngine();
     setReviewIds(null);
     imagesApi.clearBatch();
-    setTitle(DEFAULT_TITLE);
+    setTitle(tr(DEFAULT_TITLE));
   }, [imagesApi, discardEngine]);
 
   const setToolEnabled = useCallback(
@@ -195,7 +197,7 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
     discardRun: engine.discard
   };
 
-  return <BatchContext.Provider value={value}>{children}</BatchContext.Provider>;
+  return <BatchContext.Provider value={value}>{tr(children)}</BatchContext.Provider>;
 }
 
 export function useBatch(): BatchContextValue {

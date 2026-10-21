@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
-import { SEO_PAGES, WORKSPACE_PATHS, TOOL_ALIASES, SITE_URL } from '../dist-ssr/entry-server.js';
+import { SEO_PAGES, WORKSPACE_PATHS, TOOL_ALIASES, SITE_URL, metaForPath } from '../dist-ssr/entry-server.js';
 
 const titles = new Set(), descriptions = new Set();
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
@@ -13,7 +13,7 @@ const publicPaths = new Set(SEO_PAGES.map((page) => page.path));
 const inbound = new Set();
 let checkedLinks = 0;
 for (const page of SEO_PAGES) {
-  const html = await readFile(page.path === '/' ? 'dist/index.html' : `dist${page.path}.html`, 'utf8');
+  const html = await readFile(page.path.endsWith('/') ? `dist${page.path}index.html` : `dist${page.path}.html`, 'utf8');
   const title = html.match(/<title>(.*?)<\/title>/)?.[1];
   const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1];
   assert(title && description, `Missing metadata: ${page.path}`);
@@ -23,6 +23,10 @@ for (const page of SEO_PAGES) {
   assert.equal([...html.matchAll(/rel="canonical"/g)].length, 1, `Expected one canonical: ${page.path}`);
   assert(html.includes(`<link rel="canonical" href="${SITE_URL}${page.path}">`), `Incorrect canonical: ${page.path}`);
   assert(html.includes('content="index,follow,max-image-preview:large"'));
+  const meta = metaForPath(page.path);
+  assert(html.includes('<html lang="' + meta.locale + '">'), 'Wrong document language: ' + page.path);
+  for (const [lang, url] of Object.entries(meta.alternates)) assert(html.includes('<link rel="alternate" hreflang="' + lang + '" href="' + url + '">'), 'Missing language alternate: ' + page.path);
+  if (meta.locale === 'es' && page.kind === 'article') assert(html.includes('/guides/es/'), 'Spanish guide needs localized screenshots');
   assert(!html.includes('noindex'), `Public route marked noindex: ${page.path}`);
   assert(sitemap.includes(`<loc>${SITE_URL}${page.path}</loc>`), `Missing sitemap URL: ${page.path}`);
   assert(!html.includes('<!--seo-head-->') && !html.includes('vite.svg'));
@@ -54,7 +58,7 @@ for (const page of SEO_PAGES) {
   if (page.kind === 'article') assert(html.includes('<figcaption') && html.includes('loading="lazy"'), `Missing illustrated instructions: ${page.path}`);
 }
 for (const page of SEO_PAGES) assert(inbound.has(page.path), `Orphan public page: ${page.path}`);
-for (const path of [...WORKSPACE_PATHS, '/404']) {
+for (const path of [...WORKSPACE_PATHS, '/404', '/es/404']) {
   const html = await readFile(`dist${path}.html`, 'utf8');
   assert(html.includes('content="noindex,follow"'), `Internal/404 route indexable: ${path}`);
   assert(!html.includes('rel="canonical"'), `Unnecessary internal canonical: ${path}`);

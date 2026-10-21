@@ -1,4 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useI18n } from '../../i18n/LocaleContext';
+import { Link, useNavigate } from '../../i18n/router';
 import { ArrowRightIcon, ArrowUpRightIcon } from 'lucide-react';
 import type { ToolInfo } from '../../types/content';
 import { ToolIcon } from '../ui/ToolIcon';
@@ -10,6 +11,7 @@ interface ToolCardProps {
 }
 
 export function ToolCard({ tool, variant = 'full' }: ToolCardProps) {
+  const { tr } = useI18n();
   const navigate = useNavigate();
 
   if (variant === 'compact') {
@@ -22,8 +24,8 @@ export function ToolCard({ tool, variant = 'full' }: ToolCardProps) {
           <ToolIcon tool={tool.id} />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-semibold text-ink">{tool.name}</span>
-          <span className="mt-0.5 block text-[13px] leading-snug text-muted">{tool.tagline}</span>
+          <span className="block text-[15px] font-semibold text-ink">{tr(tool.name)}</span>
+          <span className="mt-0.5 block text-[13px] leading-snug text-muted">{tr(tool.tagline)}</span>
         </span>
         <ArrowUpRightIcon
           className="h-4 w-4 shrink-0 text-muted transition-transform duration-150 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
@@ -40,26 +42,20 @@ export function ToolCard({ tool, variant = 'full' }: ToolCardProps) {
       </span>
       <h2 className="mt-5 text-lg font-semibold tracking-[-0.015em] text-ink">
         <Link to={`/tools/${tool.slug}`} className="rounded hover:underline hover:underline-offset-4">
-          {tool.name}
+          {tr(tool.name)}
         </Link>
       </h2>
-      <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">{tool.tagline}</p>
+      <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">{tr(tool.tagline)}</p>
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-6">
         <Button
           variant="primary"
           onClick={() => {
             navigate(`/app/${tool.id}`);
-          }}>
-          
-          Use in workspace
-          <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+          }}>{tr("Use in workspace")}<ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
         <Link
           to={`/tools/${tool.slug}`}
-          className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted transition-colors duration-150 hover:text-ink">
-          
-          How it works
-        </Link>
+          className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-muted transition-colors duration-150 hover:text-ink">{tr("How it works")}</Link>
       </div>
     </article>);
 
