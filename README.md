@@ -34,18 +34,20 @@ Run `npm test` and `npx tsc --noEmit` to verify the processing and application.
 The application is a static React/Vite SPA. Image processing, AI inference, and
 ZIP generation run in the visitor's browser; no API server or database is needed.
 
-Connect `javasjavasjavas/batch` to Cloudflare Workers Builds:
+Connect `javasjavasjavas/batch` to Cloudflare Pages:
 
-- Worker name: `batch-image-kit` (must match `wrangler.json`).
+- Project name: `batchimagekit` (matches `wrangler.json`).
 - Production branch: `main`.
+- Framework preset: React (Vite).
 - Build command: `npm run build`.
-- Deploy command: `npx wrangler deploy`.
+- Build output directory: `dist`.
 - Root directory: repository root.
 - Node.js: 22, declared in `.node-version`.
 
 Cloudflare installs dependencies from `package-lock.json`. The Wrangler config
-serves `dist` as static assets and enables SPA navigation for direct links such
-as `/app/steam` and `/tools`. No Worker script or paid storage is needed.
+declares `dist` as the Pages output. Pages automatically supports SPA navigation
+for direct links such as `/app/steam` and `/tools` because the build has no
+top-level `404.html`. No Functions, Worker script, or paid storage is needed.
 
 The intended custom domain is `batchimagekit.com`. Add it in Cloudflare after
 the first successful deployment and finish the registrar's DNS setup. Repository
