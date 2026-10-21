@@ -94,6 +94,9 @@ export function EditorialLayout({ breadcrumb, eyebrow, title, lede, meta, draft,
               )}
                 </ul>
             }
+              {s.links && <ul className="mt-3 space-y-2">
+                {s.links.map((link) => <li key={link.href}><a href={link.href} className="text-sm underline underline-offset-4 hover:text-muted">{link.label}</a></li>)}
+              </ul>}
               {s.image && <figure className="mt-6">
                 <a href={s.image.src} target="_blank" rel="noreferrer" className="block w-fit max-w-full rounded-xl border border-line bg-white p-2 transition-colors hover:border-line-strong" aria-label={`Enlarge screenshot: ${s.image.alt}`}>
                   <img src={s.image.src} alt={s.image.alt} width={s.image.width} height={s.image.height} loading="lazy" decoding="async" className="h-auto max-w-full rounded-lg" />

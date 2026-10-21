@@ -30,6 +30,7 @@ export interface ArticleSection {
   heading: string;
   paragraphs: string[];
   list?: string[];
+  links?: { label: string; href: string }[];
   image?: { src: string; alt: string; caption: string; width: number; height: number };
 }
 
