@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRightIcon, CpuIcon, EyeOffIcon, MonitorSmartphoneIcon, FolderUpIcon, SlidersHorizontalIcon, ClipboardCheckIcon, Gamepad2Icon } from 'lucide-react';
 import { TOOLS } from '../data/tools';
 import { HOME_FAQS } from '../data/homeFaqs';
@@ -36,7 +36,6 @@ const LOCAL_POINTS = [
 
 
 export function Home() {
-  const navigate = useNavigate();
   const { handleFiles, rejected, clearRejected, openSample } = useWorkspaceEntry();
 
   return (
@@ -44,11 +43,7 @@ export function Home() {
       <section className="home-hero mx-auto grid max-w-content gap-x-10 gap-y-5 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-x-12 lg:pb-20 lg:pt-14">
         <div className="home-hero-main">
           <h1 className="text-[42px] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-[58px]">
-            Get your
-            <br />
-            images ready.
-            <br />
-            All at once.
+            Free bulk<br />image tools.<br />All in one place.
           </h1>
           <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-muted">
             Resize, compress, convert, and rename a whole batch of images with one set of settings. Free, no account, and
@@ -61,19 +56,15 @@ export function Home() {
           <ul className="mt-2 flex flex-wrap gap-2">
             {TOOLS.map((tool) =>
             <li key={tool.id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate(`/app/${tool.id}`);
-                  }}
+                <Link to={`/tools/${tool.slug}`}
                   className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-sm font-medium text-ink transition-[border-color,background-color] duration-150 hover:border-line-strong hover:bg-lime-soft">
                   
                     <ToolIcon tool={tool.id} className="h-4 w-4" />
                     {TOOL_LABEL[tool.id]}
-                </button>
+                </Link>
               </li>
             )}
-            <li><Link to="/app/steam" className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-sm font-medium text-ink hover:bg-lime-soft"><Gamepad2Icon className="h-4 w-4" />Steam assets</Link></li>
+            <li><Link to="/tools/steam-assets" className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-sm font-medium text-ink hover:bg-lime-soft"><Gamepad2Icon className="h-4 w-4" />Steam assets</Link></li>
             <li><Link to="/tools" className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-lime-soft px-3 text-sm font-medium text-ink hover:bg-lime">Platform kits<ArrowRightIcon className="h-4 w-4" /></Link></li>
           </ul>
         </div>
@@ -87,7 +78,7 @@ export function Home() {
           <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <h2 id="how-title" className="text-[30px] font-semibold tracking-[-0.03em] text-ink sm:text-[36px]">
-                Three steps, any number of images
+                Three steps, up to 100 images
               </h2>
               <p className="mt-2 max-w-[52ch] text-[15.5px] leading-relaxed text-muted">
                 Batch is built for the moment you have forty photos and one set of requirements.

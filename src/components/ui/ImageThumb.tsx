@@ -13,11 +13,10 @@ interface ImageThumbProps {
 
 export function ImageThumb({ src, alt, fit = 'contain', className, showLabel = false, eager = false }: ImageThumbProps) {
   const [failed, setFailed] = useState(false);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setFailed(false);
-    setLoaded(false);
+
   }, [src]);
 
   if (!src || failed) {
@@ -35,19 +34,18 @@ export function ImageThumb({ src, alt, fit = 'contain', className, showLabel = f
 
   return (
     <div className={twMerge('relative h-full w-full bg-sunken', className)}>
-      {!loaded && <div className="absolute inset-0 animate-pulse bg-[#E8E8E0]" aria-hidden="true" />}
+
       <img
         src={src}
         alt={alt}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         draggable={false}
-        onLoad={() => setLoaded(true)}
         onError={() => setFailed(true)}
         className={twMerge(
           'h-full w-full transition-opacity duration-200 ease-out',
           fit === 'contain' ? 'object-contain' : 'object-cover',
-          loaded ? 'opacity-100' : 'opacity-0'
+          'opacity-100'
         )} />
       
     </div>);

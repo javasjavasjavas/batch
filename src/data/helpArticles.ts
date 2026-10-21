@@ -1,6 +1,8 @@
 import type { HelpArticle } from '../types/content';
+import { WORKFLOW_GUIDES } from './workflowGuides';
 
 export const HELP_ARTICLES: HelpArticle[] = [
+...WORKFLOW_GUIDES,
 {
   slug: 'getting-started-with-a-batch',
   title: 'Getting started with a batch',

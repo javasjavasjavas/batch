@@ -6,7 +6,7 @@ export const TOOLS: ToolInfo[] = [
   slug: 'bulk-image-resizer',
   name: 'Bulk Image Resizer',
   tagline: 'Set exact dimensions or a maximum size for every image at once.',
-  title: 'Resize a whole folder of images to one size',
+  title: 'Bulk image resizer: resize photos online',
   lede:
   'Marketplaces, social feeds, and site templates each want their own dimensions. Set the target once and every image in the batch is planned to match, with proportions kept or framed to an exact size.',
   dropTitle: 'Drop the images you want to resize',
@@ -46,7 +46,7 @@ export const TOOLS: ToolInfo[] = [
   slug: 'image-compressor',
   name: 'Image Compressor',
   tagline: 'Shrink file sizes with one quality level for the whole batch.',
-  title: 'Make image files smaller without guessing',
+  title: 'Compress images in bulk online',
   lede:
   'Heavy photos slow down pages and run into upload limits. Pick one quality level for the batch and see exactly what it means before anything is exported.',
   dropTitle: 'Drop the images you want to make smaller',
@@ -106,13 +106,13 @@ export const TOOLS: ToolInfo[] = [
   },
   {
     title: 'Animated GIFs',
-    body: 'Conversion uses the first frame of an animated GIF. Animation isn’t carried over to JPG, PNG, or WebP output.'
+    body: 'Animated images can be renamed without changing their contents. Resizing, compression and conversion are blocked for animated files to preserve their frames; use a still image for those operations.'
   }],
 
   faqs: [
   {
     q: 'Which format should I choose?',
-    a: 'WebP gives the smallest files for websites. JPG works almost everywhere, including email and older software. PNG keeps every pixel and supports transparency, but files are larger.'
+    a: 'WebP often produces smaller files for websites; compare the result with your original. JPG works almost everywhere, including email and older software. PNG keeps every pixel and supports transparency, but files are larger.'
   },
   { q: 'Is WebP widely supported?', a: 'All current major browsers display WebP. Some older desktop software and a few upload forms still expect JPG.' },
   {
@@ -127,7 +127,7 @@ export const TOOLS: ToolInfo[] = [
   slug: 'bulk-file-renamer',
   name: 'Bulk File Renamer',
   tagline: 'Give a batch consistent names with patterns and numbering.',
-  title: 'Rename a batch of images with one pattern',
+  title: 'Bulk image file renamer online',
   lede:
   'IMG_4821.jpg doesn’t tell anyone what’s inside. Build a naming pattern with numbers, original names, and dates, and see every new filename before you commit.',
   dropTitle: 'Drop the images you want to rename',

@@ -9,6 +9,7 @@ import { SettingsPreviewCard } from './SettingsPreviewCard';
 import { StepList } from './StepList';
 import { FaqSection } from './FaqSection';
 import { ToolCard } from './ToolCard';
+import { WORKFLOW_GUIDES, GUIDE_TOOLS } from '../../data/workflowGuides';
 
 export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
   const { handleFiles, rejected, clearRejected, openSample, openWorkspace } = useWorkspaceEntry(tool.id);
@@ -76,6 +77,7 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
       </div>
 
       <section aria-labelledby="related-tools" className="border-t border-line py-14">
+        <nav aria-label="Image preparation guides" className="mb-8"><h2 className="text-lg font-semibold">Practical image guides</h2><ul className="mt-3 space-y-2">{WORKFLOW_GUIDES.filter((guide) => GUIDE_TOOLS[guide.slug]?.includes(tool.slug)).map((guide) => <li key={guide.slug}><Link className="text-sm underline underline-offset-4" to={`/help/${guide.slug}`}>{guide.title}</Link></li>)}<li><Link className="text-sm underline underline-offset-4" to="/help/choosing-output-settings">Choose size, quality, format and filename settings</Link></li></ul></nav>
         <h2 id="related-tools" className="text-lg font-semibold tracking-[-0.015em] text-ink">
           Related tools
         </h2>

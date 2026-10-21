@@ -31,7 +31,7 @@ Run `npm test` and `npx tsc --noEmit` to verify the processing and application.
 
 ## Cloudflare deployment
 
-The application is a static React/Vite SPA. Image processing, AI inference, and
+The application is a React/Vite site with prerendered public pages and client-side image workspaces. Image processing, AI inference, and
 ZIP generation run in the visitor's browser; no API server or database is needed.
 
 Connect `javasjavasjavas/batch` to Cloudflare Pages:
@@ -45,9 +45,13 @@ Connect `javasjavasjavas/batch` to Cloudflare Pages:
 - Node.js: 22, declared in `.node-version`.
 
 Cloudflare installs dependencies from `package-lock.json`. The Wrangler config
-declares `dist` as the Pages output. Pages automatically supports SPA navigation
-for direct links such as `/app/steam` and `/tools` because the build has no
-top-level `404.html`. No Functions, Worker script, or paid storage is needed.
+declares `dist` as the Pages output. The build prerenders public pages and every
+supported workspace route to extensionless HTML pages. A top-level `404.html`
+gives unknown URLs a real 404 response. Generated `_redirects` redirect platform
+`/app/:id` aliases to `/tools/:id-assets`. Canonicals consistently use
+`https://batchimagekit.com`. Host-level www/pages.dev redirects must be configured
+in Cloudflare Redirect Rules or Bulk Redirects; Pages `_redirects` does not
+support them. No Functions, Worker script, or paid storage is needed.
 
 Live URLs:
 
@@ -66,3 +70,28 @@ Repository pushes to `main` trigger automatic builds and deployments.
 AI models are downloaded on demand from their configured external model hosts.
 Keep these model files outside the static asset bundle: individual Cloudflare
 static assets have a 25 MiB limit. The browser caches downloaded models.
+
+## Search visibility
+
+Run `npm run build` to build browser assets, render static HTML, generate
+`sitemap.xml`, `robots.txt`, redirects and cache headers, and audit the output.
+`npm run test:seo` repeats the output audit after a build.
+
+`src/data/seo.ts` is the source of truth for public metadata, canonical URLs and
+workspace exclusions. Add public routes there when adding a page. Tool, platform
+and guide entries are generated from their content catalogs. The audit checks
+unique metadata, one H1 and canonical, schema, discoverability, local links,
+assets, workspace exclusions and redirects. Do not add a wildcard SPA rewrite: it
+would turn unknown addresses into soft 404s. Existing workspace routes are built
+explicitly so direct links and reloads continue to work.
+
+Public content is rendered using the same React routes as the browser. Client
+navigation updates metadata, and route code loads on demand. The browser keeps
+the static page visible until its initial route is ready, then mounts the
+interactive application with the visitor's local preferences. No image data is
+processed or stored during prerendering.
+
+Submit https://batchimagekit.com/sitemap.xml in the site's verified Google Search
+Console and Bing Webmaster Tools properties. Sitemap discovery does not confirm
+indexing. Track organic impressions, clicks and successful tool usage by landing
+page; rankings and traffic improvements require live search data.

@@ -4,6 +4,8 @@ import { HELP_ARTICLES } from '../data/helpArticles';
 import { EditorialLayout } from '../components/site/EditorialLayout';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { NotFound } from './NotFound';
+import { GUIDE_TOOLS } from '../data/workflowGuides';
+import { SEO_PAGES } from '../data/seo';
 
 export function HelpArticle() {
   const { slug } = useParams();
@@ -23,6 +25,7 @@ export function HelpArticle() {
       showAd
       footer={
       <div className="mt-4 border-t border-line pt-8">
+          {GUIDE_TOOLS[article.slug] && <nav aria-label="Tools for this guide" className="mb-8"><h2 className="text-lg font-semibold">Try the tools in this guide</h2><ul className="mt-3 flex flex-wrap gap-4">{GUIDE_TOOLS[article.slug].map((slug) => <li key={slug}><Link to={`/tools/${slug}`} className="text-sm font-medium underline underline-offset-4">{SEO_PAGES.find((page) => page.path === `/tools/${slug}`)?.name}</Link></li>)}</ul></nav>}
           <div className="flex flex-col gap-4 rounded-2xl bg-lime-soft p-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-semibold text-ink">Try it with the sample batch</p>
