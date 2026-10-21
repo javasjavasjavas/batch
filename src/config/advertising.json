@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "publisherId": "",
+  "consentMessagePublished": false,
+  "manualPlacementsConfirmed": false,
+  "units": {
+    "home-primary": "", "home-secondary": "",
+    "tool-primary": "", "tool-secondary": "",
+    "platform-primary": "", "platform-secondary": "",
+    "workspace": "", "results": "", "directory": "",
+    "guide-rail": "", "guide-inline": "", "help": ""
+  }
+}

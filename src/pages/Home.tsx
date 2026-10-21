@@ -40,16 +40,16 @@ export function Home() {
 
   return (
     <>
-      <section className="home-hero mx-auto grid max-w-content gap-x-10 gap-y-5 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-x-12 lg:pb-20 lg:pt-14">
+      <section className="home-hero mx-auto grid max-w-content gap-x-10 gap-y-5 px-5 pb-8 pt-8 sm:px-8 lg:grid-cols-[1fr_1.05fr] lg:gap-x-12">
         <div className="home-hero-main">
-          <h1 className="text-[42px] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-[58px]">
+          <h1 className="text-[38px] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-[46px]">
             Free bulk<br />image tools.<br />All in one place.
           </h1>
-          <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-muted">
+          <p className="mt-4 max-w-[46ch] text-[16px] leading-relaxed text-muted">
             Resize, compress, convert, and rename a whole batch of images with one set of settings. Free, no account, and
             designed to keep your files on your device.
           </p>
-          <Dropzone className="home-hero-upload mt-8" onFiles={handleFiles} onSample={openSample} rejected={rejected} onDismissRejected={clearRejected} />
+          <Dropzone size="compact" className="home-hero-upload mt-5" onFiles={handleFiles} onSample={openSample} rejected={rejected} onDismissRejected={clearRejected} />
         </div>
         <div className="home-hero-tools">
           <p className="text-[13px] text-muted">Or start with one tool</p>
@@ -68,6 +68,7 @@ export function Home() {
             <li><Link to="/tools" className="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-lime-soft px-3 text-sm font-medium text-ink hover:bg-lime">Platform kits<ArrowRightIcon className="h-4 w-4" /></Link></li>
           </ul>
         </div>
+        <AdSlot placement="home-primary" className="home-hero-ad" />
         <div className="home-hero-showcase mt-5 lg:mt-0 lg:pt-2">
           <BatchShowcase />
         </div>
@@ -93,9 +94,7 @@ export function Home() {
         </div>
       </section>
 
-      <div className="mx-auto max-w-content px-5 py-12 sm:px-8">
-        <AdSlot format="leaderboard" />
-      </div>
+      <AdSlot placement="home-secondary" className="mx-auto my-12 max-w-content px-5 sm:px-8" />
 
       <section aria-labelledby="local-title" className="mx-auto max-w-content px-5 pb-20 sm:px-8">
         <div className="grid gap-10 rounded-2xl bg-ink p-7 text-white sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:p-12">

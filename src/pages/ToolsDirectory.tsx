@@ -50,6 +50,7 @@ export function ToolsDirectory() {
                 <ToolCard tool={tool} />
               </li>
           )}
+            {!query.trim() && <li className="empty:hidden md:col-span-2"><AdSlot placement="directory" className="my-8" /></li>}
             {showSteam && <li><article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 sm:p-7"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-lime-soft"><Gamepad2Icon className="h-5 w-5" /></span><h2 className="mt-5 text-lg font-semibold"><Link to="/tools/steam-assets">Steam Asset Generator</Link></h2><p className="mt-1.5 text-[14.5px] leading-relaxed text-muted">Turn your artwork into Steam capsules, library images and icons. Review every crop and export a named set with an asset guide.</p><Link to="/tools/steam-assets" className="mt-6 inline-flex items-center gap-2 self-start rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white">Create Steam assets<ArrowRightIcon className="h-4 w-4" /></Link></article></li>}
             {packs.map((pack) => <li key={pack.id}><article className="flex h-full flex-col rounded-2xl border border-line bg-white p-6 sm:p-7"><div className="flex items-center justify-between gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-lime-soft"><PlatformIcon id={pack.id} /></span><span className="text-xs text-muted">{pack.category} · {pack.assets.length} presets</span></div><h2 className="mt-5 text-lg font-semibold"><Link to={`/tools/${pack.id}-assets`}>{pack.name} Asset Kit</Link></h2><p className="mt-1.5 flex-1 text-[14.5px] leading-relaxed text-muted">{pack.description}</p><Link to={`/tools/${pack.id}-assets`} className="mt-6 inline-flex items-center gap-2 self-start rounded-lg bg-ink px-4 py-2.5 text-sm font-medium text-white">Create {pack.name} assets<ArrowRightIcon className="h-4 w-4" /></Link></article></li>)}
           </ul> :
@@ -68,9 +69,6 @@ export function ToolsDirectory() {
         }
       </div>
 
-      <div className="mt-16">
-        <AdSlot format="leaderboard" />
-      </div>
     </div>);
 
 }

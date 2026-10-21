@@ -5,6 +5,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { Dialog } from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { Toggle } from '../ui/Toggle';
+import { advertisingReady } from '../../advertising/config';
 
 const CATEGORIES: {key: keyof ConsentChoices;label: string;description: string;}[] = [
 {
@@ -38,6 +39,15 @@ export function CookieDialog() {
     close();
     toast({ tone: 'success', title: message });
   };
+
+  if (advertisingReady) return <Dialog open={cookieDialogOpen} onClose={close} title="Privacy and cookie settings" size="md">
+    <p className="text-sm leading-relaxed text-muted">Advertising choices are managed by Google's consent message. Batch does not share your images or file names with advertisers.</p>
+    <Button className="mt-5" onClick={() => {
+      if (window.googlefc?.showRevocationMessage) { close(); window.googlefc.showRevocationMessage(); }
+      else toast({ tone: 'info', title: 'Consent settings unavailable', description: 'The Google consent message may not apply in your region, or may be blocked by your browser.' });
+    }}>Manage advertising choices</Button>
+    <p className="mt-4 text-sm text-muted">You can remove local settings by clearing this site's browser data. Regional privacy options, when applicable, are also provided by Google's message.</p>
+  </Dialog>;
 
   return (
     <Dialog

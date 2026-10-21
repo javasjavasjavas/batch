@@ -92,8 +92,9 @@ Help illustrations are real cropped screenshots of the bundled sample batch,
 stored in `public/guides` and mapped to sections in `src/data/guideScreenshots.ts`.
 Refresh these when the illustrated controls change; keep dimensions, alt text
 and captions aligned with each screenshot. Images load lazily and can be enlarged.
-The monetization proposal is in `docs/seo-and-ads-review-2026-10-21.html`;
-it is a recommendation, not an active AdSense integration.
+The current benchmark, positions and implementation screenshots are in
+`docs/adsense-benchmark-2026-10-21.html`. AdSense integration is prepared but
+disabled until the publisher account, site approval and consent setup are ready.
 
 `src/data/seo.ts` is the source of truth for public metadata, canonical URLs and
 workspace exclusions. Add public routes there when adding a page. Tool, platform
@@ -113,3 +114,41 @@ Submit https://batchimagekit.com/sitemap.xml in the site's verified Google Searc
 Console and Bing Webmaster Tools properties. Sitemap discovery does not confirm
 indexing. Track organic impressions, clicks and successful tool usage by landing
 page; rankings and traffic improvements require live search data.
+
+## AdSense activation
+
+`src/config/advertising.json` is the public configuration. IDs are public ad
+identifiers, never credentials. Keep `enabled: false` while setting up the account.
+
+1. Choose the owner's AdSense account, add `batchimagekit.com`, and complete its
+   requested ownership verification and site review. Add the actual `ca-pub-...`
+   ID to `publisherId`: the build then generates `ads.txt` and the verification
+   meta tag even while ad serving is disabled. Deploy and verify both live.
+2. Finish the public Privacy/Terms pages with the operator's chosen public
+   identity and contact. Publish and verify Google's consent messages in
+   Privacy & messaging for the regions served, including an accessible refusal
+   and revocation flow. Only then set `consentMessagePublished: true`.
+3. Keep Auto ads off initially (including anchors, side rails and vignettes),
+   so ads stay in the reviewed manual placements. Set
+   `manualPlacementsConfirmed: true` only after checking the account setting.
+4. Create 12 Display ad units using responsive sizing, named after the keys in
+   `units`: home-primary, home-secondary, tool-primary, tool-secondary,
+   platform-primary, platform-secondary, workspace, results, directory,
+   guide-rail, guide-inline and help. Enter each real numeric slot ID. Shared
+   templates reuse units; page-family/device reports distinguish their traffic.
+5. Once the site is approved and consent verified, enable the configuration,
+   build and deploy. Check fill, consent choices and Active View on the canonical
+   domain without clicking your own ads. Account review can take time; valid IDs
+   and a successful build do not prove approval or ad delivery.
+
+The build rejects incomplete enabled configurations. The SDK is restricted to
+the canonical domain and www. Manual slots exclude legal, review, processing and
+error screens. Each slot requests once near the viewport; there is no timed
+refresh. Workspace reserves a separate row only on screens at least 1280 × 700.
+Google's published CMP manages ad consent; the old local preferences do not
+authorize Google ads. The SDK remains available on legal routes for privacy
+choices, which is why manual-only account configuration is required.
+
+Run the development server and append `?ads=preview` to inspect reserved spaces
+without any real Google ad requests. This preview is absent from production.
+When disabled, ad slots and their reserved space are omitted.

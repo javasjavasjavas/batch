@@ -1,4 +1,5 @@
 import { SteamGuide } from '../components/site/PlatformGuide';
+import { AdSlot } from '../components/ui/AdSlot';
 import { useEffect, useRef, useState } from 'react';
 import { DownloadIcon, Gamepad2Icon, ImagePlusIcon, UploadIcon, XIcon } from 'lucide-react';
 import { Button } from '../components/ui/Button';
@@ -150,6 +151,7 @@ export function SteamAssets() {
   return <div className="mx-auto max-w-content px-5 pb-16 pt-10 sm:px-8">
     <header className="mb-8 max-w-3xl"><span className="inline-flex items-center gap-2 rounded-full bg-lime-soft px-3 py-1.5 text-xs font-medium"><Gamepad2Icon className="h-4 w-4" />Steam asset generator</span><h1 className="mt-4 text-[38px] font-semibold leading-tight tracking-[-0.04em] sm:text-[48px]">Steam capsule and<br />library asset generator</h1><p className="mt-3 text-[17px] leading-relaxed text-muted">Create store capsules, library artwork and icons at Steamworks sizes. Adjust each crop, then download a named ZIP with an asset guide.</p></header>
     {error && <div role="alert" className="mb-5 rounded-xl border border-danger/20 bg-danger-soft p-4 text-sm text-danger">{error}</div>}
+    <AdSlot placement="platform-primary" className="my-10" />
     <fieldset disabled={busy} className="min-w-0">
       <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
         <section className="rounded-2xl border-2 border-dashed border-line-strong bg-white p-6" aria-labelledby="steam-art-title" onDragOver={(e) => e.preventDefault()} onDrop={(e) => { e.preventDefault(); if (!busy) void upload(Array.from(e.dataTransfer.files), 'artwork'); }}>
@@ -177,5 +179,6 @@ export function SteamAssets() {
     <section className="sticky bottom-3 z-20 mt-8 rounded-2xl border border-line bg-white p-5 shadow-pop" aria-label="Export Steam assets"><div className="flex flex-wrap items-center justify-between gap-4"><div><h2 className="font-semibold">{outputs.length ? `${outputs.length} assets generated` : `${included.length} assets ready to generate`}</h2><p className="mt-1 hidden text-xs text-muted sm:block">ZIP includes descriptive filenames, dimensions, descriptions and source links.</p></div><div className="flex gap-2">{progress && <Button variant="secondary" onClick={() => active.current?.abort()}>Cancel</Button>}<Button variant="accent" size="lg" disabled={busy || !included.length} onClick={() => void generate()}><DownloadIcon className="h-4 w-4" />{loading ? 'Reading image…' : progress || 'Generate & download ZIP'}</Button></div></div>{missing.length > 0 && <p className="mt-3 text-xs leading-relaxed text-warning"><span className="sm:hidden">{missing.length} required items missing or excluded. See the checklist above.</span><span className="hidden sm:inline">Incomplete release set — missing or excluded: {missing.join(', ')}. You can export the available assets now.</span></p>}<span className="sr-only" role="status">{progress || (outputs.length ? 'ZIP ready to download' : '')}</span></section>
     <p className="mt-8 text-xs leading-relaxed text-muted">Specifications checked {STEAM_CHECKED}. <a href={STEAM_DOCS} target="_blank" rel="noreferrer" className="underline">Official Steamworks requirements ↗</a> · Review content and templates before uploading. macOS releases also need a separate ICNS icon. Steam creates the documented half-size library images. Batch is not affiliated with Valve.</p>
       <SteamGuide />
+      <AdSlot placement="platform-secondary" className="my-12" />
   </div>;
 }

@@ -176,11 +176,9 @@ export function Results() {
                 Start a new batch
               </Button>
             </div>
-            <div className="pt-4">
-              <AdSlot format="rectangle" className="mx-auto" />
-            </div>
           </aside>
         </div>
+        {done.length > 0 && <AdSlot placement="results" className="mt-12 pb-8" />}
       </div>
 
       <CompareDialog items={done} itemId={compareId} onClose={() => setCompareId(null)} onNavigate={setCompareId} />

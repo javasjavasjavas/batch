@@ -22,10 +22,10 @@ export function Seo() {
     setMeta('og:locale', 'en_US', true);
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
-    setMeta('og:image:alt', 'Batch Image Kit: free bulk image tools for every platform', true);
+    setMeta('og:image:alt', 'Batch — Free Bulk Image Tools', true);
     setMeta('twitter:card', 'summary_large_image');
     setMeta('twitter:image', `${SITE_URL}/social-card.png`);
-    setMeta('twitter:image:alt', 'Batch Image Kit: free bulk image tools for every platform');
+    setMeta('twitter:image:alt', 'Batch — Free Bulk Image Tools');
     setMeta('twitter:title', meta.title);
     setMeta('twitter:description', meta.description);
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');

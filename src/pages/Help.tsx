@@ -158,9 +158,7 @@ export function Help() {
         </>
       }
 
-      <div className="mt-16">
-        <AdSlot format="leaderboard" />
-      </div>
+      <AdSlot placement="help" className="mt-16" />
     </div>);
 
 }

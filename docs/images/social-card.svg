@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Batch — Free Bulk Image Tools</title>
+  <rect width="1200" height="630" fill="#f7f7f2"/>
+  <!-- The same mark as src/components/ui/Logo.tsx, scaled without alteration. -->
+  <g transform="translate(438 243) scale(3.5)">
+    <rect x="1.5" y="1.5" width="12" height="12" rx="3" fill="#D4F25C"/>
+    <rect x="6" y="6" width="12" height="12" rx="3" fill="none" stroke="#151715" stroke-width="1.75"/>
+    <rect x="10.5" y="10.5" width="12" height="12" rx="3" fill="#151715"/>
+  </g>
+  <text x="546" y="311" font-family="Segoe UI, Arial, sans-serif" font-size="84" font-weight="600" letter-spacing="-2.52" fill="#151715">Batch</text>
+  <text x="600" y="383" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="300" letter-spacing="0.5" fill="#686e63">Free Bulk Image Tools</text>
+</svg>

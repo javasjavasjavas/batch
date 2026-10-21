@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ChevronRightIcon, FilePenLineIcon } from 'lucide-react';
 import type { ArticleSection } from '../../types/content';
 import { AdSlot } from '../ui/AdSlot';
+import { advertisingReady } from '../../advertising/config';
 
 interface EditorialLayoutProps {
   breadcrumb?: {label: string;to: string;}[];
@@ -17,6 +18,8 @@ interface EditorialLayoutProps {
 }
 
 export function EditorialLayout({ breadcrumb, eyebrow, title, lede, meta, draft, sections, footer, showAd }: EditorialLayoutProps) {
+  const { search } = useLocation();
+  const hasAd = showAd && (advertisingReady || (import.meta.env.DEV && new URLSearchParams(search).get('ads') === 'preview'));
   return (
     <div className="mx-auto max-w-content px-5 pb-20 sm:px-8">
       {breadcrumb &&
@@ -56,7 +59,7 @@ export function EditorialLayout({ breadcrumb, eyebrow, title, lede, meta, draft,
         }
       </header>
 
-      <div className={`grid gap-10 border-t border-line pt-10 lg:grid-cols-[180px_minmax(0,1fr)] ${showAd ? 'xl:grid-cols-[180px_minmax(0,1fr)_300px]' : ''}`}>
+      <div className={`grid gap-10 border-t border-line pt-10 lg:grid-cols-[180px_minmax(0,1fr)] ${hasAd ? 'xl:grid-cols-[180px_minmax(0,1fr)_300px]' : ''}`}>
         <nav aria-label="On this page" className="hidden lg:block">
           <div className="sticky top-24">
             <p className="text-[13px] font-semibold text-ink">On this page</p>
@@ -73,7 +76,7 @@ export function EditorialLayout({ breadcrumb, eyebrow, title, lede, meta, draft,
         </nav>
 
         <article className="min-w-0 max-w-[68ch]">
-          {sections.map((s) =>
+          {sections.map((s, index) =>
           <section key={s.id} id={s.id} className="scroll-mt-24 pb-10">
               <h2 className="text-[21px] font-semibold tracking-[-0.02em] text-ink">{s.heading}</h2>
               {s.paragraphs.map((p) =>
@@ -97,24 +100,18 @@ export function EditorialLayout({ breadcrumb, eyebrow, title, lede, meta, draft,
                 </a>
                 <figcaption className="mt-2 max-w-[60ch] text-[13px] leading-relaxed text-muted">{s.image.caption} <span className="whitespace-nowrap">Select image to enlarge.</span></figcaption>
               </figure>}
+              {showAd && index === 1 && <AdSlot placement="guide-inline" className="mt-10 xl:hidden" />}
             </section>
           )}
           {footer}
         </article>
 
-        {showAd &&
+        {hasAd &&
         <div className="hidden xl:block">
-            <div className="sticky top-24">
-              <AdSlot format="rectangle" />
-            </div>
+            <AdSlot placement="guide-rail" />
           </div>
         }
       </div>
-      {showAd &&
-      <div className="mt-6 xl:hidden">
-          <AdSlot format="leaderboard" />
-        </div>
-      }
     </div>);
 
 }

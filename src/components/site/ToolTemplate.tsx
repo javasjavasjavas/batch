@@ -33,13 +33,14 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
         </ol>
       </nav>
 
-      <section className="grid gap-10 pb-16 pt-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:pt-8">
+      <section className="tool-hero grid gap-8 pb-12 pt-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-x-14">
         <div>
           <h1 className="max-w-[18ch] text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] text-ink sm:text-[48px]">
             {tool.title}
           </h1>
           <p className="mt-4 max-w-[58ch] text-[16.5px] leading-relaxed text-muted">{tool.lede}</p>
           <Dropzone
+            size="compact"
             className="mt-8"
             title={tool.dropTitle}
             onFiles={handleFiles}
@@ -48,9 +49,12 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
             onDismissRejected={clearRejected} />
           
         </div>
-        <div className="lg:pt-2">
+        <AdSlot placement="tool-primary" className="tool-hero-ad" />
+        <div className="tool-hero-settings">
           <SettingsPreviewCard tool={tool} onOpen={openWorkspace} />
-          <div className="mt-6 space-y-5">
+        </div>
+      </section>
+          <div className="mb-10 grid gap-5 sm:grid-cols-2">
             {tool.notes.map((note) =>
             <div key={note.title} className="border-l-2 border-lime pl-4">
                 <h2 className="text-[15px] font-semibold text-ink">{note.title}</h2>
@@ -58,8 +62,6 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
               </div>
             )}
           </div>
-        </div>
-      </section>
 
       <section aria-labelledby="tool-steps" className="pb-16">
         <h2 id="tool-steps" className="mb-6 text-[28px] font-semibold tracking-[-0.025em] text-ink">
@@ -68,9 +70,7 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
         <StepList steps={tool.steps} />
       </section>
 
-      <div className="pb-16">
-        <AdSlot format="leaderboard" />
-      </div>
+      <AdSlot placement="tool-secondary" className="mb-16" />
 
       <div className="pb-16">
         <FaqSection id="tool-faq" title={`${tool.name} questions`} items={tool.faqs} />

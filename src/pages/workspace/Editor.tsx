@@ -76,9 +76,6 @@ export function Editor() {
                 </div>
             }
               <ImageCollection view={view} onOpen={setDetailId} />
-              <div className="mt-10 lg:hidden">
-                <AdSlot format="leaderboard" />
-              </div>
             </div>
             {isDragging &&
           <div className="pointer-events-none absolute inset-3 z-20 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#A9C82B] bg-lime-soft/95">
@@ -91,14 +88,9 @@ export function Editor() {
 
         <div className={`scrollbar-thin min-h-0 flex-1 overflow-y-auto ${selectedIds.length ? 'pb-44' : 'pb-32'} lg:pb-0`}>
             <EmptyWorkspace onFiles={handleFiles} rejected={rejected} onDismissRejected={clearRejected} />
-            <div className="px-4 pb-10 lg:hidden">
-              <AdSlot format="leaderboard" />
-            </div>
           </div>
         }
-        <div className="hidden shrink-0 justify-center border-t border-line bg-canvas px-6 py-2.5 lg:flex">
-          <AdSlot format="strip" />
-        </div>
+        <AdSlot placement="workspace" className="workspace-ad shrink-0 border-t border-line bg-canvas px-6 py-3" />
       </section>
 
       {isLg && <aside aria-label="Batch settings" className="hidden w-[340px] shrink-0 border-l border-line bg-white lg:flex lg:flex-col xl:w-[360px]">

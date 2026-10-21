@@ -3,12 +3,18 @@ import { dirname } from 'node:path';
 import { render, SEO_PAGES, WORKSPACE_PATHS, TOOL_ALIASES, SITE_URL, metaForPath, structuredData } from '../dist-ssr/entry-server.js';
 
 const template = await readFile('dist/index.html', 'utf8');
+const advertising = JSON.parse(await readFile('src/config/advertising.json', 'utf8'));
+const publisherConfigured = /^ca-pub-\d{16}$/.test(advertising.publisherId);
+if (publisherConfigured) {
+  await writeFile('dist/ads.txt', `google.com, ${advertising.publisherId.replace('ca-', '')}, DIRECT, f08c47fec0942fa0\n`);
+}
 if (!template.includes('<!--seo-head-->')) throw new Error('Missing metadata insertion point');
 const escape = (value) => value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const paths = [...SEO_PAGES.map((page) => page.path), ...WORKSPACE_PATHS, '/404'];
 for (const path of paths) {
   const meta = metaForPath(path);
   const tags = [
+    ...(publisherConfigured ? [`<meta name="google-adsense-account" content="${advertising.publisherId}">`] : []),
     `<title>${escape(meta.title)}</title>`,
     `<meta name="description" content="${escape(meta.description)}">`,
     `<meta name="robots" content="${meta.robots}">`,
@@ -21,10 +27,10 @@ for (const path of paths) {
     '<meta property="og:image:type" content="image/png">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
-    '<meta property="og:image:alt" content="Batch Image Kit: free bulk image tools for every platform">',
+    '<meta property="og:image:alt" content="Batch — Free Bulk Image Tools">',
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:image" content="${SITE_URL}/social-card.png">`,
-    '<meta name="twitter:image:alt" content="Batch Image Kit: free bulk image tools for every platform">',
+    '<meta name="twitter:image:alt" content="Batch — Free Bulk Image Tools">',
     `<meta name="twitter:title" content="${escape(meta.title)}">`,
     `<meta name="twitter:description" content="${escape(meta.description)}">`,
     ...(meta.canonical ? [`<link rel="canonical" href="${meta.canonical}">`, `<meta property="og:url" content="${meta.canonical}">`] : []),

@@ -22,7 +22,7 @@ export function SettingsPreviewCard({ tool, onOpen }: SettingsPreviewCardProps) 
       </div>
       <dl className="divide-y divide-line px-5">
         {tool.settingsPreview.map((row) =>
-        <div key={row.label} className="flex items-center justify-between gap-4 py-3.5">
+        <div key={row.label} className="flex items-center justify-between gap-4 py-2">
             <dt className="text-sm text-muted">{row.label}</dt>
             <dd className="tabular text-sm font-medium text-ink">{row.value}</dd>
           </div>

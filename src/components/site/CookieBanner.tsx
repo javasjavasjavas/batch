@@ -3,10 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CookieIcon } from 'lucide-react';
 import { usePrefs } from '../../contexts/PrefsContext';
 import { Button } from '../ui/Button';
+import { advertisingReady } from '../../advertising/config';
 
 export function CookieBanner() {
   const { consent, acceptAll, rejectAll, setCookieDialogOpen, cookieDialogOpen } = usePrefs();
-  const visible = !consent.decided && !cookieDialogOpen;
+  const visible = !advertisingReady && !consent.decided && !cookieDialogOpen;
 
   return (
     <AnimatePresence>
@@ -23,7 +24,7 @@ export function CookieBanner() {
             <div className="flex min-w-0 flex-1 gap-3">
               <CookieIcon className="mt-0.5 h-5 w-5 shrink-0 text-ink" strokeWidth={1.75} aria-hidden="true" />
               <div className="text-sm">
-                <h2 className="font-semibold text-ink">Batch is free because of ads</h2>
+                <h2 className="font-semibold text-ink">Your privacy choices</h2>
                 <p className="mt-1 leading-relaxed text-muted">
                   With your permission, optional cookies would personalize ads and measure usage. Necessary storage keeps your
                   preferences working.{' '}

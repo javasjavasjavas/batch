@@ -10,7 +10,7 @@ interface DropzoneProps {
   onFiles: (files: File[]) => void;
   onSample?: () => void;
   title?: string;
-  size?: 'hero' | 'large';
+  size?: 'hero' | 'large' | 'compact';
   rejected?: RejectedFile[];
   onDismissRejected?: () => void;
   className?: string;
@@ -34,14 +34,15 @@ export function Dropzone({
         {...bind}
         className={twMerge(
           'relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed text-center transition-[background-color,border-color] duration-150 ease-out',
-          size === 'hero' ? 'px-6 py-9 sm:px-10 sm:py-11' : 'px-6 py-12 sm:py-16',
+          size === 'compact' ? 'px-4 py-5' : size === 'hero' ? 'px-6 py-9 sm:px-10 sm:py-11' : 'px-6 py-12 sm:py-16',
           isDragging ? 'border-[#A9C82B] bg-lime-soft' : 'border-line-strong bg-white'
         )}>
         
         <div
           className={twMerge(
-            'mb-4 flex h-12 w-12 items-center justify-center rounded-xl border transition-colors duration-150',
-            isDragging ? 'border-[#A9C82B] bg-lime text-ink' : 'border-line bg-canvas text-ink'
+            'mb-3 flex h-10 w-10 items-center justify-center rounded-xl border transition-colors duration-150',
+            isDragging ? 'border-[#A9C82B] bg-lime text-ink' : 'border-line bg-canvas text-ink',
+            size === 'compact' && 'hidden'
           )}
           aria-hidden="true">
           
