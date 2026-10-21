@@ -12,6 +12,11 @@ dist
 dist-ssr
 .cache/
 artifacts/
+.wrangler/
+.dev.vars*
+.env
+.env.*
+!.env.example
 *.local
 
 # Editor directories and files
