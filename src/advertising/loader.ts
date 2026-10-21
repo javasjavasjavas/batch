@@ -1,12 +1,15 @@
-import { advertising, advertisingReady, isAdHost } from './config';
+import { advertising, consentReady, isAdHost } from './config';
 
 declare global {
-  interface Window { adsbygoogle?: Record<string, unknown>[]; googlefc?: { showRevocationMessage?: () => void }; }
+  interface Window {
+    adsbygoogle?: Record<string, unknown>[];
+    googlefc?: { showRevocationMessage?: () => void; callbackQueue?: Record<string, () => void>[] };
+  }
 }
 let loading: Promise<void> | undefined;
 /** One SDK per document. No timers, refreshes, image data or filenames. */
 export function loadAdSense(): Promise<void> {
-  if (!advertisingReady || !isAdHost(window.location.hostname)) return Promise.reject(new Error('Ads are not enabled'));
+  if (!consentReady || !isAdHost(window.location.hostname)) return Promise.reject(new Error('AdSense consent is not configured'));
   if (loading) return loading;
   loading = new Promise<void>((resolve, reject) => {
     const script = document.createElement('script');

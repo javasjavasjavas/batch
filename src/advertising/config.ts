@@ -2,8 +2,9 @@ import settings from '../config/advertising.json';
 
 export type AdPlacement = keyof typeof settings.units;
 export const advertising = settings;
-export const advertisingReady = settings.enabled && /^ca-pub-\d{16}$/.test(settings.publisherId)
+export const consentReady = /^ca-pub-\d{16}$/.test(settings.publisherId)
   && settings.consentMessagePublished && settings.manualPlacementsConfirmed;
+export const advertisingReady = settings.enabled && consentReady;
 export const isAdHost = (host: string) => host === 'batchimagekit.com' || host === 'www.batchimagekit.com';
 export const validAdUnit = (id: string) => /^\d{10}$/.test(id);
 export function isAdRoute(path: string) {

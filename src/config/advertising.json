@@ -1,13 +1,13 @@
 {
   "enabled": false,
   "publisherId": "ca-pub-6613900279618437",
-  "consentMessagePublished": false,
-  "manualPlacementsConfirmed": false,
+  "consentMessagePublished": true,
+  "manualPlacementsConfirmed": true,
   "units": {
-    "home-primary": "", "home-secondary": "",
-    "tool-primary": "", "tool-secondary": "",
-    "platform-primary": "", "platform-secondary": "",
-    "workspace": "", "results": "", "directory": "",
-    "guide-rail": "", "guide-inline": "", "help": ""
+    "home-primary": "9612718327", "home-secondary": "4534195197",
+    "tool-primary": "6501882985", "tool-secondary": "5346829396",
+    "platform-primary": "3275199823", "platform-secondary": "1962118159",
+    "workspace": "5454640603", "results": "9594950180", "directory": "8992314952",
+    "guide-rail": "6366151611", "guide-inline": "4033747727", "help": "5053069940"
   }
 }

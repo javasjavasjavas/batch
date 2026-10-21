@@ -3,11 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CookieIcon } from 'lucide-react';
 import { usePrefs } from '../../contexts/PrefsContext';
 import { Button } from '../ui/Button';
-import { advertisingReady } from '../../advertising/config';
+import { consentReady } from '../../advertising/config';
 
 export function CookieBanner() {
   const { consent, acceptAll, rejectAll, setCookieDialogOpen, cookieDialogOpen } = usePrefs();
-  const visible = !advertisingReady && !consent.decided && !cookieDialogOpen;
+  const visible = !consentReady && !consent.decided && !cookieDialogOpen;
 
   return (
     <AnimatePresence>

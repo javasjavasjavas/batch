@@ -141,7 +141,9 @@ identifiers, never credentials. Keep `enabled: false` while setting up the accou
    domain without clicking your own ads. Account review can take time; valid IDs
    and a successful build do not prove approval or ad delivery.
 
-The build rejects incomplete enabled configurations. The SDK is restricted to
+The build rejects incomplete enabled configurations. Once the published CMP and
+manual-only settings are confirmed, the SDK can load for consent management while
+`enabled: false` still suppresses all ad slots during site review. The SDK is restricted to
 the canonical domain and www. Manual slots exclude legal, review, processing and
 error screens. Each slot requests once near the viewport; there is no timed
 refresh. Workspace reserves a separate row only on screens at least 1280 × 700.
