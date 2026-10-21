@@ -49,9 +49,19 @@ declares `dist` as the Pages output. Pages automatically supports SPA navigation
 for direct links such as `/app/steam` and `/tools` because the build has no
 top-level `404.html`. No Functions, Worker script, or paid storage is needed.
 
-The intended custom domain is `batchimagekit.com`. Add it in Cloudflare after
-the first successful deployment and finish the registrar's DNS setup. Repository
-pushes to `main` then trigger automatic builds and deployments.
+Live URLs:
+
+- https://batchimagekit.com/
+- https://www.batchimagekit.com/
+- https://batchimagekit.pages.dev/ (Cloudflare fallback URL)
+
+The project uses Cloudflare Pages Free. Both custom domains are associated with
+the Pages project and have proxied CNAME records pointing to
+`batchimagekit.pages.dev`. Namecheap delegates DNS to
+`julissa.ns.cloudflare.com` and `todd.ns.cloudflare.com`; manage future DNS
+changes in Cloudflare. Existing email MX and SPF records are preserved.
+HTTPS and the HTTP-to-HTTPS redirect were verified on 2026-10-21.
+Repository pushes to `main` trigger automatic builds and deployments.
 
 AI models are downloaded on demand from their configured external model hosts.
 Keep these model files outside the static asset bundle: individual Cloudflare
