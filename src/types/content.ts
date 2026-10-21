@@ -30,6 +30,7 @@ export interface ArticleSection {
   heading: string;
   paragraphs: string[];
   list?: string[];
+  image?: { src: string; alt: string; caption: string; width: number; height: number };
 }
 
 export interface HelpArticle {

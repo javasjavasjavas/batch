@@ -18,6 +18,7 @@ for (const path of paths) {
     '<meta property="og:site_name" content="Batch Image Kit">',
     '<meta property="og:locale" content="en_US">',
     `<meta property="og:image" content="${SITE_URL}/social-card.png">`,
+    '<meta property="og:image:type" content="image/png">',
     '<meta property="og:image:width" content="1200">',
     '<meta property="og:image:height" content="630">',
     '<meta property="og:image:alt" content="Batch Image Kit: free bulk image tools for every platform">',

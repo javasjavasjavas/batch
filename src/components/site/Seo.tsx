@@ -18,6 +18,8 @@ export function Seo() {
     setMeta('robots', meta.robots);
     for (const [key, value] of Object.entries({ title: meta.title, description: meta.description, type: meta.type, site_name: 'Batch Image Kit' })) setMeta(`og:${key}`, value, true);
     setMeta('og:image', `${SITE_URL}/social-card.png`, true);
+    setMeta('og:image:type', 'image/png', true);
+    setMeta('og:locale', 'en_US', true);
     setMeta('og:image:width', '1200', true);
     setMeta('og:image:height', '630', true);
     setMeta('og:image:alt', 'Batch Image Kit: free bulk image tools for every platform', true);

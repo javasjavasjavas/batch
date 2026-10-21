@@ -19,7 +19,7 @@ twMerge(
   isActive ? 'text-ink' : 'text-muted hover:text-ink'
 );
 
-export function SiteHeader() {
+export function SiteHeader({ workspace = false }: { workspace?: boolean }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -33,8 +33,8 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-canvas">
-      <div className="mx-auto flex h-16 max-w-content items-center gap-6 px-5 sm:px-8">
+    <header className="sticky top-0 z-40 shrink-0 border-b border-line bg-canvas">
+      <div className={twMerge('mx-auto flex h-16 max-w-content items-center gap-6 px-5 sm:px-8', workspace && 'max-w-none sm:px-5')}>
         <Link to="/" aria-label="Batch home" className="rounded-md">
           <Logo />
         </Link>
@@ -53,10 +53,10 @@ export function SiteHeader() {
           )}
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <ButtonLink to="/app" variant="primary" className="hidden sm:inline-flex">
+          {!workspace && <ButtonLink to="/app" variant="primary" className="hidden sm:inline-flex">
             Batch workspace
             <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
-          </ButtonLink>
+          </ButtonLink>}
           <Button
             variant="ghost"
             size="icon"
@@ -91,10 +91,10 @@ export function SiteHeader() {
                 </li>
             )}
             </ul>
-            <ButtonLink to="/app" variant="primary" size="lg" className="mt-3 w-full">
+            {!workspace && <ButtonLink to="/app" variant="primary" size="lg" className="mt-3 w-full">
               Batch workspace
               <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
-            </ButtonLink>
+            </ButtonLink>}
           </motion.nav>
         }
       </AnimatePresence>

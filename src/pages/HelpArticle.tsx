@@ -6,6 +6,7 @@ import { ButtonLink } from '../components/ui/ButtonLink';
 import { NotFound } from './NotFound';
 import { GUIDE_TOOLS } from '../data/workflowGuides';
 import { SEO_PAGES } from '../data/seo';
+import { GUIDE_SCREENSHOTS } from '../data/guideScreenshots';
 
 export function HelpArticle() {
   const { slug } = useParams();
@@ -21,7 +22,7 @@ export function HelpArticle() {
       title={article.title}
       lede={article.summary}
       meta={article.readTime}
-      sections={article.sections}
+      sections={article.sections.map((section) => ({ ...section, image: GUIDE_SCREENSHOTS[article.slug]?.[section.id] }))}
       showAd
       footer={
       <div className="mt-4 border-t border-line pt-8">

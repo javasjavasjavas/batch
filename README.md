@@ -84,6 +84,16 @@ Run `npm run build` to build browser assets, render static HTML, generate
 `npm run test:seo` repeats the output audit after a build.
 Run `node scripts/check-live-seo.mjs` after deployment to verify public pages,
 workspace exclusions, aliases, HTTP/HTTPS host redirects, sitemap and real 404s.
+It also verifies the deployed titles/descriptions and social image dimensions.
+Run `node scripts/build-search-preview.mjs` after a build to regenerate the
+local search/social preview in `docs/search-preview.html`.
+
+Help illustrations are real cropped screenshots of the bundled sample batch,
+stored in `public/guides` and mapped to sections in `src/data/guideScreenshots.ts`.
+Refresh these when the illustrated controls change; keep dimensions, alt text
+and captions aligned with each screenshot. Images load lazily and can be enlarged.
+The monetization proposal is in `docs/seo-and-ads-review-2026-10-21.html`;
+it is a recommendation, not an active AdSense integration.
 
 `src/data/seo.ts` is the source of truth for public metadata, canonical URLs and
 workspace exclusions. Add public routes there when adding a page. Tool, platform

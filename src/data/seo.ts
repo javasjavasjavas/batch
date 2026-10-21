@@ -25,7 +25,57 @@ const coreDescriptions: Record<string, string> = {
   rename: 'Rename image files in bulk online with numbering, prefixes, suffixes and custom patterns. Preview every filename and download a ZIP without changing originals.',
 };
 
-export const SEO_PAGES: SeoPage[] = [
+// Lead with the task people need to complete; keep secondary use cases in the description.
+const searchTitles: Record<string, string> = {
+  '/': 'Free Bulk Image Tools & Asset Kits',
+  '/tools': 'Free Image Tools: Resize, Compress & Convert',
+  '/tools/bulk-image-resizer': 'Bulk Image Resizer – Free, No Uploads',
+  '/tools/image-compressor': 'Bulk Image Compressor – JPG, PNG & WebP',
+  '/tools/image-converter': 'Bulk Image Converter – JPG, PNG & WebP',
+  '/tools/bulk-file-renamer': 'Bulk Image Renamer – Free Online Tool',
+  '/tools/steam-assets': 'Steam Capsule & Library Asset Generator',
+  '/tools/youtube-assets': 'YouTube Thumbnail & Banner Resizer',
+  '/tools/instagram-assets': 'Instagram Resizer – Posts, Stories & Reels',
+  '/tools/facebook-assets': 'Facebook Cover Photo & Post Resizer',
+  '/tools/linkedin-assets': 'LinkedIn Banner & Profile Photo Resizer',
+  '/tools/discord-assets': 'Discord Server Icon & Banner Maker',
+  '/tools/x-assets': 'X (Twitter) Header & Profile Resizer',
+  '/tools/twitch-assets': 'Twitch Banner & Panel Resizer',
+  '/tools/etsy-assets': 'Etsy Listing Photo & Banner Resizer',
+  '/tools/shopify-assets': 'Shopify Product Image Resizer',
+  '/tools/mobile-assets': 'App Store & Google Play Screenshot Maker',
+  '/help/getting-started-with-a-batch': 'Batch Image Processing: A Quick Start Guide',
+  '/help/choosing-output-settings': 'Image Size, Quality & Format: Export Guide',
+  '/help/local-processing-and-browser-limits': 'Local Image Processing & Browser Limits',
+  '/help/resize-product-photos-without-cropping': 'Resize Product Photos Without Cropping',
+  '/help/reduce-image-file-size': 'How to Reduce Image File Size for Uploads',
+  '/help/convert-webp-png-jpg': 'Convert WebP, PNG & JPG: A Practical Guide',
+};
+
+const searchDescriptions: Record<string, string> = {
+  '/': 'Resize, compress, convert and rename images in bulk for free. Prepare Steam, social media and product image kits. No sign-up; photos stay on your device.',
+  '/tools': 'Choose from 15 free image tools: batch resizing, compression, conversion and platform asset kits. Process photos in your browser and download a ZIP.',
+  '/tools/bulk-image-resizer': 'Resize up to 100 images at once. Set dimensions or a percentage, crop or pad to fit, then download a ZIP. Free, no sign-up, no photo uploads.',
+  '/tools/image-compressor': 'Compress JPG, PNG and WebP images in bulk for free. Adjust quality, compare file sizes and download a ZIP. Your photos stay on your device.',
+  '/tools/image-converter': 'Convert multiple images to JPG, PNG or WebP for free. Set quality and transparency, preview filenames and download a ZIP. No account or uploads.',
+  '/tools/bulk-file-renamer': 'Rename image files in bulk with numbering, prefixes and custom patterns. Preview filenames and download a ZIP. Free; original files stay unchanged.',
+  '/tools/steam-assets': 'Turn your artwork into Steam capsules, library images and icons. Adjust individual crops and download a named ZIP with dimensions. Free, no sign-up.',
+  '/tools/youtube-assets': 'Resize artwork for YouTube thumbnails, channel banners and Shorts covers. Preview crops and safe areas, then download your image kit for free.',
+  '/tools/instagram-assets': 'Resize photos for Instagram posts, Stories and Reels covers. Adjust each crop and export multiple formats in one kit. Free, with no account or uploads.',
+  '/tools/facebook-assets': 'Resize Facebook cover photos, profile pictures, posts and event images. Preview each crop and download your image kit. Free; photos stay on your device.',
+  '/tools/linkedin-assets': 'Resize LinkedIn personal banners, company covers and profile photos. Adjust each crop and download a consistent image kit. Free and no sign-up.',
+  '/tools/discord-assets': 'Make Discord server icons, banners and invite backgrounds from your artwork. Check crops and feature requirements, then download your kit for free.',
+  '/tools/x-assets': 'Resize X (Twitter) headers, profile pictures and post images. Adjust your framing and download a ready-sized image kit. Free, with no photo uploads.',
+  '/tools/twitch-assets': 'Resize Twitch banners, profile images and information panels. Adjust each crop and export a named image kit. Free, with no account or photo uploads.',
+  '/tools/etsy-assets': 'Resize Etsy listing photos, shop banners and icons. Adjust individual crops and download a consistent product image kit. Free and no sign-up.',
+  '/tools/shopify-assets': 'Resize Shopify product photos, collection images and store banners. Preview each crop and export a consistent image kit. Free; photos stay on your device.',
+  '/tools/mobile-assets': 'Prepare App Store and Google Play screenshots, icons and graphics. Add captions, review device sizes and export your launch kit. Free and no sign-up.',
+  '/help/getting-started-with-a-batch': 'Learn to add images, combine tools, review settings and download a ZIP. Follow cropped screenshots of the Batch Image Kit workspace, step by step.',
+  '/help/choosing-output-settings': 'Choose image dimensions, JPG or WebP quality, transparency and filenames. See the actual settings panels and practical starting points for your batch.',
+  '/help/local-processing-and-browser-limits': 'See how local image processing works, what your browser saves and which batch limits apply. Learn about background tools, formats and large exports.',
+};
+
+export const SEO_PAGES: SeoPage[] = ([
   { path: '/', name: 'Batch Image Kit', title: 'Free Bulk Image Tools & Asset Generators | Batch Image Kit', description: 'Resize, compress, convert and rename images in bulk. Create Steam, social media, shop and app store image kits for free. No account; images stay on your device.', kind: 'website' },
   { path: '/tools', name: 'Free image tools', title: 'Free Online Image Tools & Platform Asset Kits | Batch Image Kit', description: 'Find free bulk image tools and asset generators for Steam, YouTube, Instagram, Etsy, Shopify and more. Prepare images locally and download ready-to-use files.', kind: 'website' },
   ...TOOLS.map((tool): SeoPage => ({ path: `/tools/${tool.slug}`, name: tool.name, title: `${tool.name} Online – Free | Batch Image Kit`, description: coreDescriptions[tool.id], kind: 'tool' })),
@@ -36,7 +86,7 @@ export const SEO_PAGES: SeoPage[] = [
   { path: '/about', name: 'About Batch Image Kit', title: 'About Our Free Image Tools | Batch Image Kit', description: 'Learn how Batch Image Kit prepares images locally in your browser, why the tools are free, and how batch processing keeps your original files unchanged.', kind: 'website' },
   { path: '/privacy', name: 'Privacy policy', title: 'Privacy Policy & Local Image Processing | Batch Image Kit', description: 'Read how Batch Image Kit handles local image processing, browser storage, preferences and cookies, and what happens to the images you select.', kind: 'website' },
   { path: '/terms', name: 'Terms of use', title: 'Terms of Use | Batch Image Kit', description: 'Read the terms for using Batch Image Kit, including acceptable use, image ownership, browser limitations and responsibility for exported files.', kind: 'website' },
-];
+] as SeoPage[]).map((page) => ({ ...page, title: searchTitles[page.path] ? `${searchTitles[page.path]} | Batch Image Kit` : page.title, description: searchDescriptions[page.path] || page.description }));
 
 export const WORKSPACE_PATHS = ['', '/resize', '/compress', '/convert', '/rename'].flatMap((tool) => ['', '/review', '/run', '/results'].map((step) => `/app${tool}${step}`));
 export const TOOL_ALIASES: Record<string, string> = Object.fromEntries(['steam', ...PLATFORM_PACKS.map((pack) => pack.id)].map((id) => [`/app/${id}`, `/tools/${id}-assets`]));

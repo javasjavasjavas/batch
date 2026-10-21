@@ -32,6 +32,12 @@ for (const page of SEO_PAGES) {
   assert(!JSON.stringify(schema).includes('aggregateRating'), 'Do not invent ratings');
   if (page.kind === 'tool') assert(schema['@graph'].some((node) => node['@type'] === 'WebApplication'));
   assert(html.includes(`${SITE_URL}/social-card.png`));
+  for (const key of ['og:title', 'og:description', 'og:url', 'og:image', 'og:image:type', 'og:image:alt', 'og:image:width', 'og:image:height', 'og:locale']) {
+    assert.equal([...html.matchAll(new RegExp(`<meta property="${key}" content="[^"]+"`, 'g'))].length, 1, `Missing or duplicate ${key}: ${page.path}`);
+  }
+  for (const key of ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:image:alt']) {
+    assert.equal([...html.matchAll(new RegExp(`<meta name="${key}" content="[^"]+"`, 'g'))].length, 1, `Missing or duplicate ${key}: ${page.path}`);
+  }
   assert(html.includes('<main'), `No rendered main content: ${page.path}`);
   assert(!html.includes('Something went wrong'), `Rendered route error: ${page.path}`);
   for (const [, href] of html.matchAll(/href="(\/[^"#?]*)(?:[?#][^"]*)?"/g)) {
@@ -44,6 +50,8 @@ for (const page of SEO_PAGES) {
     checkedLinks++;
   }
   for (const [, src] of html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)) await access(`dist${src}`);
+  for (const [, src] of html.matchAll(/src="(\/guides\/[^"?#]+)"/g)) await access(`dist${src}`);
+  if (page.kind === 'article') assert(html.includes('<figcaption') && html.includes('loading="lazy"'), `Missing illustrated instructions: ${page.path}`);
 }
 for (const page of SEO_PAGES) assert(inbound.has(page.path), `Orphan public page: ${page.path}`);
 for (const path of [...WORKSPACE_PATHS, '/404']) {
