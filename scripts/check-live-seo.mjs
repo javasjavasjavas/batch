@@ -27,4 +27,13 @@ const sitemap = await fetch(`${SITE_URL}/sitemap.xml`).then((response) => { asse
 assert.equal([...sitemap.matchAll(/<loc>/g)].length, SEO_PAGES.length);
 const robots = await fetch(`${SITE_URL}/robots.txt`).then((response) => { assert.equal(response.status, 200); return response.text(); });
 assert(robots.includes(`Sitemap: ${SITE_URL}/sitemap.xml`));
-console.log(`Live SEO passed: ${SEO_PAGES.length} public pages, ${WORKSPACE_PATHS.length} workspace routes, ${Object.keys(TOOL_ALIASES).length} redirects, true 404, robots.txt and sitemap.xml.`);
+const hostRedirects = ['www.batchimagekit.com', 'batchimagekit.pages.dev'];
+await Promise.all(hostRedirects.flatMap((host) => ['http:', 'https:'].flatMap((protocol) =>
+  ['/', '/tools/youtube-assets?utm_source=seo-audit&test=1'].map(async (path) => {
+    const source = `${protocol}//${host}${path}`;
+    const response = await fetch(source, { redirect: 'manual', signal: AbortSignal.timeout(20000) });
+    assert.equal(response.status, 301, `Host redirect status: ${source}`);
+    assert.equal(response.headers.get('location'), SITE_URL + path, `Host redirect destination: ${source}`);
+  })
+)));
+console.log(`Live SEO passed: ${SEO_PAGES.length} public pages, ${WORKSPACE_PATHS.length} workspace routes, ${Object.keys(TOOL_ALIASES).length} route redirects, ${hostRedirects.length} canonical host redirects (HTTP/HTTPS, paths and query strings), true 404, robots.txt and sitemap.xml.`);

@@ -49,15 +49,21 @@ declares `dist` as the Pages output. The build prerenders public pages and every
 supported workspace route to extensionless HTML pages. A top-level `404.html`
 gives unknown URLs a real 404 response. Generated `_redirects` redirect platform
 `/app/:id` aliases to `/tools/:id-assets`. Canonicals consistently use
-`https://batchimagekit.com`. Host-level www/pages.dev redirects must be configured
-in Cloudflare Redirect Rules or Bulk Redirects; Pages `_redirects` does not
-support them. No Functions, Worker script, or paid storage is needed.
+`https://batchimagekit.com`. Host redirects are configured in Cloudflare Bulk
+Redirects: list `batchimagekit_canonical_hosts`, enabled rule
+`Batch Image Kit canonical domains`. Both `www.batchimagekit.com/` and
+`batchimagekit.pages.dev/` redirect permanently (301) to the canonical origin,
+preserving path suffixes and query strings with subpath matching enabled.
+Include subdomains is disabled so deployment preview hosts remain independent.
+These account-level settings are managed in Cloudflare, not deployed from this
+repository; Pages `_redirects` does not support host-level sources.
+No Functions, Worker script, or paid storage is needed.
 
 Live URLs:
 
 - https://batchimagekit.com/
-- https://www.batchimagekit.com/
-- https://batchimagekit.pages.dev/ (Cloudflare fallback URL)
+- https://www.batchimagekit.com/ (301 to the canonical domain)
+- https://batchimagekit.pages.dev/ (301 to the canonical domain)
 
 The project uses Cloudflare Pages Free. Both custom domains are associated with
 the Pages project and have proxied CNAME records pointing to
@@ -76,6 +82,8 @@ static assets have a 25 MiB limit. The browser caches downloaded models.
 Run `npm run build` to build browser assets, render static HTML, generate
 `sitemap.xml`, `robots.txt`, redirects and cache headers, and audit the output.
 `npm run test:seo` repeats the output audit after a build.
+Run `node scripts/check-live-seo.mjs` after deployment to verify public pages,
+workspace exclusions, aliases, HTTP/HTTPS host redirects, sitemap and real 404s.
 
 `src/data/seo.ts` is the source of truth for public metadata, canonical URLs and
 workspace exclusions. Add public routes there when adding a page. Tool, platform
