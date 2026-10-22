@@ -100,7 +100,7 @@ export function Home() {
 
       <AdSlot placement="home-secondary" className="mx-auto my-12 max-w-content px-5 sm:px-8" />
 
-      <section aria-labelledby="local-title" className="mx-auto max-w-content px-5 pb-20 sm:px-8">
+      <section aria-labelledby="local-title" className="mx-auto max-w-content px-5 pb-20 pt-16 sm:px-8 sm:pt-20">
         <div className="grid gap-10 rounded-2xl bg-ink p-7 text-white sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16 lg:p-12">
           <div>
             <h2 id="local-title" className="text-[28px] font-semibold leading-tight tracking-[-0.03em] sm:text-[34px]">{tr("Designed to keep your images on your device")}</h2>
