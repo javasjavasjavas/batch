@@ -1,6 +1,7 @@
 export type Locale = 'en' | 'es';
 export const localeForPath = (path: string): Locale => /^\/es(?:\/|$)/.test(path) ? 'es' : 'en';
 const slugs: Record<string, string> = {
+  'image-seo-filenames-alt-text': 'seo-imagenes-nombres-texto-alternativo',
   'bulk-image-resizer': 'redimensionar-imagenes', 'image-compressor': 'comprimir-imagenes',
   'image-converter': 'convertir-imagenes', 'bulk-file-renamer': 'renombrar-imagenes',
   'getting-started-with-a-batch': 'primeros-pasos', 'choosing-output-settings': 'elegir-ajustes-de-exportacion',

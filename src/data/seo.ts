@@ -1,6 +1,6 @@
 import { TOOLS } from './tools';
 import { PLATFORM_PACKS } from './platforms';
-import { HELP_ARTICLES } from './helpArticles';
+import { ARTICLE_META } from './articleMetadata';
 import { englishPath, localizedPath, localeForPath } from '../i18n/paths';
 import { translate } from '../i18n/translate';
 
@@ -84,7 +84,7 @@ const ENGLISH_PAGES: SeoPage[] = ([
   { path: '/tools/steam-assets', name: 'Steam Asset Generator', title: 'Steam Capsule & Library Asset Generator | Batch Image Kit', description: 'Create Steam store capsules, library artwork, icons and screenshot exports. Adjust each crop and download a named ZIP with dimensions and an asset guide.', kind: 'tool' },
   ...PLATFORM_PACKS.map((pack): SeoPage => ({ path: `/tools/${pack.id}-assets`, name: PLATFORM_SEARCH[pack.id].heading, title: `${PLATFORM_SEARCH[pack.id].title} | Batch Image Kit`, description: PLATFORM_SEARCH[pack.id].description, kind: 'tool' })),
   { path: '/help', name: 'Image processing guides', title: 'Bulk Image Processing Guides & Help | Batch Image Kit', description: 'Learn to resize, compress, convert and rename images in batches. Find output settings, supported formats, browser limits and practical step-by-step guides.', kind: 'website' },
-  ...HELP_ARTICLES.map((article): SeoPage => ({ path: `/help/${article.slug}`, name: article.title, title: `${article.title} | Batch Image Kit`, description: article.summary, kind: 'article' })),
+  ...Object.values(ARTICLE_META).map((article): SeoPage => ({ path: `/help/${article.slug}`, name: article.title, title: `${article.title} | Batch Image Kit`, description: article.summary, kind: 'article' })),
   { path: '/about', name: 'About Batch Image Kit', title: 'About Our Free Image Tools | Batch Image Kit', description: 'Learn how Batch Image Kit prepares images locally in your browser, why the tools are free, and how batch processing keeps your original files unchanged.', kind: 'website' },
   { path: '/privacy', name: 'Privacy policy', title: 'Privacy Policy & Local Image Processing | Batch Image Kit', description: 'Read how Batch Image Kit handles local image processing, browser storage, preferences and cookies, and what happens to the images you select.', kind: 'website' },
   { path: '/terms', name: 'Terms of use', title: 'Terms of Use | Batch Image Kit', description: 'Read the terms for using Batch Image Kit, including acceptable use, image ownership, browser limitations and responsibility for exported files.', kind: 'website' },

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RunState } from '../types/run';
-import { processFile, type ProcessResult } from '../processing/codec';
+import type { ProcessResult } from '../processing/codec';
 import type { InputFormat } from '../processing/formats';
 
 export function useRunEngine() {
@@ -62,7 +62,10 @@ export function useRunEngine() {
         w.postMessage({ id: item.id, file: item.file, input, animated: Boolean(item.animated), settings: run.settings, enabled: run.enabled });
       } catch (error) { finish(undefined, error instanceof Error ? error.message : String(error)); }
     } else {
-      void processFile(item.file, input, Boolean(item.animated), run.settings, run.enabled, report).then((result) => finish(result)).catch((error) => finish(undefined, error instanceof Error ? error.message : String(error)));
+      void import('../processing/codec').then(({ processFile }) => {
+        if (token !== generation.current) return undefined;
+        return processFile(item.file!, input, Boolean(item.animated), run.settings, run.enabled, report);
+      }).then((result) => finish(result)).catch((error) => finish(undefined, error instanceof Error ? error.message : String(error)));
     }
   }, [run]);
 

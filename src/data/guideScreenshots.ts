@@ -18,6 +18,7 @@ const images = {
 };
 
 export const GUIDE_SCREENSHOTS: Record<string, Record<string, Screenshot>> = {
+  'image-seo-filenames-alt-text': { 'name-images': images.rename, 'size-and-format': images.results },
   'getting-started-with-a-batch': { 'add-images': images.intake, organize: images.organize, 'choose-tools': images.compress, review: images.review },
   'choosing-output-settings': { size: images.resize, quality: images.compress, format: images.convert, naming: images.rename },
   'local-processing-and-browser-limits': { backgrounds: images.background },

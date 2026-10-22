@@ -1,3 +1,4 @@
+import { matchRoutes } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from 'react-router-dom/server';
 import { routes } from './App';
@@ -12,4 +13,8 @@ export async function render(path: string) {
   if (context.errors) throw new Error(`Route failed for ${path}: ${JSON.stringify(context.errors)}`);
   const router = createStaticRouter(handler.dataRoutes, context);
   return renderToString(<PrefsProvider><MotionPrefs><StaticRouterProvider router={router} context={context} hydrate={false} /></MotionPrefs></PrefsProvider>);
+}
+
+export function routeModules(path: string): string[] {
+  return (matchRoutes(routes, path) || []).flatMap(match => match.route.handle?.module ? [match.route.handle.module] : []);
 }

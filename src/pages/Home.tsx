@@ -1,3 +1,4 @@
+import { HOME_USE_CASES } from '../data/homeUseCases';
 import { useI18n } from '../i18n/LocaleContext';
 import { Link } from '../i18n/router';
 import { ArrowRightIcon, CpuIcon, EyeOffIcon, MonitorSmartphoneIcon, FolderUpIcon, SlidersHorizontalIcon, ClipboardCheckIcon, Gamepad2Icon } from 'lucide-react';
@@ -68,6 +69,18 @@ export function Home() {
         <AdSlot placement="home-primary" className="home-hero-ad" />
         <div className="home-hero-showcase mt-5 lg:mt-0 lg:pt-2">
           <BatchShowcase />
+        </div>
+      </section>
+
+      <section aria-labelledby="use-cases-title" className="mx-auto max-w-content px-5 py-14 sm:px-8">
+        <h2 id="use-cases-title" className="text-[30px] font-semibold tracking-[-0.03em]">{tr('What are you preparing?')}</h2>
+        <p className="mt-2 text-muted">{tr('Start with the job you need to finish.')}</p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {HOME_USE_CASES.map((item) => <div key={item.title} className="flex flex-col rounded-2xl border border-line bg-white p-6">
+            <h3 className="font-semibold">{tr(item.title)}</h3>
+            <p className="mb-5 mt-2 text-sm leading-relaxed text-muted">{tr(item.body)}</p>
+            <Link to={item.href} className="mt-auto text-sm font-medium underline underline-offset-4">{tr(item.label)}</Link>
+          </div>)}
         </div>
       </section>
 

@@ -5,7 +5,7 @@ import { HELP_ARTICLES } from '../data/helpArticles';
 import { EditorialLayout } from '../components/site/EditorialLayout';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { NotFound } from './NotFound';
-import { GUIDE_TOOLS } from '../data/workflowGuides';
+import { GUIDE_TOOLS } from '../data/guideTools';
 import { SEO_PAGES } from '../data/seo';
 import { GUIDE_SCREENSHOTS, localizedScreenshot } from '../data/guideScreenshots';
 

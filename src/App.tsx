@@ -4,14 +4,6 @@ import { MotionPrefs } from './components/ui/MotionPrefs';
 import { RootLayout } from './components/site/RootLayout';
 import { SiteLayout } from './components/site/SiteLayout';
 import { RouteError } from './components/site/RouteError';
-import { Home } from './pages/Home';
-import { ToolsDirectory } from './pages/ToolsDirectory';
-import { ToolLanding } from './pages/ToolLanding';
-import { Help } from './pages/Help';
-import { HelpArticle } from './pages/HelpArticle';
-import { About } from './pages/About';
-import { Privacy } from './pages/Privacy';
-import { Terms } from './pages/Terms';
 import { NotFound } from './pages/NotFound';
 import { PLATFORM_PACKS } from './data/platforms';
 import { LocaleProvider } from './i18n/LocaleContext';
@@ -31,32 +23,32 @@ export const routes: RouteObject[] = [
   {
     element: <SiteLayout />,
     children: [
-    { path: '/', element: <Home /> },
-    { path: '/tools', element: <ToolsDirectory /> },
-    { path: '/app/steam', lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
-    { path: '/tools/steam-assets', lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
+    { path: '/', handle: { module: 'src/pages/Home.tsx' }, lazy: async () => ({ Component: (await import('./pages/Home')).Home }) },
+    { path: '/tools', handle: { module: 'src/pages/ToolsDirectory.tsx' }, lazy: async () => ({ Component: (await import('./pages/ToolsDirectory')).ToolsDirectory }) },
+    { path: '/app/steam', handle: { module: 'src/pages/SteamAssets.tsx' }, lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
+    { path: '/tools/steam-assets', handle: { module: 'src/pages/SteamAssets.tsx' }, lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
     ...PLATFORM_PACKS.flatMap((pack) => [
-      { path: `/app/${pack.id}`, lazy: platformLoader(pack.id) },
-      { path: `/tools/${pack.id}-assets`, lazy: platformLoader(pack.id) },
+      { path: `/app/${pack.id}`, handle: { module: 'src/pages/PlatformAssets.tsx' }, lazy: platformLoader(pack.id) },
+      { path: `/tools/${pack.id}-assets`, handle: { module: 'src/pages/PlatformAssets.tsx' }, lazy: platformLoader(pack.id) },
     ]),
-    { path: '/tools/:slug', element: <ToolLanding /> },
-    { path: '/help', element: <Help /> },
-    { path: '/help/:slug', element: <HelpArticle /> },
-    { path: '/about', element: <About /> },
-    { path: '/privacy', element: <Privacy /> },
-    { path: '/terms', element: <Terms /> },
+    { path: '/tools/:slug', handle: { module: 'src/pages/ToolLanding.tsx' }, lazy: async () => ({ Component: (await import('./pages/ToolLanding')).ToolLanding }) },
+    { path: '/help', handle: { module: 'src/pages/Help.tsx' }, lazy: async () => ({ Component: (await import('./pages/Help')).Help }) },
+    { path: '/help/:slug', handle: { module: 'src/pages/HelpArticle.tsx' }, lazy: async () => ({ Component: (await import('./pages/HelpArticle')).HelpArticle }) },
+    { path: '/about', handle: { module: 'src/pages/About.tsx' }, lazy: async () => ({ Component: (await import('./pages/About')).About }) },
+    { path: '/privacy', handle: { module: 'src/pages/Privacy.tsx' }, lazy: async () => ({ Component: (await import('./pages/Privacy')).Privacy }) },
+    { path: '/terms', handle: { module: 'src/pages/Terms.tsx' }, lazy: async () => ({ Component: (await import('./pages/Terms')).Terms }) },
     { path: '*', element: <NotFound /> }]
 
   },
   ...['/app', '/app/resize', '/app/compress', '/app/convert', '/app/rename'].map((path) => ({
     path,
-    lazy: async () => ({ Component: (await import('./components/workspace/WorkspaceLayout')).WorkspaceLayout }),
+    handle: { module: 'src/components/workspace/WorkspaceLayout.tsx' }, lazy: async () => ({ Component: (await import('./components/workspace/WorkspaceLayout')).WorkspaceLayout }),
     errorElement: <LocaleProvider><RouteError /></LocaleProvider>,
     children: [
-    { index: true, lazy: async () => ({ Component: (await import('./pages/workspace/Editor')).Editor }) },
-    { path: 'review', lazy: async () => ({ Component: (await import('./pages/workspace/Review')).Review }) },
-    { path: 'run', lazy: async () => ({ Component: (await import('./pages/workspace/Processing')).Processing }) },
-    { path: 'results', lazy: async () => ({ Component: (await import('./pages/workspace/Results')).Results }) }]
+    { index: true, handle: { module: 'src/pages/workspace/Editor.tsx' }, lazy: async () => ({ Component: (await import('./pages/workspace/Editor')).Editor }) },
+    { path: 'review', handle: { module: 'src/pages/workspace/Review.tsx' }, lazy: async () => ({ Component: (await import('./pages/workspace/Review')).Review }) },
+    { path: 'run', handle: { module: 'src/pages/workspace/Processing.tsx' }, lazy: async () => ({ Component: (await import('./pages/workspace/Processing')).Processing }) },
+    { path: 'results', handle: { module: 'src/pages/workspace/Results.tsx' }, lazy: async () => ({ Component: (await import('./pages/workspace/Results')).Results }) }]
 
   }))]
 

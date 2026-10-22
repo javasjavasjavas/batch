@@ -1,15 +1,14 @@
+import { IMAGE_SEO_GUIDE } from './imageSeoGuide';
+import { ARTICLE_META } from './articleMetadata';
 import type { HelpArticle } from '../types/content';
 import { WORKFLOW_GUIDES } from './workflowGuides';
 
 export const HELP_ARTICLES: HelpArticle[] = [
 ...WORKFLOW_GUIDES,
+IMAGE_SEO_GUIDE,
 {
-  slug: 'getting-started-with-a-batch',
-  title: 'Getting started with a batch',
-  summary: 'Add images, choose what should happen to them, and review the plan before running.',
-  category: 'Getting started',
-  readTime: '3 min read',
-  sections: [
+  ...ARTICLE_META['getting-started-with-a-batch'],
+    sections: [
   {
     id: 'add-images',
     heading: 'Add your images',
@@ -46,12 +45,8 @@ export const HELP_ARTICLES: HelpArticle[] = [
 
 },
 {
-  slug: 'choosing-output-settings',
-  title: 'Choosing output settings',
-  summary: 'Practical defaults for size, quality, format, and naming, and when to change them.',
-  category: 'Output settings',
-  readTime: '4 min read',
-  sections: [
+  ...ARTICLE_META['choosing-output-settings'],
+    sections: [
   {
     id: 'size',
     heading: 'Size',
@@ -87,12 +82,8 @@ export const HELP_ARTICLES: HelpArticle[] = [
 
 },
 {
-  slug: 'local-processing-and-browser-limits',
-  title: 'Understanding local processing and browser limits',
-  summary: 'How Batch is designed to work on your device, and what that means for large batches.',
-  category: 'Local processing',
-  readTime: '3 min read',
-  sections: [
+  ...ARTICLE_META['local-processing-and-browser-limits'],
+    sections: [
   {
     id: 'local',
     heading: 'What local processing means',

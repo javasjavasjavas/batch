@@ -31,8 +31,8 @@ export function SettingsPreviewCard({ tool, onOpen }: SettingsPreviewCardProps) 
         )}
       </dl>
       <div className="border-t border-line p-4">
-        <Button variant="secondary" className="w-full" onClick={onOpen}>{tr("Open workspace with ")}{tr(tool.name.replace(/^Bulk /, '').toLowerCase())}
-          <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
+        <Button variant="secondary" className="h-auto min-h-10 w-full whitespace-normal py-2" onClick={onOpen}><span className="min-w-0">{tr("Open workspace with ")}{tr(tool.name.replace(/^Bulk /, '').toLowerCase())}</span>
+          <ArrowRightIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
         </Button>
       </div>
     </aside>);

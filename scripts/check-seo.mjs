@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
-import { SEO_PAGES, WORKSPACE_PATHS, TOOL_ALIASES, SITE_URL, metaForPath } from '../dist-ssr/entry-server.js';
+import { SEO_PAGES, WORKSPACE_PATHS, TOOL_ALIASES, SITE_URL, metaForPath, routeModules } from '../dist-ssr/entry-server.js';
 
+const manifest = JSON.parse(await readFile('dist/.vite/manifest.json', 'utf8'));
 const titles = new Set(), descriptions = new Set();
 const sitemap = await readFile('dist/sitemap.xml', 'utf8');
 const redirects = await readFile('dist/_redirects', 'utf8');
@@ -14,6 +15,9 @@ const inbound = new Set();
 let checkedLinks = 0;
 for (const page of SEO_PAGES) {
   const html = await readFile(page.path.endsWith('/') ? `dist${page.path}index.html` : `dist${page.path}.html`, 'utf8');
+  for (const module of routeModules(page.path)) {
+    assert(html.includes('href="/' + manifest[module].file + '"'), 'Missing current-route preload: ' + page.path);
+  }
   const title = html.match(/<title>(.*?)<\/title>/)?.[1];
   const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1];
   assert(title && description, `Missing metadata: ${page.path}`);
@@ -54,7 +58,11 @@ for (const page of SEO_PAGES) {
     checkedLinks++;
   }
   for (const [, src] of html.matchAll(/(?:src|href)="(\/assets\/[^"?#]+)"/g)) await access(`dist${src}`);
-  for (const [, src] of html.matchAll(/src="(\/guides\/[^"?#]+)"/g)) await access(`dist${src}`);
+  const sitemapEntry = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].find(([, entry]) => entry.includes('<loc>' + SITE_URL + page.path + '</loc>'))?.[1];
+  for (const [, src] of html.matchAll(/src="(\/guides\/[^"?#]+)"/g)) {
+    await access(`dist${src}`);
+    assert(sitemapEntry?.includes('<image:loc>' + SITE_URL + src + '</image:loc>'), 'Guide screenshot missing from image sitemap: ' + page.path);
+  }
   if (page.kind === 'article') assert(html.includes('<figcaption') && html.includes('loading="lazy"'), `Missing illustrated instructions: ${page.path}`);
 }
 for (const page of SEO_PAGES) assert(inbound.has(page.path), `Orphan public page: ${page.path}`);

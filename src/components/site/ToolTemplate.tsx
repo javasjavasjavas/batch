@@ -1,3 +1,4 @@
+import { TOOL_USE_CASES } from '../../data/toolUseCases';
 import { useI18n } from '../../i18n/LocaleContext';
 import { Link } from '../../i18n/router';
 import { ChevronRightIcon } from 'lucide-react';
@@ -10,7 +11,8 @@ import { SettingsPreviewCard } from './SettingsPreviewCard';
 import { StepList } from './StepList';
 import { FaqSection } from './FaqSection';
 import { ToolCard } from './ToolCard';
-import { WORKFLOW_GUIDES, GUIDE_TOOLS } from '../../data/workflowGuides';
+import { GUIDE_TOOLS } from '../../data/guideTools';
+import { ARTICLE_META } from '../../data/articleMetadata';
 
 export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
   const { tr } = useI18n();
@@ -33,7 +35,7 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
         </ol>
       </nav>
 
-      <section className="tool-hero grid gap-8 pb-12 pt-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-x-14">
+      <section className="tool-hero grid grid-cols-1 gap-8 pb-12 pt-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-x-14">
         <div>
           <h1 className="max-w-[18ch] text-[36px] font-semibold leading-[1.05] tracking-[-0.035em] text-ink sm:text-[48px]">
             {tr(tool.title)}
@@ -63,6 +65,18 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
             )}
           </div>
 
+      <section aria-labelledby="task-settings" className="pb-16">
+        <h2 id="task-settings" className="scroll-mt-24 text-[28px] font-semibold tracking-[-0.025em]">{tr('Choose settings for your task')}</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">{tr('Practical starting points. Check the preview and the destination requirements before exporting.')}</p>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {TOOL_USE_CASES[tool.id].map((item) => <div key={item.title} className="flex flex-col rounded-2xl border border-line bg-white p-6">
+            <h3 className="text-base font-semibold">{tr(item.title)}</h3>
+            <p className="mb-5 mt-3 text-sm leading-relaxed text-muted">{tr(item.body)}</p>
+            <Link to={item.href} className="mt-auto text-sm font-medium underline underline-offset-4">{tr(item.label)}</Link>
+          </div>)}
+        </div>
+      </section>
+
       <section aria-labelledby="tool-steps" className="pb-16">
         <h2 id="tool-steps" className="mb-6 text-[28px] font-semibold tracking-[-0.025em] text-ink">{tr("How it works")}</h2>
         <StepList steps={tool.steps} />
@@ -75,7 +89,7 @@ export function ToolTemplate({ tool }: {tool: ToolInfo;}) {
       </div>
 
       <section aria-labelledby="related-tools" className="border-t border-line py-14">
-        <nav aria-label={tr("Image preparation guides")} className="mb-8"><h2 className="text-lg font-semibold">{tr("Practical image guides")}</h2><ul className="mt-3 space-y-2">{WORKFLOW_GUIDES.filter((guide) => GUIDE_TOOLS[guide.slug]?.includes(tool.slug)).map((guide) => <li key={guide.slug}><Link className="text-sm underline underline-offset-4" to={`/help/${guide.slug}`}>{tr(guide.title)}</Link></li>)}<li><Link className="text-sm underline underline-offset-4" to="/help/choosing-output-settings">{tr("Choose size, quality, format and filename settings")}</Link></li></ul></nav>
+        <nav aria-label={tr("Image preparation guides")} className="mb-8"><h2 className="text-lg font-semibold">{tr("Practical image guides")}</h2><ul className="mt-3 space-y-2">{Object.values(ARTICLE_META).filter((guide) => GUIDE_TOOLS[guide.slug]?.includes(tool.slug)).map((guide) => <li key={guide.slug}><Link className="text-sm underline underline-offset-4" to={`/help/${guide.slug}`}>{tr(guide.title)}</Link></li>)}<li><Link className="text-sm underline underline-offset-4" to="/help/choosing-output-settings">{tr("Choose size, quality, format and filename settings")}</Link></li></ul></nav>
         <h2 id="related-tools" className="text-lg font-semibold tracking-[-0.015em] text-ink">{tr("Related tools")}</h2>
         <p className="mt-1 text-sm text-muted">{tr("All tools work together in one batch.")}</p>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
