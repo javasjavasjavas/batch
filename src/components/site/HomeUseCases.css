@@ -1,0 +1,33 @@
+.home-use-cases .use-case-art { height: 190px; position: relative; overflow: hidden; flex-shrink: 0; background: #ecece3; }
+.home-use-cases .use-case-art--product > img { width: 100%; height: 100%; object-fit: cover; }
+.home-use-cases .use-case-tag { position: absolute; bottom: 12px; left: 12px; right: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 7px; border-radius: 7px; background: #fffffff0; color: #35402b; font-size: 11px; font-weight: 500; text-align: center; }
+.home-use-cases .use-case-tag svg { width: 14px; height: 14px; flex-shrink: 0; }
+.home-use-cases .use-case-corner { position: absolute; width: 22px; height: 22px; border-color: #c4e65a; border-style: solid; }
+.home-use-cases .use-case-corner--top { left: 16px; top: 16px; border-width: 2px 0 0 2px; }
+.home-use-cases .use-case-corner--bottom { right: 16px; bottom: 53px; border-width: 0 2px 2px 0; }
+.home-use-cases .use-case-art--website { background: #e9ecdf; padding: 18px 30px 0; }
+.home-use-cases .use-case-browser { background: white; transform: rotate(-6deg); border-radius: 8px; overflow: hidden; box-shadow: 0 10px 24px #263b1720; }
+.home-use-cases .use-case-browser-dots { display: flex; gap: 4px; padding: 9px 12px; }
+.home-use-cases .use-case-browser-dots span { width: 3px; height: 3px; border-radius: 50%; background: #a9af9f; }
+.home-use-cases .use-case-browser img { height: 108px; width: 100%; object-fit: cover; object-position: center 45%; }
+.home-use-cases .use-case-browser-lines { display: grid; gap: 6px; padding: 12px; }
+.home-use-cases .use-case-browser-lines span { height: 4px; background: #e0e3d7; width: 80%; }
+.home-use-cases .use-case-browser-lines span + span { width: 55%; }
+.home-use-cases .use-case-art--format { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 26px 16px; background: #eef0e5; }
+.home-use-cases .use-case-file { width: 76px; padding: 6px 6px 0; background: white; color: #35402b; border-radius: 8px; box-shadow: 0 8px 18px #263b1714; transform: rotate(-7deg); }
+.home-use-cases .use-case-file img { height: 74px; width: 100%; object-fit: cover; border-radius: 4px; }
+.home-use-cases .use-case-file > span { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 11px 0; font-size: 12px; font-weight: 600; }
+.home-use-cases .use-case-file svg { width: 12px; height: 12px; }
+.home-use-cases .use-case-file--result { background: #d4f25c; transform: rotate(7deg); }
+.home-use-cases .use-case-format-arrow { width: 18px; height: 18px; flex-shrink: 0; }
+.home-use-cases .use-case-art--steam { background: #eaeadd; }
+.home-use-cases .use-case-capsules { position: relative; width: 216px; height: 138px; margin: 5px auto 0; }
+.home-use-cases .use-case-capsule { position: absolute; overflow: hidden; border: 5px solid #fffdf5; border-radius: 7px; background: #dce5cb; box-shadow: 0 8px 18px #4b5c3020; }
+.home-use-cases .use-case-capsule--wide { width: 144px; height: 89px; top: 28px; left: 5px; transform: rotate(-8deg); }
+.home-use-cases .use-case-capsule--portrait { width: 84px; height: 120px; right: 8px; top: 11px; transform: rotate(8deg); }
+.home-use-cases .use-case-sun { position: absolute; width: 28px; height: 28px; border-radius: 50%; top: 10px; right: 16px; background: #f5f0d7; }
+.home-use-cases .use-case-hill { position: absolute; width: 180%; height: 95%; border-radius: 50% 60% 0 0; background: #a7bb90; left: -65%; bottom: -36%; transform: rotate(20deg); box-shadow: 50px -12px 0 #becda9; }
+.home-use-cases .use-case-capsule strong { position: absolute; left: 9px; bottom: 10px; width: 70px; font-size: 15px; line-height: 1.05; letter-spacing: -.04em; color: #2c3a24; }
+.home-use-cases .use-case-capsule--portrait strong { width: 50px; font-size: 13px; }
+.home-use-cases .use-case-action:hover { background: #c5e64e; }
+@media (min-width: 640px) and (max-width: 1023px) { .home-use-cases .use-case-art { height: 210px; } .home-use-cases .use-case-capsules { margin-top: 15px; } }
