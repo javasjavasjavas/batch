@@ -1,3 +1,4 @@
+import { analyticsConfigured } from '../../analytics/client';
 import { useI18n } from '../../i18n/LocaleContext';
 import { Link } from '../../i18n/router';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -9,7 +10,7 @@ import { consentReady } from '../../advertising/config';
 export function CookieBanner() {
   const { tr } = useI18n();
   const { consent, acceptAll, rejectAll, setCookieDialogOpen, cookieDialogOpen } = usePrefs();
-  const visible = !consentReady && !consent.decided && !cookieDialogOpen;
+  const visible = !analyticsConfigured && !consentReady && !consent.decided && !cookieDialogOpen;
 
   return (
     <AnimatePresence>

@@ -35,7 +35,7 @@ export const PRIVACY_SECTIONS: ArticleSection[] = [
     { label: 'Choices for participating third-party advertising providers', href: 'https://optout.aboutads.info/' }
   ] },
   { id: 'measurement', heading: 'Measurement and contact messages', paragraphs: [
-    'Batch currently has no separate Google Analytics or session-recording integration. When advertising is enabled, AdSense may measure ad delivery and performance as described above.',
+    'With your permission, Batch uses Google Analytics to measure page visits, language, tool usage and download actions. Google receives technical connection and device information and uses analytics cookies. We do not send image contents, file names, batch titles or form values. We remove query strings and URL fragments from page addresses sent to Analytics and reduce external referrers to their domain. Automatic form and download tracking, Google signals and advertising personalization are disabled for Analytics. Analytics only loads after you allow it; you can withdraw permission in Cookie preferences. Your choice and analytics cookies expire after 180 days. Batch does not use session recording. Advertising measurement is managed separately through Google’s consent tools.',
     'If you email us, we receive your email address and the information you choose to send so we can respond. Do not send private images or sensitive documents unless they are necessary to your request. Contact correspondence is retained only as needed to handle the request and applicable record-keeping obligations.'
   ] },
   { id: 'choices', heading: 'Your choices and requests', paragraphs: [

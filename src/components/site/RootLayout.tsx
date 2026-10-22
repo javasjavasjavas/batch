@@ -1,3 +1,4 @@
+import { Analytics } from '../../analytics/Analytics';
 import { Outlet } from '../../i18n/router';
 import { CookieBanner } from './CookieBanner';
 import { CookieDialog } from './CookieDialog';
@@ -12,6 +13,7 @@ export function RootLayout() {
   return (
     <LocaleProvider><ToastProvider><BatchProvider>
       <Seo />
+      <Analytics />
       <AdSenseManager />
       <Outlet />
       <OfflineNotice />

@@ -1,3 +1,4 @@
+import { trackAction } from '../analytics/client';
 import { useI18n } from '../i18n/LocaleContext';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from '../i18n/router';
@@ -157,6 +158,7 @@ export function BatchProvider({ children }: {children: React.ReactNode;}) {
     if (validateBatch(settings, enabled, reviewImages.length).some((issue) => issue.level === 'error')) return false;
     runWorkspace.current = workspacePath;
     startEngine(createRun(reviewImages, settings, enabled, workspaceTool));
+    trackAction('batch_start');
     return true;
   }, [startEngine, reviewImages, settings, enabled, workspacePath, workspaceTool]);
 

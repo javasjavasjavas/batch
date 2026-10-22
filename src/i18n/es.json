@@ -1926,5 +1926,13 @@
   "Create {0} assets": "Crear recursos para {0}",
   "{0} options": "Opciones de {0}",
   "{0} width": "Ancho de {0}",
-  "{0} height": "Alto de {0}"
+  "{0} height": "Alto de {0}",
+  "Optional analytics": "Analítica opcional",
+  "Help us improve Batch": "Ayúdanos a mejorar Batch",
+  "May we use Google Analytics cookies to understand visits and tool usage? Images and file names are never included. You can change this in Cookie preferences.": "¿Nos permites usar cookies de Google Analytics para entender las visitas y el uso de las herramientas? Nunca se incluyen imágenes ni nombres de archivos. Puedes cambiarlo en Preferencias de cookies.",
+  "Reject analytics": "Rechazar analítica",
+  "Allow analytics": "Permitir analítica",
+  "Google Analytics": "Google Analytics",
+  "Measure visits and downloads. No images or file names. Changes apply immediately.": "Medir visitas y descargas. Sin imágenes ni nombres de archivos. Los cambios se aplican al instante.",
+  "With your permission, Batch uses Google Analytics to measure page visits, language, tool usage and download actions. Google receives technical connection and device information and uses analytics cookies. We do not send image contents, file names, batch titles or form values. We remove query strings and URL fragments from page addresses sent to Analytics and reduce external referrers to their domain. Automatic form and download tracking, Google signals and advertising personalization are disabled for Analytics. Analytics only loads after you allow it; you can withdraw permission in Cookie preferences. Your choice and analytics cookies expire after 180 days. Batch does not use session recording. Advertising measurement is managed separately through Google’s consent tools.": "Con tu permiso, Batch utiliza Google Analytics para medir visitas, idioma, uso de herramientas y acciones de descarga. Google recibe información técnica de conexión y del dispositivo y utiliza cookies de analítica. No enviamos imágenes, nombres de archivos, títulos de lotes ni valores de formularios. Eliminamos parámetros y fragmentos de las direcciones enviadas a Analytics y limitamos las referencias externas a su dominio. El seguimiento automático de formularios y descargas, Google signals y la personalización publicitaria están desactivados en Analytics. Analytics solo se carga después de tu aceptación; puedes retirar el permiso en Preferencias de cookies. Tu elección y las cookies de analítica caducan después de 180 días. Batch no graba sesiones. La medición publicitaria se gestiona por separado mediante las herramientas de consentimiento de Google."
 }

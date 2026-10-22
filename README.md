@@ -154,3 +154,26 @@ choices, which is why manual-only account configuration is required.
 Run the development server and append `?ads=preview` to inspect reserved spaces
 without any real Google ad requests. This preview is absent from production.
 When disabled, ad slots and their reserved space are omitted.
+
+## Traffic measurement and Search Console
+
+Google Analytics 4 uses web stream `G-9KF9E5Y7MW` (Batch Image Kit — Web).
+Settings live in `src/config/analytics.json`. Only the production domains collect
+analytics; localhost and preview deployments do not. Keep enhanced measurement
+OFF in the Google UI: page views are sent once per React route change, and the
+app explicitly sends `batch_start` and `asset_download`. Download events indicate
+that a download was initiated, not that a browser saved the file successfully.
+
+Analytics is opt-in through its own versioned 180-day consent choice, separate
+from AdSense's Google CMP and the old prototype preference. The footer permits
+revocation. No image, filename, batch title or form value is sent. Page paths are
+allowlisted; query strings and fragments are removed, and external referrers are
+reduced to their origin. Google signals and ad personalization are disabled in
+the tag configuration. Tests cover consent, revocation, URL privacy and duplicate
+page views. Account data-sharing options were left disabled.
+
+The Search Console verification meta tag in `index.html` belongs to the
+`https://batchimagekit.com/` property under the owner's Google account. Preserve
+it during future redesigns. Submit `https://batchimagekit.com/sitemap.xml` in that
+property; indexing status must be checked in URL Inspection, not inferred from
+a successful deployment or a search engine site query.

@@ -1,3 +1,4 @@
+import { AnalyticsPreference } from '../../analytics/Analytics';
 import { useI18n } from '../../i18n/LocaleContext';
 import { useEffect, useState } from 'react';
 import type { ConsentChoices } from '../../types/prefs';
@@ -44,6 +45,7 @@ export function CookieDialog() {
 
   if (consentReady) return <Dialog open={cookieDialogOpen} onClose={close} title={tr("Privacy and cookie settings")} size="md">
     <p className="text-sm leading-relaxed text-muted">{tr("Advertising choices are managed by Google's consent message. Batch does not share your images or file names with advertisers.")}</p>
+    <AnalyticsPreference />
     <Button className="mt-5" onClick={() => {
       if (window.googlefc?.showRevocationMessage) {
         close();

@@ -1,3 +1,4 @@
+import { trackAction } from '../analytics/client';
 import type { RunItem } from '../types/run';
 import { ZipWriter, BlobWriter, BlobReader } from '@zip.js/zip.js/lib/zip-core-external.js';
 import { LIMITS } from './formats';
@@ -7,6 +8,7 @@ export function downloadBlob(blob: Blob, filename: string) {
   const link = document.createElement('a');
   link.href = url; link.download = filename; document.body.append(link); link.click(); link.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  trackAction('asset_download');
 }
 
 export async function makeZip(items: RunItem[], signal: AbortSignal, onProgress: (done: number, total: number) => void): Promise<Blob> {
