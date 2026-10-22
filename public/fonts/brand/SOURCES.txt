@@ -1,0 +1,7 @@
+Unmodified fonts from https://github.com/google/fonts (downloaded 2026-10-22).
+Each font is redistributed under its accompanying SIL Open Font License 1.1.
+SpaceGrotesk.ttf: ofl/spacegrotesk/SpaceGrotesk[wght].ttf
+IBMPlexMono.ttf: ofl/ibmplexmono/IBMPlexMono-Regular.ttf
+DMSerifDisplay.ttf: ofl/dmserifdisplay/DMSerifDisplay-Regular.ttf
+NunitoSans.ttf: ofl/nunitosans/NunitoSans[YTLC,opsz,wdth,wght].ttf
+These four fonts are served locally. No logo or text is sent to Google Fonts.

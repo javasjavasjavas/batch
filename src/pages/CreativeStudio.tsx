@@ -10,6 +10,7 @@ import { LIMITS } from '../processing/formats';
 import { canvasBlob, createStudioOutputs, loadStudioImage, renderStudio, screenshotDimensions, STUDIO_DEFAULTS, zipStudio, type StudioImage, type StudioOptions, type StudioOutput } from '../processing/creative';
 import './CreativeStudio.css';
 import { trackAction } from '../analytics/client';
+import { BrandStudio } from './BrandStudio';
 
 function Field({ label, children }: { label: string; children: (id: string) => ReactNode }) {
   const id = useId(); return <div className="studio-field"><label htmlFor={id}>{label}</label>{children(id)}</div>;
@@ -18,6 +19,10 @@ const positions = ['top-left', 'top-center', 'top-right', 'center-left', 'center
 const positionLabels = ['Top left', 'Top center', 'Top right', 'Center left', 'Center', 'Center right', 'Bottom left', 'Bottom center', 'Bottom right'];
 
 export function CreativeStudio({ kind }: { kind: CreativeToolId }) {
+  return kind === 'brand' ? <BrandStudio /> : <BasicStudio kind={kind} />;
+}
+
+function BasicStudio({ kind }: { kind: CreativeToolId }) {
   const { tr, locale } = useI18n();
   const tool = CREATIVE_TOOLS.find(t => t.id === kind)!;
   const single = kind === 'favicon' || kind === 'brand';
