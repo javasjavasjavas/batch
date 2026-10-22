@@ -1,9 +1,11 @@
-import { analyzeBrandPixels, brandFont, contrast, edgeBackground, luminance, mixColor, pixelBounds, textOn, type BrandAnalysis, type BrandColor } from './brandAnalysis';
+import { analyzeBrandPixels, brandFont, contrast, edgeBackground, luminance, pixelBounds, textOn, type BrandAnalysis, type BrandColor } from './brandAnalysis';
 import { canvasBlob, type StudioImage, type StudioOutput } from './creative';
 import { translate } from '../i18n/translate';
-export type BrandView = 'board' | 'cards' | 'mug' | 'social' | 'pattern' | 'avatar';
-export const BRAND_VIEWS: { id: BrandView; label: string }[] = [{ id: 'board', label: 'Brand board' }, { id: 'cards', label: 'Business cards' }, { id: 'mug', label: 'Mug mockup' }, { id: 'social', label: 'Social graphic' }, { id: 'pattern', label: 'Brand pattern' }, { id: 'avatar', label: 'Brand avatar' }];
-export interface BrandOptions { name: string; tagline: string; colors: BrandColor[]; fontId: string; removeBackground: boolean; padding: number; includeFont: boolean }
+import { photoBase, PHOTO_SURFACES, printMug, printPlane } from './brandPhoto';
+import { applicationSheet, brandCopy, typographySheet, wrapText, type BrandUseCase } from './brandLayouts';
+export type BrandView = 'board' | 'cards' | 'mug' | 'tote' | 'notebook' | 'typography' | 'applications' | 'social' | 'pattern' | 'avatar';
+export const BRAND_VIEWS: { id: BrandView; label: string }[] = [{ id: 'board', label: 'Brand board' }, { id: 'cards', label: 'Business cards' }, { id: 'mug', label: 'Mug mockup' }, { id: 'tote', label: 'Canvas tote' }, { id: 'notebook', label: 'Notebook' }, { id: 'typography', label: 'Type & color' }, { id: 'applications', label: 'Brand in use' }, { id: 'social', label: 'Social graphic' }, { id: 'pattern', label: 'Brand pattern' }, { id: 'avatar', label: 'Brand avatar' }];
+export interface BrandOptions { name: string; tagline: string; colors: BrandColor[]; fontId: string; removeBackground: boolean; padding: number; includeFont: boolean; headline: string; body: string; action: string; useCase: BrandUseCase; printStyle: 'auto' | 'original' | 'mono' }
 export interface PreparedBrand { image: HTMLCanvasElement; original: HTMLCanvasElement; analysis: BrandAnalysis; background?: number[] }
 const fontLoads = new Map<string, Promise<void>>();
 export async function loadBrandFont(id: string) {
@@ -91,72 +93,81 @@ function pattern(logo: HTMLCanvasElement, o: BrandOptions, seed: number, w = 160
   }
   return c;
 }
-function scene(prepared: PreparedBrand, o: BrandOptions, view: BrandView, logo: HTMLCanvasElement): HTMLCanvasElement {
-  const r = brandRoles(o.colors), font = brandFont(o.fontId).name;
+function printableLogo(prepared: PreparedBrand, o: BrandOptions) {
+  const logo = logoCanvas(prepared, o), r = brandRoles(o.colors);
+  const actual = prepared.analysis.colors.filter(c => c.origin === 'image');
+  const oneInk = o.printStyle === 'mono' || (o.printStyle === 'auto' && actual.every(c => luminance(c.hex) > 0.65));
+  if (!oneInk) return logo;
+  const ink = contrast(r.ink, '#ffffff') >= 4.5 ? r.ink : '#202020';
+  const c = surface(logo.width, logo.height); place(context(c), logoCanvas(prepared, o, true), 0, 0, c.width, c.height, 0, ink); return c;
+}
+async function scene(prepared: PreparedBrand, o: BrandOptions, view: BrandView, logo: HTMLCanvasElement, locale: 'en' | 'es'): Promise<HTMLCanvasElement> {
+  const r = brandRoles(o.colors), font = brandFont(o.fontId).name, copy = brandCopy(o, locale);
+  if (view === 'typography') return typographySheet(o, r, locale);
+  if (view === 'applications') return applicationSheet(o, r, logo, locale);
   if (view === 'pattern') return pattern(logoCanvas(prepared, o, true), o, prepared.analysis.signature);
   if (view === 'avatar') { const c = surface(800, 800), ctx = context(c); ctx.fillStyle = logoBackground(r); ctx.fillRect(0, 0, 800, 800); place(ctx, logo, 0, 0, 800, 800, 110 + o.padding); return c; }
   if (view === 'social') {
-    const wide = prepared.analysis.ratio > 1.8, c = surface(wide ? 1600 : 1080, wide ? 900 : 1080), ctx = context(c);
+    const c = surface(1080, 1080), ctx = context(c), panel = r.paper;
     ctx.drawImage(pattern(logoCanvas(prepared, o, true), o, prepared.analysis.signature, c.width, c.height), 0, 0);
-    const panel = logoBackground(r);
-    ctx.fillStyle = panel; ctx.fillRect(65, 65, c.width - 130, c.height - 130);
-    place(ctx, logo, 120, 140, c.width - 240, c.height * 0.45, o.padding);
-    label(ctx, o.name, 120, c.height - 220, wide ? 62 : 56, textOn(panel), font, c.width - 240);
-    label(ctx, o.tagline, 120, c.height - 155, 28, textOn(panel), font, c.width - 240);
-    ctx.fillStyle = r.accent; ctx.fillRect(120, c.height - 115, c.width - 240, 10); return c;
+    ctx.fillStyle = panel; ctx.fillRect(65, 65, 950, 950);
+    ctx.fillStyle = r.logoBase; ctx.fillRect(110, 110, 310, 190); place(ctx, logo, 110, 110, 310, 190, 25);
+    wrapText(ctx, copy.headline, 110, 430, 860, 82, 94, font, textOn(panel), 3);
+    wrapText(ctx, copy.body, 115, 780, 830, 31, 44, font, textOn(panel), 3);
+    label(ctx, copy.action + ' →', 115, 960, 28, textOn(panel), font, 830); return c;
   }
-  const c = surface(1600, 1000), ctx = context(c);
-  const sceneColor = mixColor(r.paper, r.accent, 0.1);
-  const bg = ctx.createLinearGradient(0, 0, 1600, 1000); bg.addColorStop(0, sceneColor); bg.addColorStop(1, mixColor(sceneColor, r.ink, 0.1)); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1600, 1000);
   if (view === 'cards') {
-    for (const [x, y, angle, back] of [[970, 390, 0.14, true], [610, 630, -0.12, false]] as const) {
-      ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.shadowColor = '#00000035'; ctx.shadowBlur = 45; ctx.shadowOffsetY = 28;
-      ctx.fillStyle = back ? r.ink : r.paper; ctx.fillRect(-380, -217, 760, 434); ctx.shadowColor = 'transparent'; ctx.drawImage(cardFace(logo, o, back), -380, -217, 760, 434); ctx.restore();
-    }
-    return c;
+    const c = await photoBase('cards');
+    printPlane(c, cardFace(logo, o, true), PHOTO_SURFACES.cardBack);
+    printPlane(c, cardFace(logo, o, false), PHOTO_SURFACES.cardFront); return c;
   }
   if (view === 'mug') {
-    const material = logoBackground(r), highlight = luminance(material) < 0.3 ? 0.12 : 0.7;
-    ctx.save(); ctx.translate(780, 855); ctx.scale(1, 0.2); const shadow = ctx.createRadialGradient(0, 0, 10, 0, 0, 390); shadow.addColorStop(0, '#00000045'); shadow.addColorStop(1, '#00000000'); ctx.fillStyle = shadow; ctx.fillRect(-420, -420, 840, 840); ctx.restore();
-    // Ceramic handle, shaded body and cylindrical print mapping, built from the current brand.
-    ctx.strokeStyle = mixColor(material, '#ffffff', highlight); ctx.lineWidth = 65; ctx.beginPath(); ctx.ellipse(1050, 520, 140, 180, 0, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = '#00000012'; ctx.lineWidth = 8; ctx.beginPath(); ctx.ellipse(1050, 520, 140, 180, 0, -Math.PI / 2, Math.PI / 2); ctx.stroke();
-    const ceramic = ctx.createLinearGradient(510, 0, 1040, 0); ceramic.addColorStop(0, mixColor(material, '#000000', 0.18)); ceramic.addColorStop(0.22, mixColor(material, '#ffffff', highlight)); ceramic.addColorStop(0.65, mixColor(material, '#ffffff', highlight * 0.6)); ceramic.addColorStop(1, mixColor(material, '#000000', 0.2));
-    ctx.beginPath(); ctx.moveTo(510, 280); ctx.lineTo(1040, 280); ctx.lineTo(1020, 760); ctx.bezierCurveTo(1020, 850, 530, 850, 530, 760); ctx.closePath(); ctx.fillStyle = ceramic; ctx.fill();
-    ctx.beginPath(); ctx.ellipse(775, 280, 265, 60, 0, 0, Math.PI * 2); ctx.fillStyle = '#fdfdfb'; ctx.fill();
-    const inside = ctx.createLinearGradient(0, 240, 0, 330); inside.addColorStop(0, mixColor(r.paper, r.ink, 0.35)); inside.addColorStop(1, mixColor(r.paper, '#ffffff', 0.7)); ctx.beginPath(); ctx.ellipse(775, 282, 242, 43, 0, 0, Math.PI * 2); ctx.fillStyle = inside; ctx.fill();
-    const print = surface(500, 300); place(context(print), logo, 0, 0, 500, 300, 45 + o.padding);
-    // Fill exact destination pixels to avoid seams between resampled strips.
-    for (let dx = Math.ceil(775 - Math.sin(0.8) * 280); dx < 775 + Math.sin(0.8) * 280 - 1; dx++) {
-      const u = Math.asin((dx - 775) / 280), next = Math.asin((dx + 1 - 775) / 280);
-      const sx = (u / 1.6 + 0.5) * 500, sw = (next - u) / 1.6 * 500;
-      const vertical = 1 - Math.abs(u) * 0.05;
-      ctx.drawImage(print, sx, 0, sw, 300, dx, 440 + (1 - vertical) * 150, 1, 300 * vertical);
-    }
-    return c;
+    const c = await photoBase('mug'), print = surface(760, 500);
+    place(context(print), printableLogo(prepared, o), 0, 0, 760, 500, 30 + o.padding);
+    printMug(c, print); return c;
   }
-  return c;
+  if (view === 'tote') {
+    const c = await photoBase('tote'), print = surface(700, 640), ctx = context(print);
+    place(ctx, printableLogo(prepared, o), 0, 0, 700, 520, 30 + o.padding);
+    wrapText(ctx, o.tagline, 50, 590, 600, 25, 32, font, r.ink, 1);
+    printPlane(c, print, PHOTO_SURFACES.tote, true); return c;
+  }
+  if (view === 'notebook') {
+    const c = await photoBase('notebook'), cover = surface(840, 1188), ctx = context(cover);
+    ctx.fillStyle = r.paper; ctx.fillRect(0, 0, 840, 1188);
+    ctx.fillStyle = r.primary; ctx.fillRect(0, 0, 22, 1188);
+    ctx.fillStyle = r.logoBase; ctx.fillRect(90, 90, 300, 240); place(ctx, logo, 90, 90, 300, 240, 30 + o.padding * 0.35);
+    wrapText(ctx, copy.headline, 90, 550, 660, 72, 88, font, textOn(r.paper), 4);
+    label(ctx, o.name, 90, 1060, 28, textOn(r.paper), font, 660);
+    o.colors.forEach((color, i) => { ctx.fillStyle = color.hex; ctx.fillRect(90+i*100, 1100, 80, 8); });
+    printPlane(c, cover, PHOTO_SURFACES.notebook); return c;
+  }
+  throw new Error('Unknown brand application.');
 }
-export async function renderBrand(prepared: PreparedBrand, o: BrandOptions, view: BrandView): Promise<HTMLCanvasElement> {
+export async function renderBrand(prepared: PreparedBrand, o: BrandOptions, view: BrandView, locale: 'en' | 'es' = 'en'): Promise<HTMLCanvasElement> {
   await loadBrandFont(o.fontId);
   const logo = logoCanvas(prepared, o);
-  if (view !== 'board') return scene(prepared, o, view, logo);
-  const c = surface(1600, 1320), ctx = context(c), r = brandRoles(o.colors), font = brandFont(o.fontId).name;
-  ctx.fillStyle = '#fafaf8'; ctx.fillRect(0, 0, 1600, 1320);
-  label(ctx, o.name, 70, 115, 60, '#20251e', font, 1460); label(ctx, o.tagline, 70, 165, 26, '#50554a', font, 1460);
-  ctx.fillStyle = logoBackground(r); ctx.fillRect(70, 215, 700, 340); place(ctx, logo, 70, 215, 700, 340, 45 + o.padding);
-  ctx.fillStyle = r.ink; ctx.fillRect(800, 215, 730, 340); place(ctx, logoCanvas(prepared, o, true), 800, 215, 730, 340, 45 + o.padding, textOn(r.ink));
-  const swatchWidth = 1460 / o.colors.length;
-  o.colors.forEach((color, i) => { ctx.fillStyle = color.hex; ctx.fillRect(70 + i * swatchWidth, 595, swatchWidth - 15, 90); label(ctx, color.hex.toUpperCase(), 70 + i * swatchWidth, 720, 22, '#30352d', 'monospace', swatchWidth - 20); });
-  ctx.drawImage(scene(prepared, o, 'cards', logo), 70, 770, 700, 438); ctx.drawImage(scene(prepared, o, 'mug', logo), 800, 770, 730, 438);
-  label(ctx, `${font}  /  Aa Bb Cc 0123456789`, 70, 1270, 28, '#20251e', font, 1460); return c;
+  if (view !== 'board') return scene(prepared, o, view, logo, locale);
+  const c = surface(1600, 2020), ctx = context(c), r = brandRoles(o.colors), font = brandFont(o.fontId).name;
+  ctx.fillStyle = '#fafaf8'; ctx.fillRect(0, 0, 1600, c.height);
+  label(ctx, o.name, 65, 100, 55, '#20251e', font, 1470); label(ctx, o.tagline, 65, 145, 24, '#50554a', font, 1470);
+  ctx.fillStyle = logoBackground(r); ctx.fillRect(65, 185, 720, 250); place(ctx, logo, 65, 185, 720, 250, 25 + o.padding);
+  ctx.fillStyle = r.ink; ctx.fillRect(815, 185, 720, 250); place(ctx, logoCanvas(prepared, o, true), 815, 185, 720, 250, 25 + o.padding, textOn(r.ink));
+  const swatchWidth = 1470 / o.colors.length;
+  o.colors.forEach((color, i) => { ctx.fillStyle = color.hex; ctx.fillRect(65 + i*swatchWidth, 465, swatchWidth-15, 80); label(ctx, color.hex.toUpperCase(), 65+i*swatchWidth, 578, 21, '#30352d', 'monospace', swatchWidth-20); });
+  const views = ['cards', 'mug', 'tote', 'notebook'] as const;
+  for (let i = 0; i < views.length; i++) { const photo = await scene(prepared, o, views[i], logo, locale); ctx.drawImage(photo, 65+(i%2)*750, 615+Math.floor(i/2)*510, 720, 480); photo.width = 1; }
+  const copy = brandCopy(o, locale);
+  label(ctx, font, 65, 1695, 23, '#50554a', font, 1470);
+  wrapText(ctx, copy.headline, 65, 1780, 1460, 63, 76, font, r.ink, 2);
+  wrapText(ctx, copy.body, 70, 1950, 1400, 26, 34, font, '#50554a', 2); return c;
 }
 export async function exportBrand(prepared: PreparedBrand, o: BrandOptions, signal: AbortSignal, progress: (n: number) => void, locale: 'en' | 'es'): Promise<StudioOutput[]> {
   const outputs: StudioOutput[] = [], font = brandFont(o.fontId), r = brandRoles(o.colors);
   const fontReason = translate(o.fontId === prepared.analysis.fontId ? prepared.analysis.reason : 'You chose this font instead of the automatic suggestion.', locale);
   const addText = (name: string, text: string) => outputs.push({ name, blob: new Blob([text], { type: 'text/plain;charset=utf-8' }) });
   const check = () => { if (signal.aborted) throw new DOMException('Export canceled', 'AbortError'); };
-  for (let i = 0; i < BRAND_VIEWS.length; i++) { check(); const view = BRAND_VIEWS[i]; const canvas = await renderBrand(prepared, o, view.id); outputs.push({ name: `${view.id}.png`, blob: await canvasBlob(canvas) }); canvas.width = 1; progress(i + 1); }
+  for (let i = 0; i < BRAND_VIEWS.length; i++) { check(); const view = BRAND_VIEWS[i]; const canvas = await renderBrand(prepared, o, view.id, locale); outputs.push({ name: `${view.id}.png`, blob: await canvasBlob(canvas) }); canvas.width = 1; progress(i + 1); }
   const logo = logoCanvas(prepared, o);
   outputs.push({ name: 'logo-trimmed.png', blob: await canvasBlob(logo) });
   const silhouette = logoCanvas(prepared, o, true);
@@ -165,11 +176,11 @@ export async function exportBrand(prepared: PreparedBrand, o: BrandOptions, sign
   outputs.push({ name: 'card-front.png', blob: await canvasBlob(cardFace(logo, o, false)) }, { name: 'card-back.png', blob: await canvasBlob(cardFace(logo, o, true)) });
   const tokens = o.colors.map((c, i) => `  --brand-color-${i + 1}: ${c.hex};`).join('\n');
   addText('colors.css', `:root {\n${tokens}\n  --brand-ink: ${r.ink};\n  --brand-paper: ${r.paper};\n  --brand-font: "${font.name}";\n}\n`);
-  addText('brand.json', JSON.stringify({ name: o.name, tagline: o.tagline, palette: o.colors, font: { name: font.name, url: font.url, suggestion: fontReason }, backgroundRemoved: o.removeBackground && prepared.analysis.removed, monochromeVariants: 'Recolored silhouette; review intentional light areas.', contrastRatio: Number(contrast(r.ink, r.paper).toFixed(2)) }, null, 2));
+  addText('brand.json', JSON.stringify({ name: o.name, tagline: o.tagline, copy: brandCopy(o, locale), useCase: o.useCase, printStyle: o.printStyle, palette: o.colors, font: { name: font.name, url: font.url, suggestion: fontReason }, backgroundRemoved: o.removeBackground && prepared.analysis.removed, monochromeVariants: 'Recolored silhouette; review intentional light areas.', contrastRatio: Number(contrast(r.ink, r.paper).toFixed(2)) }, null, 2));
   addText('typography.txt', `${font.name}\n${font.url}\n${fontReason}\n${locale === 'es' ? (o.includeFont ? 'La fuente original y su licencia están incluidas en fonts/.' : 'Descargá la fuente desde el enlace de Google Fonts de arriba.') : (o.includeFont ? 'The original font file and its license are included in fonts/.' : 'Download the font from the Google Fonts link above.')}\n`);
   if (o.includeFont) {
     for (const filename of [font.file, font.license]) { check(); const response = await fetch(`/fonts/brand/${filename}`, { signal }); if (!response.ok) throw new Error('Could not download the font files. Try again or turn off Include font files.'); outputs.push({ name: `fonts/${filename}`, blob: await response.blob() }); }
   }
-  addText('README.txt', locale === 'es' ? 'Kit generado localmente a partir de tu logo. La paleta distingue colores extraídos, sugeridos y editados. La tipografía es una sugerencia visual, no la identificación de la fuente original. Los mockups son composiciones ilustradas de presentación. Las tarjetas son imágenes conceptuales de 1050 × 600 px, sin sangrado ni perfil de imprenta. Revisá el recorte, la limpieza de fondo y las siluetas monocromáticas antes de usar. La limpieza elimina solo fondos uniformes conectados al borde; no reconstruye zonas tapadas. Los patrones usan tu propio logo. No se inventan datos personales o de contacto.' : 'Generated locally from your logo. The palette distinguishes extracted, suggested and edited colors. Typography is a visual pairing suggestion, not identification of the original typeface. Mockups are illustrated presentation compositions. Cards are 1050 × 600 px concept images, without print bleed or a printer color profile. Review cropping, background cleanup and monochrome silhouettes before use. Cleanup removes only uniform backgrounds connected to the border; it does not reconstruct hidden areas. Patterns use your actual logo. No personal or contact details are invented.');
+  addText('README.txt', locale === 'es' ? 'Kit generado localmente a partir de tu logo. La paleta distingue colores extraídos, sugeridos y editados. La tipografía es una sugerencia visual, no la identificación de la fuente original. Los mockups usan escenas fotorealistas generadas por IA. Tu logo se aplica localmente con perspectiva, curvatura e iluminación de la superficie. Son simulaciones de presentación. Las tarjetas son imágenes conceptuales de 1050 × 600 px, sin sangrado ni perfil de imprenta. Revisá el recorte, la limpieza de fondo y las siluetas monocromáticas antes de usar. La limpieza elimina solo fondos uniformes conectados al borde; no reconstruye zonas tapadas. Los patrones usan tu propio logo. No se inventan datos personales o de contacto.' : 'Generated locally from your logo. The palette distinguishes extracted, suggested and edited colors. Typography is a visual pairing suggestion, not identification of the original typeface. Mockups use AI-generated photorealistic base scenes. Your logo is composited locally with surface perspective, curvature and lighting. These are presentation simulations. Cards are 1050 × 600 px concept images, without print bleed or a printer color profile. Review cropping, background cleanup and monochrome silhouettes before use. Cleanup removes only uniform backgrounds connected to the border; it does not reconstruct hidden areas. Patterns use your actual logo. No personal or contact details are invented.');
   check(); return outputs;
 }
