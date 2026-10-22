@@ -6,6 +6,8 @@ import { TOOLS } from '../../data/tools';
 import { ToolIcon } from '../ui/ToolIcon';
 import { PLATFORM_PACKS } from '../../data/platforms';
 import { PlatformIcon } from '../platforms/PlatformIcon';
+import { CREATIVE_TOOLS } from '../../data/creativeTools';
+import { SparklesIcon } from 'lucide-react';
 
 export function ToolsMenu({ label = 'Tools', mobile = false }: { label?: string; mobile?: boolean }) {
   const { tr } = useI18n();
@@ -61,6 +63,7 @@ export function ToolsMenu({ label = 'Tools', mobile = false }: { label?: string;
         {TOOLS.map((tool) => <Link key={tool.id} to={`/tools/${tool.slug}`} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-canvas">
           <ToolIcon tool={tool.id} className="h-4 w-4" /><span>{tr(tool.name)}</span>
         </Link>)}
+        {CREATIVE_TOOLS.map(tool => <Link key={tool.id} to={`/tools/${tool.slug}`} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-canvas"><SparklesIcon className="h-4 w-4 shrink-0" /><span>{tr(tool.name)}</span></Link>)}
         <Link to="/tools/steam-assets" className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-canvas"><Gamepad2Icon className="h-4 w-4" aria-hidden="true" /><span>{tr("Steam Asset Generator")}</span></Link>
         </div><div className="border-t border-line pt-3 md:border-l md:border-t-0 md:pl-3 md:pt-0"><p className="px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted">{tr("Platform kits")}</p><div className="grid sm:grid-cols-2">{PLATFORM_PACKS.map((pack) => <Link key={pack.id} to={`/tools/${pack.id}-assets`} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm hover:bg-lime-soft"><PlatformIcon id={pack.id} className="h-4 w-4 shrink-0" /><span>{tr(pack.name)}</span></Link>)}</div></div></div>
         <Link to="/tools" className="mt-1 block border-t border-line px-3 pb-1 pt-3 text-[12px] text-muted hover:text-ink">{tr("Explore all tools")}</Link>

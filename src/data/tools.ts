@@ -45,10 +45,10 @@ export const TOOLS: ToolInfo[] = [
   id: 'compress',
   slug: 'image-compressor',
   name: 'Image Compressor',
-  tagline: 'Shrink file sizes with one quality level for the whole batch.',
+  tagline: 'Compress a batch by quality or set a maximum file size in KB.',
   title: 'Compress images in bulk online',
   lede:
-  'Heavy photos slow down pages and run into upload limits. Pick one quality level for the batch and see exactly what it means before anything is exported.',
+  'Prepare images for websites and upload forms. Choose quality or enter a maximum size per image, such as 200 KB. Allow smaller dimensions when needed, then review the actual exported sizes.',
   dropTitle: 'Drop the images you want to make smaller',
   settingsPreview: [
   { label: 'Quality', value: '82' },
@@ -72,6 +72,7 @@ export const TOOLS: ToolInfo[] = [
 
   faqs: [
   { q: 'Which quality should I use for a website?', a: 'Around 75–82 is a good default for product and blog photos. Use 85–90 for large hero images where texture matters.' },
+  { q: 'Can I compress images to 200 KB or 1 MB?', a: 'Yes. Enter 200 or 1000 in Maximum size per image (KB). The tool searches for an output within the limit and can reduce dimensions if you allow it. If the limit cannot be reached, that file is reported as failed rather than exported oversized.' },
   {
     q: 'Does compression work on PNG files?',
     a: 'PNG is lossless, so the quality slider doesn’t apply. To make PNG photos much smaller, combine compression with converting to WebP or JPG.'

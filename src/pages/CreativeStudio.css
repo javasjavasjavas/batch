@@ -1,0 +1,15 @@
+.studio-shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); border: 1px solid #e3e5dc; border-radius: 20px; overflow: hidden; background: #fff; }
+.studio-controls { padding: 28px; border-right: 1px solid #e3e5dc; }
+.studio-main { padding: 28px; min-width: 0; background: #f8f9f5; }
+.studio-field label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+.studio-field input:not([type="range"]):not([type="color"]), .studio-field select { width: 100%; min-width: 0; border: 1px solid #dce0d4; border-radius: 8px; padding: 10px 12px; background: white; font-size: 13px; }
+.studio-field input[type="range"] { width: 100%; accent-color: #252b21; }
+.studio-field input[type="file"] { font-size: 11px !important; padding: 8px !important; }
+.studio-color { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+.studio-color input { width: 42px; height: 34px; padding: 2px; border: 1px solid #dce0d4; border-radius: 6px; background: white; }
+.studio-toggle { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.studio-toggle input { width: 16px; height: 16px; accent-color: #252b21; }
+.studio-preview { display: flex; justify-content: center; align-items: center; min-height: 340px; height: 490px; margin-top: 20px; border-radius: 12px; padding: 28px; background: repeating-conic-gradient(#eaece5 0% 25%, #f3f4ee 0% 50%) 50% / 20px 20px; overflow: hidden; }
+.studio-preview img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 8px 30px #151a1014; }
+@media(max-width: 900px) { .studio-shell { grid-template-columns: 260px minmax(0, 1fr); } .studio-main, .studio-controls { padding: 20px; } .studio-preview { height: 360px; min-height: 240px; padding: 16px; } }
+@media(max-width: 640px) { .studio-shell { grid-template-columns: minmax(0, 1fr); } .studio-controls { border-right: 0; border-bottom: 1px solid #e3e5dc; } .studio-preview { height: 300px; } }

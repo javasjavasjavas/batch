@@ -8,6 +8,12 @@ import { NotFound } from './pages/NotFound';
 import { PLATFORM_PACKS } from './data/platforms';
 import { LocaleProvider } from './i18n/LocaleContext';
 import { localizedPath } from './i18n/paths';
+import { CREATIVE_TOOLS, type CreativeToolId } from './data/creativeTools';
+
+function creativeLoader(kind: CreativeToolId) {
+  let result: Promise<{ Component: () => JSX.Element }> | undefined;
+  return () => result ??= import('./pages/CreativeStudio').then(({ CreativeStudio }) => ({ Component: () => <CreativeStudio kind={kind} /> }));
+}
 
 // Reuse the component identity across locale routes so a language change preserves kit state.
 function platformLoader(platform: string) {
@@ -25,6 +31,7 @@ export const routes: RouteObject[] = [
     children: [
     { path: '/', handle: { module: 'src/pages/Home.tsx' }, lazy: async () => ({ Component: (await import('./pages/Home')).Home }) },
     { path: '/tools', handle: { module: 'src/pages/ToolsDirectory.tsx' }, lazy: async () => ({ Component: (await import('./pages/ToolsDirectory')).ToolsDirectory }) },
+    ...CREATIVE_TOOLS.map(tool => ({ path: `/tools/${tool.slug}`, handle: { module: 'src/pages/CreativeStudio.tsx' }, lazy: creativeLoader(tool.id) })),
     { path: '/app/steam', handle: { module: 'src/pages/SteamAssets.tsx' }, lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
     { path: '/tools/steam-assets', handle: { module: 'src/pages/SteamAssets.tsx' }, lazy: async () => ({ Component: (await import('./pages/SteamAssets')).SteamAssets }) },
     ...PLATFORM_PACKS.flatMap((pack) => [

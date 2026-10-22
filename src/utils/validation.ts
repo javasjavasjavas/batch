@@ -64,6 +64,10 @@ export function validateBatch(settings: BatchSettings, enabled: EnabledTools, im
   }
 
   if (enabled.compress) {
+    const target = settings.compress.targetKB?.trim();
+    if (target && (!/^\d+$/.test(target) || Number(target) < 1 || Number(target) > 40000)) {
+      add({ id: 'compress-target', tool: 'compress', field: 'targetKB', level: 'error', message: 'Enter a maximum size from 1 to 40,000 KB, or leave it empty.' });
+    }
     if (!settings.compress.stripMetadata) {
       add({ id: 'metadata-preserve', tool: 'compress', level: 'error', message: 'Metadata preservation is available for Rename only. Turn on Remove metadata to re-encode images.' });
     }

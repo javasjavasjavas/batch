@@ -43,7 +43,7 @@ describe('ZIP export', () => {
   it('rejects cancellation and empty completed sets', async () => {
     const controller = new AbortController();
     controller.abort();
-    await expect(makeZip([item('one.jpg', [1])], controller.signal, () => {})).rejects.toMatchObject({ name: 'AbortError' });
-    await expect(makeZip([], new AbortController().signal, () => {})).rejects.toThrow('No completed images');
+    await expect(makeZip([item('one.jpg', [1])], controller.signal, () => { /* No progress expected after cancellation. */ })).rejects.toMatchObject({ name: 'AbortError' });
+    await expect(makeZip([], new AbortController().signal, () => { /* Empty exports cannot report progress. */ })).rejects.toThrow('No completed images');
   });
 });

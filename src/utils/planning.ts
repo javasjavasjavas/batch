@@ -114,7 +114,7 @@ export function toolSummary(tool: ToolId, s: BatchSettings): string {
         return (r.lockAspect ? `Fit within ${w} × ${h}` : `${w} × ${h}, ${FIT_LABEL[r.fit].toLowerCase()}`) + background;
       }
     case 'compress':
-      return `Quality ${s.compress.quality}`;
+      return s.compress.targetKB ? `≤ ${s.compress.targetKB} KB` : `Quality ${s.compress.quality}`;
     case 'convert':
       return `${FORMAT_LABEL[s.convert.format]}${
       s.convert.format === 'webp' && s.convert.webpLossless ? ' lossless' : ''}`;
@@ -154,6 +154,7 @@ export function settingRows(tool: ToolId, s: BatchSettings): SettingRow[] {
     case 'compress':
       return [
       { label: 'Quality', value: String(s.compress.quality) },
+      ...(s.compress.targetKB ? [{ label: 'Maximum size per image (KB)', value: s.compress.targetKB }, { label: 'Allow smaller dimensions', value: s.compress.allowTargetResize ? 'Yes' : 'No' }] : []),
       { label: 'Metadata', value: s.compress.stripMetadata ? 'Removed' : 'Kept' }];
 
     case 'convert':{

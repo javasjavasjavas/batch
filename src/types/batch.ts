@@ -45,6 +45,8 @@ export interface ResizeSettings {
 export interface CompressSettings {
   quality: number;
   stripMetadata: boolean;
+  targetKB?: string;
+  allowTargetResize?: boolean;
 }
 
 export interface ConvertSettings {

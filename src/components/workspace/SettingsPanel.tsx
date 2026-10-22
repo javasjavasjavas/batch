@@ -19,7 +19,7 @@ import { IssueList } from './IssueList';
 
 const DESCRIPTIONS: Record<ToolId, string> = {
   resize: 'Change the pixel dimensions of every image.',
-  compress: 'Reduce file size with one quality level.',
+  compress: 'Choose quality or a maximum size per image.',
   convert: 'Choose one output format for the batch.',
   rename: 'Give every file a consistent name.'
 };

@@ -9,6 +9,7 @@ import oxipngWasmUrl from '@jsquash/oxipng/codec/pkg/squoosh_oxipng_bg.wasm?url'
 import { simd } from 'wasm-feature-detect';
 import { encodingOptions } from './encodingOptions';
 import { extendGradient } from './gradient';
+import { encodeToTarget } from './targetSize';
 
 export interface ProcessResult { blob: Blob; width: number; height: number; format: string }
 
@@ -113,8 +114,26 @@ export async function processFile(file: File, input: InputFormat, animated: bool
     ctx.drawImage(source, dx, dy, dw, dh);
     report('Encoding the output…');
     const data = ctx.getImageData(0, 0, dims.width, dims.height);
-    const bytes = await encode(data, format, settings, enabled);
+    const target = enabled.compress && settings.compress.targetKB?.trim();
+    const result = target ? await encodeToTarget({
+      width: dims.width, height: dims.height, maxBytes: Number(target) * 1000,
+      quality: settings.compress.quality, allowResize: !!settings.compress.allowTargetResize,
+      lossy: format !== 'png' && !(format === 'webp' && enabled.convert && settings.convert.webpLossless),
+      encode: async (width, height, quality) => {
+        report('Finding an output within the size limit…');
+        let pixels = data;
+        if (width !== dims.width || height !== dims.height) {
+          const smaller = canvasFor(width, height);
+          const context = smaller.getContext('2d') as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
+          context.imageSmoothingQuality = 'high';
+          context.drawImage(canvas, 0, 0, width, height);
+          pixels = context.getImageData(0, 0, width, height);
+        }
+        return encode(pixels, format, { ...settings, compress: { ...settings.compress, quality } }, enabled);
+      }
+    }) : { bytes: await encode(data, format, settings, enabled), ...dims };
+    const { bytes } = result;
     if (sniffFormat(new Uint8Array(bytes)) !== format) throw new Error('Encoder returned an unexpected format.');
-    return { blob: new Blob([bytes], { type: mimeFor(format) }), width: dims.width, height: dims.height, format };
+    return { blob: new Blob([bytes], { type: mimeFor(format) }), width: result.width, height: result.height, format };
   } finally { bitmap.release(); }
 }

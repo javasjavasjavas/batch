@@ -59,6 +59,8 @@ function start() {
   Object.assign(window, { ['ga-disable-' + settings.measurementId]: false });
   const w = tagWindow();
   w.dataLayer ||= [];
+  // Google tag's queue expects an Arguments object, not a rest-parameter array.
+  // eslint-disable-next-line prefer-rest-params
   w.gtag ||= function () { w.dataLayer!.push(arguments); };
   if (!initialized) {
     w.gtag('consent', 'default', { analytics_storage: 'denied' });

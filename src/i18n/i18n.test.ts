@@ -41,8 +41,8 @@ describe('language navigation and indexation', () => {
     for(const path of ['/tools','/es/herramientas']) {
       const schema = structuredData(path) as { '@graph': Array<Record<string, unknown>> };
       const list = schema['@graph'].find(item => item['@type'] === 'ItemList')?.itemListElement as {url:string}[];
-      expect(list).toHaveLength(15);
-      expect(new Set(list.map(item=>item.url)).size).toBe(15);
+      expect(list).toHaveLength(19);
+      expect(new Set(list.map(item=>item.url)).size).toBe(19);
       expect(list.every(item=>item.url.includes('/es/') === path.startsWith('/es/'))).toBe(true);
     }
   });

@@ -28,6 +28,12 @@ export function CompressControls() {
 
   return (
     <div className="space-y-5">
+      <div className="space-y-3 rounded-xl border border-line p-4">
+        <label className="block text-sm font-medium" htmlFor="compress-target">{tr('Maximum size per image (KB)')}</label>
+        <input id="compress-target" type="number" min="1" max="40000" step="1" placeholder={tr('Optional, e.g. 200')} value={c.targetKB || ''} onChange={e => updateSettings('compress', { targetKB: e.target.value })} className="w-full rounded-lg border border-line bg-white px-3 py-2" />
+        <p className="text-xs leading-relaxed text-muted">{tr('Leave empty to use quality only. 1 KB = 1,000 bytes. Quality becomes the upper limit; the tool searches for a smaller file without changing the format.')}</p>
+        {!!c.targetKB && <Toggle label={tr('Allow smaller dimensions')} description={tr('If quality alone is not enough, reduce dimensions proportionally. PNG and lossless WebP need this option to reduce pixel count.')} checked={!!c.allowTargetResize} onChange={allowTargetResize => updateSettings('compress', { allowTargetResize })} />}
+      </div>
       <fieldset disabled={qualityDisabled} className={`min-w-0 space-y-5 ${qualityDisabled ? 'opacity-50' : ''}`}>
       <div>
         <div className="flex items-end justify-between">

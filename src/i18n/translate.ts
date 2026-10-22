@@ -1,6 +1,7 @@
 import messages from './es.json';
+import creativeMessages from './creative.es.json';
 import type { Locale } from './paths';
-const catalog: Record<string, string> = messages;
+const catalog: Record<string, string> = { ...messages, ...creativeMessages };
 const normalize = (text: string) => text.replace(/\s+/g, ' ').trim();
 const patterns = Object.entries(catalog).filter(([key]) => /\{\d+\}/.test(key)).sort(([a],[b]) => b.replace(/\{\d+\}/g, '').length - a.replace(/\{\d+\}/g, '').length).map(([key, value]) => ({
   regex: new RegExp('^' + key.split(/(\{\d+\})/).map(part => /^\{\d+\}$/.test(part) ? (/^\{0\} (?:images|files|file|image|results|issues|issue)$/.test(key) ? '(\\d+)' : '(.+?)') : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('') + '$'),

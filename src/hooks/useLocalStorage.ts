@@ -17,7 +17,7 @@ function settingsValue(value: unknown): BatchSettings {
       fit: choice(r.fit, ['cover', 'pad'], d.resize.fit), padColor: str(r.padColor, d.resize.padColor), allowUpscale: bool(r.allowUpscale, d.resize.allowUpscale),
       backgroundMode: choice(r.backgroundMode, ['original', 'extend', 'transparent', 'color'], d.resize.backgroundMode)
     },
-    compress: { quality: typeof c.quality === 'number' && Number.isFinite(c.quality) && c.quality >= 1 && c.quality <= 100 ? c.quality : d.compress.quality, stripMetadata: bool(c.stripMetadata, d.compress.stripMetadata) },
+    compress: { quality: typeof c.quality === 'number' && Number.isFinite(c.quality) && c.quality >= 1 && c.quality <= 100 ? c.quality : d.compress.quality, stripMetadata: bool(c.stripMetadata, d.compress.stripMetadata), targetKB: str(c.targetKB, ''), allowTargetResize: bool(c.allowTargetResize, false) },
     convert: { format: choice(v.format, ['jpg', 'png', 'webp'], d.convert.format), background: str(v.background, d.convert.background), progressive: bool(v.progressive, d.convert.progressive), pngLevel: choice(v.pngLevel, ['fast', 'balanced', 'smallest'], d.convert.pngLevel), webpLossless: bool(v.webpLossless, d.convert.webpLossless) },
     rename: { pattern: str(n.pattern, d.rename.pattern), prefix: str(n.prefix, d.rename.prefix), suffix: str(n.suffix, d.rename.suffix), start: str(n.start, d.rename.start), padding: typeof n.padding === 'number' && Number.isInteger(n.padding) && n.padding >= 1 && n.padding <= 10 ? n.padding : d.rename.padding, lowercase: bool(n.lowercase, d.rename.lowercase), hyphenate: bool(n.hyphenate, d.rename.hyphenate) }
   };

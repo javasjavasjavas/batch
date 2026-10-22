@@ -3,6 +3,7 @@ import { PLATFORM_PACKS } from './platforms';
 import { ARTICLE_META } from './articleMetadata';
 import { englishPath, localizedPath, localeForPath } from '../i18n/paths';
 import { translate } from '../i18n/translate';
+import { CREATIVE_TOOLS } from './creativeTools';
 
 export const SITE_URL = 'https://batchimagekit.com';
 export interface SeoPage { path: string; title: string; description: string; kind: 'website' | 'tool' | 'article'; name: string }
@@ -56,9 +57,9 @@ const searchTitles: Record<string, string> = {
 
 const searchDescriptions: Record<string, string> = {
   '/': 'Resize, compress, convert and rename images in bulk for free. Prepare Steam, social media and product image kits. No sign-up; photos stay on your device.',
-  '/tools': 'Choose from 15 free image tools: batch resizing, compression, conversion and platform asset kits. Process photos in your browser and download a ZIP.',
+  '/tools': 'Explore free image tools for compression, favicons, watermarks, brand kits and screenshots. Process images in your browser and download ready-to-use files.',
   '/tools/bulk-image-resizer': 'Resize up to 100 images at once. Set dimensions or a percentage, crop or pad to fit, then download a ZIP. Free, no sign-up, no photo uploads.',
-  '/tools/image-compressor': 'Compress JPG, PNG and WebP images in bulk for free. Adjust quality, compare file sizes and download a ZIP. Your photos stay on your device.',
+  '/tools/image-compressor': 'Compress JPG, PNG and WebP images in bulk. Choose quality or a maximum size in KB, allow optional resizing and download a ZIP. No uploads or sign-up.',
   '/tools/image-converter': 'Convert multiple images to JPG, PNG or WebP for free. Set quality and transparency, preview filenames and download a ZIP. No account or uploads.',
   '/tools/bulk-file-renamer': 'Rename image files in bulk with numbering, prefixes and custom patterns. Preview filenames and download a ZIP. Free; original files stay unchanged.',
   '/tools/steam-assets': 'Turn your artwork into Steam capsules, library images and icons. Adjust individual crops and download a named ZIP with dimensions. Free, no sign-up.',
@@ -81,6 +82,7 @@ const ENGLISH_PAGES: SeoPage[] = ([
   { path: '/', name: 'Batch Image Kit', title: 'Free Bulk Image Tools & Asset Generators | Batch Image Kit', description: 'Resize, compress, convert and rename images in bulk. Create Steam, social media, shop and app store image kits for free. No account; images stay on your device.', kind: 'website' },
   { path: '/tools', name: 'Free image tools', title: 'Free Online Image Tools & Platform Asset Kits | Batch Image Kit', description: 'Find free bulk image tools and asset generators for Steam, YouTube, Instagram, Etsy, Shopify and more. Prepare images locally and download ready-to-use files.', kind: 'website' },
   ...TOOLS.map((tool): SeoPage => ({ path: `/tools/${tool.slug}`, name: tool.name, title: `${tool.name} Online – Free | Batch Image Kit`, description: coreDescriptions[tool.id], kind: 'tool' })),
+  ...CREATIVE_TOOLS.map((tool): SeoPage => ({ path: `/tools/${tool.slug}`, name: tool.name, title: `${tool.title} | Batch Image Kit`, description: tool.description, kind: 'tool' })),
   { path: '/tools/steam-assets', name: 'Steam Asset Generator', title: 'Steam Capsule & Library Asset Generator | Batch Image Kit', description: 'Create Steam store capsules, library artwork, icons and screenshot exports. Adjust each crop and download a named ZIP with dimensions and an asset guide.', kind: 'tool' },
   ...PLATFORM_PACKS.map((pack): SeoPage => ({ path: `/tools/${pack.id}-assets`, name: PLATFORM_SEARCH[pack.id].heading, title: `${PLATFORM_SEARCH[pack.id].title} | Batch Image Kit`, description: PLATFORM_SEARCH[pack.id].description, kind: 'tool' })),
   { path: '/help', name: 'Image processing guides', title: 'Bulk Image Processing Guides & Help | Batch Image Kit', description: 'Learn to resize, compress, convert and rename images in batches. Find output settings, supported formats, browser limits and practical step-by-step guides.', kind: 'website' },

@@ -12,7 +12,7 @@ export const DEFAULT_SETTINGS: BatchSettings = {
     allowUpscale: false,
     backgroundMode: 'original'
   },
-  compress: { quality: 82, stripMetadata: true },
+  compress: { quality: 82, stripMetadata: true, targetKB: '', allowTargetResize: false },
   convert: { format: 'webp', background: '#FFFFFF', progressive: true, pngLevel: 'balanced', webpLossless: false },
   rename: { pattern: 'product-{n}', prefix: '', suffix: '', start: '1', padding: 3, lowercase: true, hyphenate: true }
 };
