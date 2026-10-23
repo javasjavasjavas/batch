@@ -1,3 +1,4 @@
+import { ColorPicker } from '../components/ui/ColorPicker';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { ArrowRightIcon, DownloadIcon, ImagePlusIcon, SparklesIcon } from 'lucide-react';
 import { useI18n } from '../i18n/LocaleContext';
@@ -96,7 +97,7 @@ export function BrandStudio() {
             <p className="text-xs leading-relaxed text-muted">{tr('Empty fields use editable sample copy for the selected use case. Your own text is kept when you change language.')}</p>
           </div></details>
           <div className="border-t border-line pt-5"><div className="flex items-center justify-between"><h3 className="text-sm font-semibold">{tr('Your palette')}</h3><select aria-label={tr('Number of colors')} value={options.colors.length || 4} onChange={e => { const count = Number(e.target.value); update('colors', count === 3 ? options.colors.slice(0, 3) : [...options.colors, prepared!.analysis.colors[3]]); }} className="rounded border border-line bg-white p-1 text-xs"><option value="3">3</option><option value="4">4</option></select></div>
-            <div className="mt-3 space-y-3">{options.colors.map((color, i) => <div key={i} className="brand-swatch"><input type="color" aria-label={`${tr('Color')} ${i + 1}`} value={color.hex} onChange={e => changeColor(i, e.target.value)} /><div><span className="block text-xs font-semibold uppercase">{color.hex}</span><span className="text-[11px] text-muted">{originLabel(color)}</span></div></div>)}</div>
+            <div className="mt-3 space-y-3">{options.colors.map((color, i) => <ColorPicker key={i} label={`${tr('Color')} ${i + 1}`} value={color.hex} onChange={hex => changeColor(i, hex)} description={originLabel(color)} swatches={options.colors.map(c => c.hex)} />)}</div>
             <Button size="sm" variant="ghost" className="mt-3" onClick={() => { if (prepared) { update('colors', prepared.analysis.colors); update('fontId', prepared.analysis.fontId); } }}>{tr('Restore suggestions')}</Button>
             {roles && <p className="mt-2 text-xs leading-relaxed text-muted">{tr('Light / dark contrast')}: {ratio.toFixed(2)}:1 · {tr(ratio >= 4.5 ? 'Suitable for normal text at these two colors.' : 'Use these colors decoratively; choose a stronger contrast for small text.')}</p>}
           </div>

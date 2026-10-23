@@ -1,3 +1,4 @@
+import { ColorPicker } from '../components/ui/ColorPicker';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { ArrowRightIcon, DownloadIcon, ImagePlusIcon, ShieldCheckIcon, SparklesIcon, Trash2Icon } from 'lucide-react';
 import { CREATIVE_TOOLS, type CreativeToolId } from '../data/creativeTools';
@@ -108,7 +109,7 @@ function BasicStudio({ kind }: { kind: CreativeToolId }) {
     finally { if (mounted.current) setBusy(false); }
   }
   const textField = (label: string, key: 'name' | 'tagline' | 'text', limit = 60) => <Field label={tr(label)}>{id => <input id={id} maxLength={limit} value={options[key]} onChange={e => update(key, e.target.value)} />}</Field>;
-  const colorField = (label: string, key: 'background' | 'secondary' | 'accent' | 'color') => <Field label={tr(label)}>{id => <div className="studio-color"><input id={id} type="color" value={options[key]} onChange={e => update(key, e.target.value)} /><span>{options[key].toUpperCase()}</span></div>}</Field>;
+  const colorField = (label: string, key: 'background' | 'secondary' | 'accent' | 'color') => <Field label={tr(label)}>{id => <ColorPicker id={id} label={tr(label)} value={options[key]} onChange={hex => update(key, hex)} />}</Field>;
   const range = (label: string, key: 'padding' | 'opacity' | 'size' | 'margin' | 'rounded' | 'quality', min: number, max: number, unit = '') => <Field label={`${tr(label)} · ${options[key]}${unit}`}>{id => <input id={id} type="range" min={min} max={max} value={options[key]} onChange={e => update(key, Number(e.target.value))} />}</Field>;
   const toggle = (label: string, key: 'transparent' | 'frame' | 'shadow' | 'gradient') => <label className="studio-toggle"><input type="checkbox" checked={options[key]} onChange={e => update(key, e.target.checked)} />{tr(label)}</label>;
   const dims = active && (kind === 'screenshot' ? screenshotDimensions(active.width, active.height, options) : { width: active.width, height: active.height });
