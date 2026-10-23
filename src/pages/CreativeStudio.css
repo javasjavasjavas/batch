@@ -9,5 +9,14 @@
 .studio-toggle input { width: 16px; height: 16px; accent-color: #252b21; }
 .studio-preview { display: flex; justify-content: center; align-items: center; min-height: 340px; height: 490px; margin-top: 20px; border-radius: 12px; padding: 28px; background: repeating-conic-gradient(#eaece5 0% 25%, #f3f4ee 0% 50%) 50% / 20px 20px; overflow: hidden; }
 .studio-preview img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 8px 30px #151a1014; }
+.preview-dropzone { position: relative; cursor: pointer; outline: 1px dashed #89937a66; outline-offset: -1px; padding-bottom: 64px; transition: outline-color .15s, box-shadow .15s; }
+.preview-dropzone:hover, .preview-dropzone.is-dragging { outline: 2px dashed #789044; outline-offset: -2px; }
+.preview-dropzone:focus-visible { outline: 2px solid #617837; outline-offset: 3px; }
+.preview-dropzone[aria-disabled="true"] { cursor: wait; }
+.preview-drop-hint { position: absolute; bottom: 14px; left: 12px; right: 12px; display: flex; justify-content: center; align-items: center; gap: 8px; width: fit-content; max-width: calc(100% - 24px); margin: auto; padding: 8px 12px; border: 1px solid #e2e6da; border-radius: 9px; background: #fffffff2; color: #5e6952; font-size: 12px; line-height: 1.5; text-align: center; pointer-events: none; }
+.preview-drop-hint svg { flex-shrink: 0; }
+.preview-drop-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px; background: #f3f9dcee; color: #34451c; font-size: 18px; font-weight: 600; pointer-events: none; }
+.preview-dropzone[aria-disabled="true"] .preview-drop-hint { opacity: .5; }
+.studio-preview.preview-dropzone { padding-bottom: 72px; }
 @media(max-width: 900px) { .studio-shell { grid-template-columns: 260px minmax(0, 1fr); } .studio-main, .studio-controls { padding: 20px; } .studio-preview { height: 360px; min-height: 240px; padding: 16px; } }
 @media(max-width: 640px) { .studio-shell { grid-template-columns: minmax(0, 1fr); } .studio-controls { border-right: 0; border-bottom: 1px solid #e3e5dc; } .studio-preview { height: 300px; } }
